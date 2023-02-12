@@ -1,0 +1,920 @@
+[
+    {
+        "id": "8058a44447c9337f",
+        "type": "tab",
+        "label": "SunSynk Automation",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5b7d29d1d965a3ed",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Create Request for Setting Invertor Settings",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (bearer.state != undefined) { } else { node.status(\"Undef\");return null }\nif (sn.state != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state , \"peakAndVallery\": msg.payload }\nnode.status(\"Action Sent - \" + msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 260,
+        "wires": [
+            [
+                "d2122f7768b26272"
+            ]
+        ]
+    },
+    {
+        "id": "e4a575d083ae578d",
+        "type": "http request",
+        "z": "8058a44447c9337f",
+        "name": "Set Invertor Settings",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1800,
+        "y": 260,
+        "wires": [
+            [
+                "81f674df3194fdef"
+            ]
+        ]
+    },
+    {
+        "id": "2ba21a318ddc4a6a",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check If Need to Put Into UPS Mode for Upcoming load shedding",
+        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = 1;\nvar totalw = 3500 * 3;\nvar wmin = 40 * 52 / 60;\nvar soclow = 50;\nvar sochigh = 60;\nvar pt = 60;\nvar pvtest = 2000;\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" pvtest:\" + pvtest + \" totalw:\" + totalw + \" wmin:\" + wmin) }\n\nvar states = global.get('homeassistant.homeAssistant.states');\nvar lengthls = global.get('homeassistant.homeAssistant.states[\\'sensor.new_length_load_shedding\\'].state');\nvar timeleft = global.get('homeassistant.homeAssistant.states[\\'sensor.new_minutes_to_load_shedding\\'].state');\n\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nvar soc = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_battery\\'].attributes.soc'));\nvar pv1 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv1'));\nvar pv2 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv2'));\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar gridv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes.volt'));\nvar override = global.get('homeassistant.homeAssistant.states[\\'input_boolean.enable_ups_manual_override\\'].state');\nif (debugme === 1) { node.error(\"lengthls:\" + lengthls + \" override:\" + override + \" gridv:\" + gridv + \" pv:\" + pv + \" pv1:\" + pv1 + \" pv2:\" + pv2 + \" timeleft:\" + timeleft + \" timeruse:\" + timeruse + \" soc:\" + soc) }\n\n\n// Error Checking\nif (lengthls != (undefined || \"unavailable\") ) { } else { node.status(\"Undef lengthls\"); return null }\nif (timeleft != (undefined || \"unavailable\")) { } else { node.status(\"Undef timeleft\"); return null }\nif (override != (undefined )) { } else { node.status(\"Undef override\"); return null }\nif (timeruse != (undefined )) { } else { node.status(\"Undef timer\"); return null }\nif (soc != (undefined )) { } else { node.status(\"Undef soc\"); return null }\nif (pv1 != (undefined )) { } else { node.status(\"Undef pv1\"); return null }\nif (pv2 != (undefined )) { } else { node.status(\"Undef pv2\"); return null }\nif (pv != (undefined )) { } else { node.status(\"Undef pv2\"); return null }\nif (gridv != (undefined )) { } else { node.status(\"Undef GridV\"); return null }\n\n// Drop out if No Load Shedding, enable Use Timer\nif (parseInt(lengthls) === 0 || parseInt(lengthls) === 99997) {\n  node.status(\"No Load Shedding Events Scheduled\");\n  msg.payload = \"1\";\n  return msg;\n}\n\n// Calculate Load shedding Params Based on time windows of load shedding\nvar lls = parseInt(lengthls);\nif (lls > 180) { pt = 120; soclow = 80; sochigh = 90 }\nif (lls > 240) { pt = 180; soclow = 85; sochigh = 95 }\nif (lls > 300) { pt = 240; soclow = 95; sochigh = 98 }\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" wmin:\" + wmin + \" lls:\" + lls) }\n\n// Calculate charge time needed to get to needed soc% \nif ((soc <= soclow)) {\n  var minneeded = 0;\n  var soctemp = 0;\n  soctemp = sochigh - soc;\n  minneeded = (((soctemp / 100) * totalw) / wmin).toFixed(0);\n  current = current + \" wmin: \" + minneeded;\n  pt = minneeded;\n} else { current = current + \" NOWMIN \" }\nif (debugme === 1) { node.error(\"pt after calc:\" + pt) }\n\n// Setup Info for Status line \nif (parseInt(timeleft) <= pt) { current = current + \" TL \" }\nif (soc <= soclow) { current = current + \" SOC \" }\nif (pv <= pvtest) { current = current + \" PV \" }\nif (timeruse === 1) { current = current + \" TIMER \" }\n\n// If Override enabled dont calc, just disable use timer\nif (override === \"on\" ) {\n  // Override is enabled, disable USE TIMER\n  msg.payload = \"1\";\n  current = current + \" OVERRIDE - No Further Actions\";\n} else if (gridv <= 200) \n{ \n// There is no grid, enable USE TIMER\n  current = current + \" NOGRID \"; \n  msg.payload = \"1\";\n} else\n// Start soc checks \n{\n  msg.payload = \"1\";\n  //if Timeleft <= calculated time and soc < soclow and pv < test pv value \n  if ((parseInt(timeleft) <= pt) &&\n    (soc <= soclow) &&\n    (pv <= pvtest)) {\n    msg.payload = \"0\"\n  } else {\n    // If timeruse is allready disabled \n    if (timeruse === 0) {\n    // soc in state between soclow and sochigh - 50-60% example, dont renenable till soc high \n      if ((soc >= soclow) && (soc <= sochigh) && (pv <= pvtest)) {\n        current = current + \" Delay Reactivate \";\n        msg.payload = \"0\";\n      } else {\n        current = current + \" Reactivate \";\n        msg.payload = \"1\";\n      }\n    } else { current = current + \" No Action \"; msg.payload = \"1\"; }\n  }\n}\n// Setup status \ncurrent = current + \" soc:\" + soc + \" pt:\" + pt + \" t:\" + timeruse + \" pv:\" + pv + \" t:\" + timeleft + \" p:\" + msg.payload;\nglobal.set(\"AutoSunSynk\", current);\nnode.status(current);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 260,
+        "wires": [
+            [
+                "5b7d29d1d965a3ed",
+                "57f33094a9fea81d",
+                "29443a2b726cce1b"
+            ]
+        ]
+    },
+    {
+        "id": "29443a2b726cce1b",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Overall State Check",
+        "func": "var current = global.get(\"AutoSunSynk\");\nif ( current === undefined ) { current = \"Status Entry Not Set Yet\" }\nnode.status(current);\nmsg.payload = {} ;\nmsg.payload.state = current;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 340,
+        "wires": [
+            [
+                "094e24f7f9f4eb5b"
+            ]
+        ]
+    },
+    {
+        "id": "81f674df3194fdef",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Set Status",
+        "func": "var origmsg = msg.payload;\nnode.status(origmsg.msg);\nmsg.payload = {};\nmsg.payload.state = origmsg.msg;\nreturn msg\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2010,
+        "y": 260,
+        "wires": [
+            [
+                "9034a98cee7ec8c8"
+            ]
+        ]
+    },
+    {
+        "id": "57f33094a9fea81d",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check for Notification - UPS Change",
+        "func": "var timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(msg.payload + ' No Action') ; return null } else {}\nnode.status(msg.payload+ ' Action');\nif (parseInt(msg.payload) === 0 ) \n{\n   msg.payload = \n     { data: \n       {\n         title: \"Solar UPS Mode Enabled\",\n         message:\"UPS Mode Enabled\",\n         data:\n          {\n            tag: \"ups\",\n            sticky: \"true\",\n            color: \"red\",\n            channel: \"29PtaRd\"\n          }       \n       }\n     } ;\n} else\n{\n  msg.payload =\n  {\n    data:\n    {\n      title: \"Solar UPS Mode Disabled\",\n      message: \"UPS Mode Disabled\",\n      data:\n      {\n        tag: \"ups\",\n        sticky: \"true\",\n        color: \"red\",\n        channel: \"29PtaRd\"\n      }       \n    }\n  };\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 200,
+        "wires": [
+            [
+                "eb571a0a10c64e8f"
+            ]
+        ]
+    },
+    {
+        "id": "eb571a0a10c64e8f",
+        "type": "api-call-service",
+        "z": "8058a44447c9337f",
+        "name": "Send to Gary",
+        "server": "49784c25.476704",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_gary_note_9",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1510,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "431cc9134896f5dd",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Grid State Change",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.sunsynk_grid_online",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 950,
+        "y": 60,
+        "wires": [
+            [
+                "3998b016e59d18a2"
+            ]
+        ]
+    },
+    {
+        "id": "3998b016e59d18a2",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check for Notification - Grid Change",
+        "func": "node.status(msg.payload);\nif (parseInt(msg.payload) === 0 ) \n{\n   msg.payload = \n     { data: \n       {\n         title: \"Grid Disconnected\",\n         message: \"Grid has been disconneced\",\n         data : \n           {\n            tag: \"grid\",\n            sticky: \"true\",\n            color: \"red\",\n            channel: \"29PtaRd\"\n           }\n       }\n     } ;\n} else\n{\n  msg.payload =\n  {\n    data:\n    {\n      title: \"Grid Connected\",\n      message: \"Grid has been connected\",\n      data:\n      {\n        tag: \"grid\",\n        sticky: \"true\",\n        color: \"red\",\n        channel: \"29PtaRd\"\n      }\n    }\n  };\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 60,
+        "wires": [
+            [
+                "eb571a0a10c64e8f",
+                "14fb6a4702b8b44c"
+            ]
+        ]
+    },
+    {
+        "id": "14fb6a4702b8b44c",
+        "type": "api-call-service",
+        "z": "8058a44447c9337f",
+        "name": "Send to Tinus",
+        "server": "49784c25.476704",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_sm_n986b",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1540,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c1864f058f9521d7",
+        "type": "inject",
+        "z": "8058a44447c9337f",
+        "name": "Inject",
+        "props": [],
+        "repeat": "45",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "20",
+        "topic": "",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3",
+                "f79c2dc4aeb080f0"
+            ]
+        ]
+    },
+    {
+        "id": "539a99f6c7f7d9c3",
+        "type": "delay",
+        "z": "8058a44447c9337f",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "60",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "2ba21a318ddc4a6a"
+            ]
+        ]
+    },
+    {
+        "id": "c5c9bd45f83c9c04",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check Battery",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.sunsynk_battery",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "f28b6ef5451ecbec",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check PV",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.sunsynk_input",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 140,
+        "y": 380,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "beb6beea7da5cdf1",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check Grid",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.sunsynk_grid",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "2c4be0172c0ab9e2",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check Load",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.sunsynk_load",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 130,
+        "y": 500,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "dc4e070bcce3acdf",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check LE Eta",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.new_minutes_to_load_shedding",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 130,
+        "y": 560,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "7c59f9044e31cf5a",
+        "type": "server-state-changed",
+        "z": "8058a44447c9337f",
+        "name": "Check LS Length",
+        "server": "49784c25.476704",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.new_length_load_shedding",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 120,
+        "y": 620,
+        "wires": [
+            [
+                "539a99f6c7f7d9c3"
+            ]
+        ]
+    },
+    {
+        "id": "f79c2dc4aeb080f0",
+        "type": "api-current-state",
+        "z": "8058a44447c9337f",
+        "name": "SE Push Calendar",
+        "server": "49784c25.476704",
+        "version": 3,
+        "outputs": 1,
+        "halt_if": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "calendar.loadshedding_local_events",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "$entity().attributes",
+                "valueType": "jsonata"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 370,
+        "y": 120,
+        "wires": [
+            [
+                "b901da7832a87289",
+                "13b88f03eea09f15"
+            ]
+        ]
+    },
+    {
+        "id": "b901da7832a87289",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Start Time",
+        "func": "var origmsg = msg.payload;\nif (origmsg.start_time != undefined) {\n    var startdate = new Date(origmsg.start_time);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var current = currentdate.getTime();\n    var diff = start - current;\n    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n    node.status(startdate.toLocaleString());\n    if ( msg.payload <= 0 ) { msg.payload = 99999 } else { }\n//    if ( msg.state === \"on\" ) { msg.payload = 99998 } else { }\n} else {\n    msg.payload = 99997;\n    node.status(\"No Events\");\n}\n//if (origmsg.next_start_time != undefined) {\n//    msg.payload = (parseInt(msg.payload.starts_in));\n//    if ( msg.payload <= 0 ) { msg.payload = 99999 } else { }\n//    if ( origmsg.state === \"on\" ) { msg.payload = 99998 } else { }\n//    node.status(origmsg.last_update);\n//} else {\n//    msg.payload = 99997;\n//    node.status(\"No Events\");\n//}\nvar temp = msg.payload;\nmsg.payload = {};\nmsg.payload.state = temp;\nreturn msg;\n\n// Error States \n// 99997 - No new event \n// 99998 - Current Event Running \n// 99999 - Start time has passed ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "27ad4453b30a2d6e"
+            ]
+        ]
+    },
+    {
+        "id": "13b88f03eea09f15",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Load Shedding Length",
+        "func": "var origmsg = msg.payload;\nmsg.payload = 0;\nif ((origmsg.start_time != undefined ) && (origmsg.end_time != undefined) ) {\n    var startdate = new Date(origmsg.start_time);\n    var start = startdate.getTime();\n    var enddate = new Date(origmsg.end_time);\n    var end = enddate.getTime();\n    var diff = end - start;\n    if ( diff <= 0 ) { diff = 1 } \n    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n    // add 60 min due to se being 2 hours instead of 3 hours \n    msg.payload = msg.payload + 60;\n    node.status(startdate.toLocaleString());\n} else {\n    msg.payload = 0;\n    node.status(\"No Events\");\n}\n//if ((origmsg.next_start_time != undefined) && (origmsg.next_end_time != undefined)) {\n//    var startdate = new Date(origmsg.next_start_time);\n//    var start = startdate.getTime();\n//    var enddate = new Date(origmsg.next_end_time);\n//    var end = enddate.getTime();\n//    var diff = end - start;\n//    if (diff <= 0) { diff = 1 }\n//    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n//    // add 60 min due to se being 2 hours instead of 3 hours \n//    msg.payload = msg.payload + 60;\n//    node.status(startdate.toLocaleString());\n//} else {\n//    msg.payload = 0;\n//    node.status(\"No Events\");\n//}\nvar temp = msg.payload;\nmsg.payload = {};\nmsg.payload.state = temp;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 180,
+        "wires": [
+            [
+                "1cca7e715956c6e3"
+            ]
+        ]
+    },
+    {
+        "id": "9c6bfeda14cd94bd",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check Weather for Soc",
+        "func": "var debugme = 0;\nvar origpayload = msg.payload;\nvar CF = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_condition\\'].state');\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar currcap2 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap2');\nvar currcap3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\nvar tempset = \"30\"\nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" PV:\" + pv + \" Current Cap:\" + currcap2 + \",\" + currcap3 ) }\n\nif ((CF || CC || pv || currcap2 || currcap3 ) === (undefined || \"unavailable\")) {\n    node.status(\"Undefined\");\n    return null;\n}\n\nif (pv <= 6000) {\n    if ((CF || CC) === \"rainy\" || \"hail\" || \"pouring\") { tempset = \"50\" }\n    if ((CF) === \"cloudy\") { tempset = \"40\" }\n} else {\n    tempset = \"30\";\n}\n\nif ((tempset === currcap2) && (tempset === currcap3) ) {\n    node.status(\"No Action - \" +  currcap2 + \",\" + currcap3);\n    msg.payload = \"30\"\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\" Set : \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 440,
+        "wires": [
+            [
+                "44d1d28658d0dc2e"
+            ]
+        ]
+    },
+    {
+        "id": "44d1d28658d0dc2e",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Create Request for Setting Invertor Settings",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (bearer.state != undefined) { } else { node.status(\"Undef\");return null }\nif (sn.state != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state, \"cap2\": msg.payload, \"cap3\": msg.payload }\nnode.status(\"Action Sent - \"  + msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 440,
+        "wires": [
+            [
+                "d2122f7768b26272"
+            ]
+        ]
+    },
+    {
+        "id": "b90991eaa943e80f",
+        "type": "inject",
+        "z": "8058a44447c9337f",
+        "name": "Long Check",
+        "props": [],
+        "repeat": "300",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "60",
+        "topic": "",
+        "x": 470,
+        "y": 440,
+        "wires": [
+            [
+                "9c6bfeda14cd94bd"
+            ]
+        ]
+    },
+    {
+        "id": "d2122f7768b26272",
+        "type": "api-current-state",
+        "z": "8058a44447c9337f",
+        "name": "Enable SunSynk Auto Mode",
+        "server": "49784c25.476704",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "input_boolean.enable_sunsynk_auto_mode",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 1560,
+        "y": 260,
+        "wires": [
+            [
+                "e4a575d083ae578d"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "094e24f7f9f4eb5b",
+        "type": "hass-post",
+        "z": "8058a44447c9337f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.new_sunsynk_override_result",
+        "name": "Sunsynk Override Result",
+        "x": 1290,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "9034a98cee7ec8c8",
+        "type": "hass-post",
+        "z": "8058a44447c9337f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.new_sunsynk_update_status",
+        "name": "Sunsynk Update Status",
+        "x": 2250,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "27ad4453b30a2d6e",
+        "type": "hass-post",
+        "z": "8058a44447c9337f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.new_minutes_to_load_shedding",
+        "name": "Minutes To Load Shedding",
+        "x": 880,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "1cca7e715956c6e3",
+        "type": "hass-post",
+        "z": "8058a44447c9337f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.new_length_load_shedding",
+        "name": "Length Load Shedding",
+        "x": 860,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "49784c25.476704",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": 30,
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    },
+    {
+        "id": "bc1c0f273da7bbae",
+        "type": "hass-config",
+        "host": "http://localhost",
+        "port": "8123"
+    }
+]
