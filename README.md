@@ -39,6 +39,9 @@ Information of getting a long lived token is here : https://community.home-assis
 Errors Seen When Implementing 
 -----------------------------
 In the debug window there are messages with an error code 401. 
+
+![image](https://user-images.githubusercontent.com/87119523/218646245-75114dea-4fdc-4578-b3d0-dce25908312c.png)
+
 This is an invalid token in the additional palette loaded in node red
 
 Follow the instructions here to get one : https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159
