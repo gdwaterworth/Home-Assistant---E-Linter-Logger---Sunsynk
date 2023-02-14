@@ -32,4 +32,26 @@ c. Configure the node-red-contrib-hass addon
 
 Documentation : 
 Documentation for that addon is here : https://flows.nodered.org/node/node-red-contrib-hass
+
 Information of getting a long lived token is here : https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159
+
+
+Errors Seen When Implementing 
+-----------------------------
+In the debug window there are messages with an error code 401. 
+This is an invalid token in the additional palette loaded in node red
+
+Follow the instructions here to get one : https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159
+
+To apply it open one of these:
+![image](https://user-images.githubusercontent.com/87119523/218645683-1021e79e-fbae-4ba9-a634-8d5f1d72dd28.png)
+
+Click on 
+
+![image](https://user-images.githubusercontent.com/87119523/218645778-884a839b-d2d7-4ab3-91d0-f42dfd7d8b11.png)
+
+Put in long life token 
+
+![image](https://user-images.githubusercontent.com/87119523/218645838-62b05bde-f985-4457-a2c5-36afa69aeda8.png)
+
+
