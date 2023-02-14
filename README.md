@@ -54,4 +54,9 @@ Put in long life token
 
 ![image](https://user-images.githubusercontent.com/87119523/218645838-62b05bde-f985-4457-a2c5-36afa69aeda8.png)
 
+and deploy
+
+![image](https://user-images.githubusercontent.com/87119523/218646037-307de739-a71c-4872-92a7-c888c021cfe4.png)
+
+
 
