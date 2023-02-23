@@ -194,3 +194,4 @@ input_boolean:
   enable_electric_weather_override:
     initial: true
     
+
