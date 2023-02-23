@@ -35,6 +35,8 @@ Documentation for that addon is here : https://flows.nodered.org/node/node-red-c
 
 Information of getting a long lived token is here : https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159
 
+Sample Card To Show Events 
+-----------------------------
 
 Errors Seen When Implementing 
 -----------------------------
