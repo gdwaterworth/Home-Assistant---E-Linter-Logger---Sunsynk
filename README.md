@@ -35,7 +35,6 @@ Documentation for that addon is here : https://flows.nodered.org/node/node-red-c
 
 Information of getting a long lived token is here : https://community.home-assistant.io/t/how-to-get-long-lived-access-token/162159
 
-
 Errors Seen When Implementing 
 -----------------------------
 In the debug window there are messages with an error code 401. 
