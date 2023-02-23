@@ -169,7 +169,19 @@ template:
       - name: "New SunSynk Update Status"
         state: " "
         unique_id: "sensor.new_sunsynk_update_status"
-          
+  - sensor: 
+      - name: "Sunsynk Events 1"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1"
+  - sensor: 
+      - name: "Sunsynk Events 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2"
+  - sensor: 
+      - name: "Sunsynk Events 3"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3"
+
 input_boolean:
   enable_ups_manual_override:
     initial: false
