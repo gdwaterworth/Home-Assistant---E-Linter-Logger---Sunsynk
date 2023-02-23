@@ -37,6 +37,63 @@ Information of getting a long lived token is here : https://community.home-assis
 
 Sample Card To Show Events 
 -----------------------------
+type: vertical-stack
+cards:
+  - type: custom:mushroom-title-card
+    title: SunSynk Events
+    alignment: center
+    subtitle: Last 60 Days, 50 Entries
+  - type: custom:mushroom-template-card
+    primary: SunSynk Events Type 1
+    secondary: |-
+      {% for event in state_attr("sensor.sunsynk_events_1","events") %} 
+      {{event}} 
+      {%- endfor %}
+    icon: ''
+    entity: sensor.sunsynk_events_1
+    multiline_secondary: true
+    layout: horizontal
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    fill_container: true
+  - type: custom:mushroom-template-card
+    primary: SunSynk Events Type 2
+    secondary: |-
+      {% for event in state_attr("sensor.sunsynk_events_2","events") %} 
+      {{event}} 
+      {%- endfor %}
+    icon: ''
+    entity: sensor.sunsynk_events_2
+    multiline_secondary: true
+    layout: horizontal
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    fill_container: true
+  - type: custom:mushroom-template-card
+    primary: SunSynk Events Type 3
+    secondary: |-
+      {% for event in state_attr("sensor.sunsynk_events_3","events") %} 
+      {{event}} 
+      {%- endfor %}
+    icon: ''
+    entity: sensor.sunsynk_events_3
+    multiline_secondary: true
+    layout: horizontal
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    fill_container: true
 
 Errors Seen When Implementing 
 -----------------------------
