@@ -12,7 +12,7 @@
         "type": "function",
         "z": "8058a44447c9337f",
         "name": "Create Request for Setting Invertor Settings",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (bearer.state != undefined) { } else { node.status(\"Undef\");return null }\nif (sn.state != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state , \"peakAndVallery\": msg.payload }\nnode.status(\"Action Sent - \" + msg.payload);\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(timeruse)) { node.status(\"Undefined\"); return null }\n\nif (timeruse === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state , \"peakAndVallery\": msg.payload }\nnode.status(\"Action Sent - \" + msg.payload);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -42,8 +42,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1800,
-        "y": 260,
+        "x": 1920,
+        "y": 380,
         "wires": [
             [
                 "81f674df3194fdef"
@@ -55,7 +55,7 @@
         "type": "function",
         "z": "8058a44447c9337f",
         "name": "Check If Need to Put Into UPS Mode for Upcoming load shedding",
-        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = global.get(\"SunSynkDebug\") ;\nvar totalw = 3500 * 3;\nvar wmin = 40 * 52 / 60;\nvar soclow = 50;\nvar sochigh = 60;\nvar pt = 60;\nvar pvtest = 2000;\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" pvtest:\" + pvtest + \" totalw:\" + totalw + \" wmin:\" + wmin) }\n\nvar lengthls = global.get('homeassistant.homeAssistant.states[\\'sensor.new_length_load_shedding\\'].state');\nvar timeleft = global.get('homeassistant.homeAssistant.states[\\'sensor.new_minutes_to_load_shedding\\'].state');\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nvar soc = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_battery\\'].attributes.soc'));\nvar pv1 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv1'));\nvar pv2 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv2'));\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar gridv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes.volt'));\nvar override = global.get('homeassistant.homeAssistant.states[\\'input_boolean.enable_ups_manual_override\\'].state');\nif (debugme === 1) { node.error(\"lengthls:\" + lengthls + \" override:\" + override + \" gridv:\" + gridv + \" pv:\" + pv + \" pv1:\" + pv1 + \" pv2:\" + pv2 + \" timeleft:\" + timeleft + \" timeruse:\" + timeruse + \" soc:\" + soc) }\n\n\n// Error Checking\nif (lengthls === (undefined || \"unavailable\") ) { node.status(\"Undef lengthls\"); return null }\nif (timeleft === (undefined || \"unavailable\")) { node.status(\"Undef timeleft\"); return null }\nif (override === (undefined )) { node.status(\"Undef override\"); return null }\nif (timeruse === (undefined )) { node.status(\"Undef timer\"); return null }\nif (soc === undefined ) { node.status(\"Undef soc\"); return null }\nif (pv1 === undefined ) { node.status(\"Undef pv1\"); return null }\nif (pv2 === undefined ) { node.status(\"Undef pv2\"); return null }\nif (pv === undefined ) { node.status(\"Undef pv2\"); return null }\nif (gridv === undefined ) { node.status(\"Undef GridV\"); return null }\n\n// Drop out if No Load Shedding, enable Use Timer\nif (parseInt(lengthls) === 0 || parseInt(lengthls) === 99997) {\n  node.status(\"No Load Shedding Events Scheduled\");\n  msg.payload = \"1\";\n  return msg;\n}\n\n// Calculate Load shedding Params Based on time windows of load shedding\nvar lls = parseInt(lengthls);\nif (lls > 180) { pt = 120; soclow = 80; sochigh = 90 }\nif (lls > 240) { pt = 180; soclow = 85; sochigh = 95 }\nif (lls > 300) { pt = 240; soclow = 95; sochigh = 98 }\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" wmin:\" + wmin + \" lls:\" + lls) }\n\n// Calculate charge time needed to get to needed soc% \nif ((soc <= soclow)) {\n  var minneeded = 0;\n  var soctemp = 0;\n  soctemp = sochigh - soc;\n  minneeded = (((soctemp / 100) * totalw) / wmin).toFixed(0);\n  current = current + \" wmin: \" + minneeded;\n  pt = minneeded;\n} else { current = current + \" NOWMIN \" }\nif (debugme === 1) { node.error(\"pt after calc:\" + pt) }\n\n// Setup Info for Status line \nif (parseInt(timeleft) <= pt) { current = current + \" TL \" }\nif (soc <= soclow) { current = current + \" SOC \" }\nif (pv <= pvtest) { current = current + \" PV \" }\nif (timeruse === 1) { current = current + \" TIMER \" }\n\n// If Override enabled dont calc, just disable use timer\nif (override === \"on\" ) {\n  // Override is enabled, disable USE TIMER\n  msg.payload = \"1\";\n  current = current + \" OVERRIDE - No Further Actions\";\n} else if (gridv <= 200) \n{ \n// There is no grid, enable USE TIMER\n  current = current + \" NOGRID \"; \n  msg.payload = \"1\";\n} else\n// Start soc checks \n{\n  msg.payload = \"1\";\n  //if Timeleft <= calculated time and soc < soclow and pv < test pv value \n  if ((parseInt(timeleft) <= pt) &&\n    (soc <= soclow) &&\n    (pv <= pvtest)) {\n    msg.payload = \"0\"\n  } else {\n    // If timeruse is allready disabled \n    if (timeruse === 0) {\n    // soc in state between soclow and sochigh - 50-60% example, dont renenable till soc high \n      if ((soc >= soclow) && (soc <= sochigh) && (pv <= pvtest)) {\n        current = current + \" Delay Reactivate \";\n        msg.payload = \"0\";\n      } else {\n        current = current + \" Reactivate \";\n        msg.payload = \"1\";\n      }\n    } else { current = current + \" No Action \"; msg.payload = \"1\"; }\n  }\n}\n// Setup status \ncurrent = current + \" soc:\" + soc + \" pt:\" + pt + \" t:\" + timeruse + \" pv:\" + pv + \" t:\" + timeleft + \" p:\" + msg.payload;\nglobal.set(\"AutoSunSynk\", current);\nnode.status(current);\nreturn msg;",
+        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = global.get(\"SunSynkDebug\") ;\nvar totalw = 3500 * 3;\nvar wmin = 40 * 52 / 60;\nvar soclow = 50;\nvar sochigh = 60;\nvar pt = 60;\nvar pvtest = 2000;\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" pvtest:\" + pvtest + \" totalw:\" + totalw + \" wmin:\" + wmin) }\n\nvar lengthls = global.get('homeassistant.homeAssistant.states[\\'sensor.new_length_load_shedding\\'].state');\nvar timeleft = global.get('homeassistant.homeAssistant.states[\\'sensor.new_minutes_to_load_shedding\\'].state');\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nvar soc = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_battery\\'].attributes.soc'));\nvar pv1 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv1'));\nvar pv2 = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv2'));\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar gridv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes.volt'));\nvar override = global.get('homeassistant.homeAssistant.states[\\'input_boolean.enable_ups_manual_override\\'].state');\nif (debugme === 1) { node.error(\"lengthls:\" + lengthls + \" override:\" + override + \" gridv:\" + gridv + \" pv:\" + pv + \" pv1:\" + pv1 + \" pv2:\" + pv2 + \" timeleft:\" + timeleft + \" timeruse:\" + timeruse + \" soc:\" + soc) }\n\n\n// Error Checking\nif ([undefined, \"unavailable\"].includes(lengthls)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(timeleft)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(timeruse)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(soc)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(pv1)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(pv2)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(pv)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(gridv)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(override)) { node.status(\"Undefined\"); return null }\n\n// Drop out if No Load Shedding, enable Use Timer\nif (parseInt(lengthls) === 0 || parseInt(lengthls) === 99997) {\n  node.status(\"No Load Shedding Events Scheduled\");\n  msg.payload = \"1\";\n  return msg;\n}\n\n// Calculate Load shedding Params Based on time windows of load shedding\nvar lls = parseInt(lengthls);\nif (lls > 180) { pt = 120; soclow = 80; sochigh = 90 }\nif (lls > 240) { pt = 180; soclow = 85; sochigh = 95 }\nif (lls > 300) { pt = 240; soclow = 95; sochigh = 98 }\n\n// Check for Weather and Early Load Shedding\nvar CF = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_condition\\'].state');\nvar LST = global.get('homeassistant.homeAssistant.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time');\nif (([undefined, \"unavailable\"].includes(CF)) || ([undefined, \"unavailable\"].includes(CC)) || ([undefined, \"unavailable\"].includes(LST))) { node.error(\"CF/CC/LST undefined\")} else\n{\n  var LSTdate = new Date(global.get('homeassistant.homeAssistant.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time'));\n  var LSThour = LSTdate.getHours();\n  if (debugme === 1) { node.error(\"CF:\" + CF + \" CC:\" + CC + \" LSTdate:\" + LSTdate.toLocaleString() + \" LSThour:\" + LSThour) }\n  if ((LSThour >= 7) && (LSThour <= 11)) { pt = 30; soclow = 40; sochigh = 45; current = current + \" EA_LS\" ;} else \n  {\n    if ((soc <= soclow)) \n    {\n      var minneeded = 0;\n      var soctemp = 0;\n      soctemp = sochigh - soc;\n      minneeded = (((soctemp / 100) * totalw) / wmin).toFixed(0);\n      current = current + \" wmin:\" + minneeded;\n      pt = minneeded;\n    } else { current = current + \" NOWMIN\" }\n  }\n}\nif (debugme === 1) { node.error(\"pt after calc:\" + pt) }\nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" wmin:\" + wmin + \" lls:\" + lls) }\ncurrent = current + \" sl:\" + soclow;\ncurrent = current + \" sh:\" + sochigh;\n\n\n// Setup Info for Status line \nif (parseInt(timeleft) <= pt) { current = current + \" TL\" }\nif (soc <= soclow) { current = current + \" SOC\" }\nif (pv <= pvtest) { current = current + \" PV\" }\nif (timeruse === 1) { current = current + \" TIMER\" }\n\n// If Override enabled dont calc, just disable use timer\nif (override === \"on\" ) {\n  // Override is enabled, disable USE TIMER\n  msg.payload = \"1\";\n  current = current + \" OVERRIDE - No Further Actions\";\n} else if (gridv <= 200) \n{ \n// There is no grid, enable USE TIMER\n  current = current + \" NOGRID\"; \n  msg.payload = \"1\";\n} else\n// Start soc checks \n{\n  msg.payload = \"1\";\n  //if Timeleft <= calculated time and soc < soclow and pv < test pv value \n  if ((parseInt(timeleft) <= pt) &&\n    (soc <= soclow) &&\n    (pv <= pvtest)) {\n    msg.payload = \"0\"\n  } else {\n    // If timeruse is allready disabled \n    if (timeruse === 0) {\n    // soc in state between soclow and sochigh - 50-60% example, dont renenable till soc high \n      if ((soc >= soclow) && (soc <= sochigh) && (pv <= pvtest)) {\n        current = current + \" Delay Reactivate\";\n        msg.payload = \"0\";\n      } else {\n        current = current + \" Reactivate\";\n        msg.payload = \"1\";\n      }\n    } else { current = current + \" No Action\"; msg.payload = \"1\"; }\n  }\n}\n// Setup status \ncurrent = current + \" soc:\" + soc + \" pt:\" + pt + \" t:\" + timeruse + \" pv:\" + pv + \" t:\" + timeleft + \" p:\" + msg.payload;\nglobal.set(\"AutoSunSynk\", current);\nnode.status(current);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -101,8 +101,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2010,
-        "y": 260,
+        "x": 2130,
+        "y": 380,
         "wires": [
             [
                 "9034a98cee7ec8c8"
@@ -243,7 +243,7 @@
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 1520,
+        "x": 1540,
         "y": 60,
         "wires": [
             []
@@ -759,14 +759,14 @@
         "id": "9c6bfeda14cd94bd",
         "type": "function",
         "z": "8058a44447c9337f",
-        "name": "Check Weather for Soc",
-        "func": "var debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar CF = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_condition\\'].state');\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar currcap2 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap2');\nvar currcap3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\nvar tempset = \"30\"\nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" PV:\" + pv + \" Current Cap:\" + currcap2 + \",\" + currcap3 ) }\n// Error Checking\nif (\n    (CF  === (undefined || \"unavailable\")) || \n    (CC === (undefined || \"unavailable\")) || \n    (pv === undefined ) || \n    (currcap2 === (undefined || \"unavailable\")) || \n    (currcap3 === (undefined || \"unavailable\"))\n    )\n{\n    node.status(\"Undefined\");\n    return null;\n}\n\nvar tempset = \"30\"\nif ((CF === \"rainy\") || (CC === \"rainy\")) { tempset = \"50\" }\nif ((CF === \"hail\") || (CC === \"hail\")) { tempset = \"50\" }\nif ((CF === \"pouring\") || (CC === \"pouring\")) { tempset = \"50\" }\nif (CF === \"cloudy\") { tempset = \"40\" }\nif ((CF === \"partlycloudy\") && (CC === \"partlycloudy\")) { tempset = \"35\" }\n\nif ((tempset === currcap2) && (tempset === currcap3) ) {\n    node.status(\"No Action - \" +  CC + \",\" + CF + \" --- \" + tempset );\n    msg.payload = \"30\"\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\"Action - \" + CC + \",\" + CF + \" --- \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
+        "name": "Check Weather for Soc - cap2",
+        "func": "var debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar CF = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_condition\\'].state');\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar currcap2 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap2');\nvar tempset = \"30\"\nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" PV:\" + pv + \" Current Cap:\" + currcap2 + \",\" ) }\n\n\n// Error Checking\nif ([undefined, \"unavailable\"].includes(CF)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(CC)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(pv)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(currcap2)) { node.status(\"Undefined\"); return null }\n\nvar tempset = \"30\"\nif ((CF === \"rainy\") || (CC === \"rainy\")) { tempset = \"50\" }\nif ((CF === \"hail\") || (CC === \"hail\")) { tempset = \"50\" }\nif ((CF === \"pouring\") || (CC === \"pouring\")) { tempset = \"50\" }\nif (CF === \"cloudy\") { tempset = \"40\" }\nif ((CF === \"partlycloudy\") && (CC === \"partlycloudy\")) { tempset = \"35\" }\n\nif ( tempset === currcap2 ) {\n    node.status(\"No Action - \" +  CC + \",\" + CF + \" --- \" + tempset );\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\"Action - \" + CC + \",\" + CF + \" --- \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 770,
+        "x": 830,
         "y": 440,
         "wires": [
             [
@@ -778,8 +778,8 @@
         "id": "44d1d28658d0dc2e",
         "type": "function",
         "z": "8058a44447c9337f",
-        "name": "Create Request for Setting Invertor Settings",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar timeruse = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.peakAndVallery'));\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (bearer.state != undefined) { } else { node.status(\"Undef\");return null }\nif (sn.state != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state, \"cap2\": msg.payload, \"cap3\": msg.payload }\nnode.status(\"Action Sent - \" + msg.payload.cap2 + \":\" + msg.payload.cap2);\nreturn msg;",
+        "name": "Create Request for Setting Invertor Settings - cap2",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar currcap2 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap2');\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(currcap2)) { node.status(\"Undefined\"); return null }\n\nif (currcap2 === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + currcap2 + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state, \"cap2\": msg.payload }\nnode.status(\"Action Sent cap2 - \" + msg.payload.cap2 );\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -804,11 +804,13 @@
         "once": true,
         "onceDelay": "60",
         "topic": "",
-        "x": 470,
+        "x": 490,
         "y": 440,
         "wires": [
             [
-                "9c6bfeda14cd94bd"
+                "9c6bfeda14cd94bd",
+                "2640734fc5630dae",
+                "ea90cbc4d7319b78"
             ]
         ]
     },
@@ -835,8 +837,8 @@
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 1560,
-        "y": 260,
+        "x": 1680,
+        "y": 380,
         "wires": [
             [
                 "e4a575d083ae578d"
@@ -862,8 +864,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.new_sunsynk_update_status",
         "name": "Sunsynk Update Status",
-        "x": 2250,
-        "y": 260,
+        "x": 2370,
+        "y": 380,
         "wires": []
     },
     {
@@ -887,6 +889,82 @@
         "x": 860,
         "y": 180,
         "wires": []
+    },
+    {
+        "id": "2640734fc5630dae",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check Weather for Soc - cap3",
+        "func": "var debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar CF = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get('homeassistant.homeAssistant.states[\\'sensor.openweathermap_condition\\'].state');\nvar pv = parseInt(global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes.pv'));\nvar currcap3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\nvar tempset = \"30\"\nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" PV:\" + pv + \" Current Cap:\" + currcap3 ) }\n\n// Error Checking\nif ([undefined, \"unavailable\"].includes(CF)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(CC)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(pv)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(currcap3)) { node.status(\"Undefined\"); return null }\n\nvar tempset = \"30\"\nif ((CF === \"rainy\") || (CC === \"rainy\")) { tempset = \"50\" }\nif ((CF === \"hail\") || (CC === \"hail\")) { tempset = \"50\" }\nif ((CF === \"pouring\") || (CC === \"pouring\")) { tempset = \"50\" }\nif (CF === \"cloudy\") { tempset = \"40\" }\nif ((CF === \"partlycloudy\") && (CC === \"partlycloudy\")) { tempset = \"35\" }\nif ((CF === \"sunny\") || ( CF === \"clear-night\")) { tempset = \"25\" }\n\nif (tempset === currcap3)  {\n    node.status(\"No Action - \" +  CC + \",\" + CF + \" --- \" + tempset );\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\"Action - \" + CC + \",\" + CF + \" --- \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 520,
+        "wires": [
+            [
+                "f4ebfff1733f4299"
+            ]
+        ]
+    },
+    {
+        "id": "f4ebfff1733f4299",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Create Request for Setting Invertor Settings - cap3",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar currcap3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(currcap3)) { node.status(\"Undefined\"); return null }\n\nif (currcap3 === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + currcap3 + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state, \"cap3\": msg.payload }\nnode.status(\"Action Sent cap3 - \" + msg.payload.cap3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 520,
+        "wires": [
+            [
+                "d2122f7768b26272"
+            ]
+        ]
+    },
+    {
+        "id": "ea90cbc4d7319b78",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Check Sunrise for Timeslot 3",
+        "func": "let options = { hour12: false , hour: \"2-digit\", minute: \"2-digit\" };\nvar debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar sunrise = new Date(global.get('homeassistant.homeAssistant.states[\\'sun.sun\\'].attributes.next_dawn'));\nvar time3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.sellTime3');\nif (debugme === 1) { node.error(\"time3:\" + time3 + \" sunrise:\" + sunrise.toLocaleString() ) }\n\n// Error Checking\nif ([undefined, \"unavailable\"].includes(sunrise)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(time3)) { node.status(\"Undefined\"); return null }\n\nvar timetemp = sunrise.toLocaleTimeString(\"en-us\", options);\nif (debugme === 1) {node.error(\"timetemp:\" + timetemp)}\n\nif (timetemp === time3 )  {\n    node.status(\"No Action - \" +  time3 + \"  ---  \" + timetemp );\n    return null;\n} else {\n    msg.payload = timetemp;\n    node.status(\"Action - \" + time3 + \"  ---  \" + timetemp);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 600,
+        "wires": [
+            [
+                "b64d6f4f8315ef87"
+            ]
+        ]
+    },
+    {
+        "id": "b64d6f4f8315ef87",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Create Request for Setting Invertor Settings - timeslot3",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar time3 = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_settings\\'].attributes.sellTime3');\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(time3)) { node.status(\"Undefined\"); return null }\n\nif (time3 === parseInt(msg.payload)) { node.status(\"No Action  Current:\" + time3 + \"  Payload:\" + msg.payload) ; return null } else {}\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/set\";\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn.state, \"sellTime3\": msg.payload }\nnode.status(\"Action Sent sellTime3 - \" + msg.payload.sellTime3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1240,
+        "y": 600,
+        "wires": [
+            [
+                "d2122f7768b26272"
+            ]
+        ]
     },
     {
         "id": "49784c25.476704",
