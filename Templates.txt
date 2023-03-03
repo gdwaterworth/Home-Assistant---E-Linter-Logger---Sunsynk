@@ -167,8 +167,13 @@ template:
         unique_id: "sensor.new_length_load_shedding"
   - sensor: 
       - name: "New SunSynk Update Status"
-        state: " "
+        state: "Not Been Called Yet"
         unique_id: "sensor.new_sunsynk_update_status"
+  - sensor: 
+      - name: "Calculated Current Solar Pred"
+        unique_id: "sensor.calculated.current.solar.pred"
+        state: >
+         {{  ((float(states('sensor.power_production_now_2')) * 1 ) + (float(states('sensor.power_production_now')) * 1 ))|int  }}
   - sensor: 
       - name: "Sunsynk Events 1"
         state: ""
@@ -181,6 +186,12 @@ template:
       - name: "Sunsynk Events 3"
         state: ""
         unique_id: "sensor.sunsynk_events_3"
+  - sensor: 
+      - name: "Sunsynk Stats Last Update"
+        device_class: timestamp
+        state: 0
+        unique_id: "sensor.sunsynk_stats_last_update"
+
 
 input_boolean:
   enable_ups_manual_override:

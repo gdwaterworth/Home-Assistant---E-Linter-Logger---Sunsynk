@@ -774,7 +774,8 @@
                 "21dae3e15cef46c9",
                 "88abea85be217c44",
                 "de549111356c836d",
-                "7ceb62668ca5b355"
+                "7ceb62668ca5b355",
+                "a5e5f685a25108df"
             ]
         ]
     },
@@ -1182,10 +1183,39 @@
         "wires": []
     },
     {
+        "id": "a5e5f685a25108df",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Calc Last Update Time & General Status Check",
+        "func": "// Specific Checks \nvar error = \"\";\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes');\nif (typeof s_input.pvIV_0_ppv  === 'undefined') { Error = \"Input(Input)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes');\nif (typeof s_input.vip_0_power === 'undefined') { Error = \"Input(Grid)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_flow\\'].attributes');\nif ( s_input.pvPower == null) { Error = \"Input(Flow)\" }\n\nnode.error(s_input);\n\nvar states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nvar origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.attributes.device_class = \"timestamp\" ;\nif (error === \"\") \n { msg.payload.state = currdate } else \n { node.error(error + \" - Error With Data \") ; msg.payload.state = \"Error With Incoming Data\" ; }\nreturn msg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 1220,
+        "wires": [
+            [
+                "3e57fb7499cefb5a"
+            ]
+        ]
+    },
+    {
+        "id": "3e57fb7499cefb5a",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_stats_last_update",
+        "name": "Update Last Updated Date",
+        "x": 1440,
+        "y": 1220,
+        "wires": []
+    },
+    {
         "id": "bc1c0f273da7bbae",
         "type": "hass-config",
         "host": "http://localhost",
         "port": "8123"
     }
-
 ]
