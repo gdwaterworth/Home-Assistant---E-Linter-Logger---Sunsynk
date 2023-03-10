@@ -64,70 +64,70 @@ template:
   - sensor:
       - name: "Sunsynk Battery Soc"
         state: >
-            {{state_attr('sensor.sunsynk_battery', 'soc')|int}}
+            {{state_attr('sensor.sunsynk_battery', 'soc')|float}}
   - sensor:
       - name: "Sunsynk Battery Power"
         state: >
-            {{state_attr('sensor.sunsynk_battery', 'power')|int}}
+            {{state_attr('sensor.sunsynk_battery', 'power')|float}}
   - sensor:
       - name: "Sunsynk Battery etotalchg"
         state_class: total_increasing
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_battery', 'etotalchg')|int}}
+            {{state_attr('sensor.sunsynk_battery', 'etotalchg')|float}}
   - sensor:
       - name: "Sunsynk Battery etotaldischg"
         state_class: total_increasing
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_battery', 'etotaldischg')|int}}
+            {{state_attr('sensor.sunsynk_battery', 'etotaldischg')|float}}
   - sensor:
       - name: "Sunsynk PV1"
         state: >
-            {{state_attr('sensor.sunsynk_input', 'pv1')|int}}
+            {{state_attr('sensor.sunsynk_input', 'pv1')|float}}
   - sensor:
       - name: "Sunsynk PV2"
         state: >
-            {{state_attr('sensor.sunsynk_input', 'pv2')|int}}
+            {{state_attr('sensor.sunsynk_input', 'pv2')|float}}
   - sensor:
       - name: "Sunsynk PV"
         state: >
-            {{state_attr('sensor.sunsynk_input', 'pv')|int}}
+            {{state_attr('sensor.sunsynk_input', 'pv')|float}}
   - sensor:
       - name: "Sunsynk PV Total"
         state_class: total_increasing
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_input', 'pvtotal')|int}}
+            {{state_attr('sensor.sunsynk_input', 'pvtotal')|float}}
   - sensor:
       - name: "Sunsynk Grid Power"
         state: >
-            {{state_attr('sensor.sunsynk_grid', 'power')|int}}
+            {{state_attr('sensor.sunsynk_grid', 'power')|float}}
   - sensor:
       - name: "Sunsynk Grid Online"
         state: >
-            {{state_attr('sensor.sunsynk_grid', 'gridonline')|int}}
+            {{state_attr('sensor.sunsynk_grid', 'gridonline')|float}}
   - sensor:
       - name: "Sunsynk Grid Total"
         state_class: total_increasing
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_grid', 'total')|int}}
+            {{state_attr('sensor.sunsynk_grid', 'total')|float}}
   - sensor:
       - name: "Sunsynk Load Power"
         state: >
-            {{state_attr('sensor.sunsynk_load', 'totalpower')|int}}
+            {{state_attr('sensor.sunsynk_load', 'totalpower')|float}}
   - sensor:
       - name: "Sunsynk Load Total"
         state_class: total_increasing
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_load', 'total')|int}}
+            {{state_attr('sensor.sunsynk_load', 'total')|float}}
   - sensor:
       - name: "SunSynk Logger Status"
         state: >
@@ -173,7 +173,7 @@ template:
       - name: "Calculated Current Solar Pred"
         unique_id: "sensor.calculated.current.solar.pred"
         state: >
-         {{  ((float(states('sensor.power_production_now_2')) * 1 ) + (float(states('sensor.power_production_now')) * 1 ))|int  }}
+         {{  ((float(states('sensor.power_production_now_2')) * 1 ) + (float(states('sensor.power_production_now')) * 1 ))|float  }}
   - sensor: 
       - name: "Sunsynk Events 1"
         state: ""
@@ -204,3 +204,4 @@ input_boolean:
     initial: true
   enable_electric_weather_override:
     initial: true
+    
