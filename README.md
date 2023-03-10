@@ -8,4 +8,5 @@ This is something I have been working on for a while based on my own work with s
 
 Documentation is in the wiki 
 
-
+##DO NOT ENABLE THE 2nD INVERTOR UNLESS YOU KNOW WHAT YOU ARE DOING 
+##IT IS STILL UNDER CONSTRUCTION
