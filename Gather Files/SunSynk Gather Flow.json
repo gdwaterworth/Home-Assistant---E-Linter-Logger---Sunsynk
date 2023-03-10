@@ -47,7 +47,9 @@
         "wires": [
             [
                 "e53175753e61992a",
-                "90673d2b7f54dc55"
+                "90673d2b7f54dc55",
+                "890752c9c04ae832",
+                "21dae3e15cef46c9"
             ]
         ]
     },
@@ -75,18 +77,18 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Invertor Serial Number ( 1st Invertor )",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[0].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_1_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor Index\" + invindex + \" Does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 770,
-        "y": 300,
+        "x": 830,
+        "y": 480,
         "wires": [
             [
-                "99abf055fd0ac01e",
-                "3014f46216bcf438"
+                "3014f46216bcf438",
+                "418a96f5f1b651c9"
             ]
         ]
     },
@@ -95,14 +97,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting battery Info",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/battery/\" + sn.state + \"/realtime?sn=\" + sn.state + \"&lan\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/battery/\" + sn.state + \"/realtime?sn=\" + sn.state + \"&lan\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
-        "y": 640,
+        "x": 550,
+        "y": 780,
         "wires": [
             [
                 "e522b35a8a127bb6"
@@ -125,8 +127,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 930,
-        "y": 640,
+        "x": 870,
+        "y": 780,
         "wires": [
             [
                 "84cc88872dfbd9bb"
@@ -138,14 +140,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Invertor Settings",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/read\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/read\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
-        "y": 880,
+        "x": 570,
+        "y": 1020,
         "wires": [
             [
                 "1c1aed6a936a4fc2"
@@ -168,8 +170,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 920,
-        "y": 880,
+        "x": 860,
+        "y": 1020,
         "wires": [
             [
                 "a07a57f4173a145d"
@@ -181,14 +183,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Grid Info",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/grid/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/grid/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
-        "y": 760,
+        "x": 550,
+        "y": 900,
         "wires": [
             [
                 "0dbcf760fe6ec990"
@@ -211,8 +213,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 920,
-        "y": 760,
+        "x": 860,
+        "y": 900,
         "wires": [
             [
                 "82600efe878fe587"
@@ -224,14 +226,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Load Info",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/load/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/load/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
-        "y": 820,
+        "x": 550,
+        "y": 960,
         "wires": [
             [
                 "cd1e22edbc0da295"
@@ -254,8 +256,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 920,
-        "y": 820,
+        "x": 860,
+        "y": 960,
         "wires": [
             [
                 "70ec719d14f92732"
@@ -267,14 +269,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Input",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/input\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/input\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 590,
-        "y": 700,
+        "x": 530,
+        "y": 840,
         "wires": [
             [
                 "caf5b68ee44cdaca"
@@ -297,8 +299,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 910,
-        "y": 700,
+        "x": 850,
+        "y": 840,
         "wires": [
             [
                 "095649a2b02e4ec2"
@@ -310,14 +312,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Output",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/output\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/output\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 600,
-        "y": 580,
+        "x": 540,
+        "y": 720,
         "wires": [
             [
                 "45d5eef4e801a974"
@@ -340,8 +342,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 910,
-        "y": 580,
+        "x": 850,
+        "y": 720,
         "wires": [
             [
                 "70e66830d0ab0b90"
@@ -359,8 +361,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 880,
+        "x": 1100,
+        "y": 1020,
         "wires": [
             [
                 "127a0b93cf41d353"
@@ -378,8 +380,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 610,
-        "y": 460,
+        "x": 830,
+        "y": 360,
         "wires": [
             [
                 "a5e32263433166d3"
@@ -402,8 +404,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 860,
-        "y": 460,
+        "x": 1080,
+        "y": 360,
         "wires": [
             [
                 "6df5b52d7b770df4",
@@ -422,8 +424,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1030,
-        "y": 460,
+        "x": 1250,
+        "y": 360,
         "wires": [
             [
                 "ec3ce6ac52b04130",
@@ -442,8 +444,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
-        "y": 520,
+        "x": 780,
+        "y": 420,
         "wires": [
             [
                 "d39e0694ad913862"
@@ -466,8 +468,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 520,
+        "x": 1120,
+        "y": 420,
         "wires": [
             [
                 "6360d898e9fec6b9"
@@ -485,8 +487,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1180,
-        "y": 640,
+        "x": 1120,
+        "y": 780,
         "wires": [
             [
                 "3e9feb5ff04bc328"
@@ -504,8 +506,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1170,
-        "y": 700,
+        "x": 1110,
+        "y": 840,
         "wires": [
             [
                 "9cb3e2a71092678d"
@@ -523,8 +525,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 760,
+        "x": 1100,
+        "y": 900,
         "wires": [
             [
                 "2eb2b3cada070416"
@@ -542,8 +544,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 820,
+        "x": 1100,
+        "y": 960,
         "wires": [
             [
                 "31dd21860cbc8c4c"
@@ -561,8 +563,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1190,
-        "y": 580,
+        "x": 1130,
+        "y": 720,
         "wires": [
             [
                 "c4c01331b7a03f18"
@@ -580,8 +582,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 520,
+        "x": 1380,
+        "y": 420,
         "wires": [
             [
                 "54907525a327c8f1"
@@ -599,7 +601,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 840,
+        "x": 780,
         "y": 240,
         "wires": [
             [
@@ -618,8 +620,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
-        "y": 400,
+        "x": 1270,
+        "y": 300,
         "wires": [
             [
                 "539daee32f23a903"
@@ -656,8 +658,8 @@
         "once": true,
         "onceDelay": "15",
         "topic": "",
-        "x": 130,
-        "y": 160,
+        "x": 90,
+        "y": 40,
         "wires": [
             [
                 "0c13157122cbbc47",
@@ -697,7 +699,7 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_access_token",
         "name": "Update sensor.sunsynk_access_token",
-        "x": 1470,
+        "x": 1690,
         "y": 100,
         "wires": []
     },
@@ -721,48 +723,14 @@
         ]
     },
     {
-        "id": "99abf055fd0ac01e",
-        "type": "delay",
-        "z": "fca77f132c7d5d8f",
-        "name": "",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "60",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 160,
-        "y": 460,
-        "wires": [
-            [
-                "8840cdead8881df7",
-                "d985fcb00600c3b9",
-                "5cbff0fad88c676e",
-                "db5cc86a829e8bca",
-                "f51f0fbe061d9cd7",
-                "ad31dd1db4441737",
-                "21dae3e15cef46c9",
-                "88abea85be217c44",
-                "de549111356c836d",
-                "7ceb62668ca5b355"
-            ]
-        ]
-    },
-    {
         "id": "c9592b52b355aebe",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_invertor_list",
         "name": "Update sensor.sunsynk_invertor_list",
-        "x": 1470,
-        "y": 280,
+        "x": 1690,
+        "y": 240,
         "wires": []
     },
     {
@@ -772,8 +740,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.plant_id_no",
         "name": "Update Plant ID",
-        "x": 1400,
-        "y": 460,
+        "x": 1620,
+        "y": 360,
         "wires": []
     },
     {
@@ -787,8 +755,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1200,
-        "y": 460,
+        "x": 1420,
+        "y": 360,
         "wires": [
             [
                 "a57a72a33e0f7629"
@@ -802,8 +770,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_flow",
         "name": "Update SunSynk Flow",
-        "x": 1420,
-        "y": 520,
+        "x": 1640,
+        "y": 420,
         "wires": []
     },
     {
@@ -813,8 +781,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_battery",
         "name": "Update SunSynk Battery",
-        "x": 1430,
-        "y": 640,
+        "x": 1370,
+        "y": 780,
         "wires": []
     },
     {
@@ -824,8 +792,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_output",
         "name": "Update SunSynk Output",
-        "x": 1430,
-        "y": 580,
+        "x": 1370,
+        "y": 720,
         "wires": []
     },
     {
@@ -835,8 +803,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_input",
         "name": "Update SunSynk Input",
-        "x": 1420,
-        "y": 700,
+        "x": 1360,
+        "y": 840,
         "wires": []
     },
     {
@@ -846,8 +814,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_grid",
         "name": "Update SunSynk Grid",
-        "x": 1420,
-        "y": 760,
+        "x": 1360,
+        "y": 900,
         "wires": []
     },
     {
@@ -857,8 +825,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_load",
         "name": "Update SunSynk Load",
-        "x": 1420,
-        "y": 820,
+        "x": 1360,
+        "y": 960,
         "wires": []
     },
     {
@@ -868,8 +836,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_settings",
         "name": "Update SunSynk Settings",
-        "x": 1430,
-        "y": 880,
+        "x": 1370,
+        "y": 1020,
         "wires": []
     },
     {
@@ -879,8 +847,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_serial_number",
         "name": "Update Serial Number",
-        "x": 1420,
-        "y": 340,
+        "x": 1640,
+        "y": 480,
         "wires": []
     },
     {
@@ -894,8 +862,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 300,
+        "x": 1160,
+        "y": 480,
         "wires": [
             [
                 "d8de0c3eeca8835a"
@@ -909,8 +877,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_plant_list",
         "name": "Update Sunsynk Plant List",
-        "x": 1440,
-        "y": 400,
+        "x": 1660,
+        "y": 300,
         "wires": []
     },
     {
@@ -918,14 +886,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=1&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=1&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 600,
-        "y": 940,
+        "x": 540,
+        "y": 1080,
         "wires": [
             [
                 "65e67786f3f66ed7"
@@ -948,8 +916,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 940,
+        "x": 840,
+        "y": 1080,
         "wires": [
             [
                 "a78777ab17f8031f"
@@ -967,8 +935,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 940,
+        "x": 1100,
+        "y": 1080,
         "wires": [
             [
                 "a93e908a1496a9ac"
@@ -982,8 +950,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_1",
         "name": "Update Sunsynk Events Type 1",
-        "x": 1450,
-        "y": 940,
+        "x": 1390,
+        "y": 1080,
         "wires": []
     },
     {
@@ -991,14 +959,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=2&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=2&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 600,
-        "y": 1000,
+        "x": 540,
+        "y": 1140,
         "wires": [
             [
                 "70d1a3ff9766bfd2"
@@ -1021,8 +989,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 1000,
+        "x": 840,
+        "y": 1140,
         "wires": [
             [
                 "653c2346ea7d304b"
@@ -1040,8 +1008,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 1000,
+        "x": 1100,
+        "y": 1140,
         "wires": [
             [
                 "06b6ea4de1c8174b"
@@ -1055,8 +1023,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_2",
         "name": "Update Sunsynk Events Type 2",
-        "x": 1450,
-        "y": 1000,
+        "x": 1390,
+        "y": 1140,
         "wires": []
     },
     {
@@ -1064,14 +1032,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=3&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=3&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 600,
-        "y": 1060,
+        "x": 540,
+        "y": 1200,
         "wires": [
             [
                 "24707d3b6683637a"
@@ -1094,8 +1062,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 900,
-        "y": 1060,
+        "x": 840,
+        "y": 1200,
         "wires": [
             [
                 "70a6e292c9b5eac4"
@@ -1113,8 +1081,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 1060,
+        "x": 1100,
+        "y": 1200,
         "wires": [
             [
                 "294b444a28eb4d3d"
@@ -1128,8 +1096,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_3",
         "name": "Update Sunsynk Events Type 3",
-        "x": 1450,
-        "y": 1060,
+        "x": 1390,
+        "y": 1200,
         "wires": []
     },
     {
@@ -1137,7 +1105,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Calc Last Update Time & General Status Check",
-        "func": "var Error_ = \"\";\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { Error_ = \"Logger Update\"}\nif (ErrorCk.includes(loggerstat)) { Error_ = \"Logger Status\" }\nif (ErrorCk.includes(estatus)) { Error_ = \"Stats Last Update\" }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { Error_ = \"Bad Gather Data\" } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { Error_ = \"Status last updated more than 3 minutes ago. Should be minimum less than a minute\" }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { Error_ = \" Bad Last Logger Update \" } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { Error_ = \"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"; }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { Error_ = \"Logger Not Online\" }\n\n// Specific Checks \nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes');\nif (typeof s_input.pvIV_0_ppv === \"undefined\") { Error_ = \"Input(Input)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes');\nif (typeof s_input.vip_0_power === \"undefined\") { Error_ = \"Input(Grid)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_load\\'].attributes');\nif (typeof s_input.vip_0_volt === \"undefined\") { Error_ = \"Input(Load)\" }\n// Null value in Flow\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_flow\\'].attributes');\nif (s_input.pvPower == null) { Error_ = \"Input(Flow)\" }\n\nvar states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar pi = states[\"sensor.plant_id_no\"];\n\n//Error_ checking\nif ([undefined, \"unavailable\"].includes(pi)) { node.status(\"Undefined\"); Error_ = \"Plant ID\" }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); Error_ = \"Serial Number\" }\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); Error_ = \"Bearer Token\" }\n\nvar origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.attributes.device_class = \"timestamp\" ;\nif (Error_ === \"\") \n { msg.payload.state = currdate } else \n{ node.error(Error_ + \" - Error With Data \"); node.status(currdate.toLocaleString() + \" - \" + Error_ + \" - Error_ With Data \" ); msg.payload.state = \"Error With Incoming Data\" ; }\nreturn msg; ",
+        "func": "var Error_ = \"\";\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { Error_ = \"Logger Update\"}\nif (ErrorCk.includes(loggerstat)) { Error_ = \"Logger Status\" }\nif (ErrorCk.includes(estatus)) { Error_ = \"Stats Last Update\" }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { Error_ = \"Bad Gather Data\" } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { Error_ = \"Status last updated more than 3 minutes ago. Should be minimum less than a minute\" }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { Error_ = \" Bad Last Logger Update \" } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { Error_ = \"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"; }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { Error_ = \"Logger Not Online\" }\n\n// Specific Checks \nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_input\\'].attributes');\nif (typeof s_input.pvIV_0_ppv === \"undefined\") { Error_ = \"Input(Input)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_grid\\'].attributes');\nif (typeof s_input.vip_0_power === \"undefined\") { Error_ = \"Input(Grid)\" }\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_load\\'].attributes');\nif (typeof s_input.vip_0_volt === \"undefined\") { Error_ = \"Input(Load)\" }\n// Null value in Flow\nvar s_input = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_flow\\'].attributes');\nif (s_input.pvPower == null) { Error_ = \"Input(Flow)\" }\n\nvar states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number\"];\nvar pi = states[\"sensor.plant_id_no\"];\n\n//Error_ checking\nif ([undefined, \"unavailable\"].includes(pi)) { node.status(\"Undefined\"); Error_ = \"Plant ID\" }\nif ([undefined, \"unavailable\"].includes(sn)) { node.status(\"Undefined\"); Error_ = \"Serial Number\" }\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); Error_ = \"Bearer Token\" }\n\nvar origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nif (Error_ === \"\") { msg.payload.state = currdate; msg.payload.attributes.device_class = \"timestamp\"; } else \n{ node.error(Error_ + \" - Error With Data \"); node.status(currdate.toLocaleString() + \" - \" + Error_ + \" - Error_ With Data \" ); msg.payload.state = \"Error With Incoming Data\" ; }\nreturn msg; ",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1158,8 +1126,781 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_stats_last_update",
         "name": "Update Last Updated Date",
-        "x": 1440,
+        "x": 1660,
         "y": 40,
+        "wires": []
+    },
+    {
+        "id": "418a96f5f1b651c9",
+        "type": "delay",
+        "z": "fca77f132c7d5d8f",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "60",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 260,
+        "y": 620,
+        "wires": [
+            [
+                "ad31dd1db4441737",
+                "f51f0fbe061d9cd7",
+                "db5cc86a829e8bca",
+                "5cbff0fad88c676e",
+                "d985fcb00600c3b9",
+                "8840cdead8881df7",
+                "88abea85be217c44",
+                "de549111356c836d",
+                "7ceb62668ca5b355"
+            ]
+        ]
+    },
+    {
+        "id": "890752c9c04ae832",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Invertor Serial Number ( 2nd Invertor )",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_2_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 2 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor Index\" + invindex + \" does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 560,
+        "wires": [
+            [
+                "3036d4a5afe25e76",
+                "c1e47387464f92d5"
+            ]
+        ]
+    },
+    {
+        "id": "04a1de1b32dade78",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_serial_number_2",
+        "name": "Update Serial Number",
+        "x": 1640,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "3036d4a5afe25e76",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Invertor Serial Number",
+        "func": "var origpayload = msg.payload;\nmsg.payload = {} ;\nmsg.payload.state = origpayload ;\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 560,
+        "wires": [
+            [
+                "04a1de1b32dade78"
+            ]
+        ]
+    },
+    {
+        "id": "7c3b9cd7d9217b2e",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting battery Info",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/battery/\" + sn.state + \"/realtime?sn=\" + sn.state + \"&lan\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1890,
+        "y": 780,
+        "wires": [
+            [
+                "7973fa1d71c22ff7"
+            ]
+        ]
+    },
+    {
+        "id": "7973fa1d71c22ff7",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Battery Info",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2210,
+        "y": 780,
+        "wires": [
+            [
+                "1959dddd42415ffb"
+            ]
+        ]
+    },
+    {
+        "id": "9124ec17b99d19f1",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Invertor Settings",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/common/setting/\" + sn.state + \"/read\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1910,
+        "y": 1020,
+        "wires": [
+            [
+                "8d90d48594ef4892"
+            ]
+        ]
+    },
+    {
+        "id": "8d90d48594ef4892",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Settings",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2200,
+        "y": 1020,
+        "wires": [
+            [
+                "aa199e9afa5f38c3"
+            ]
+        ]
+    },
+    {
+        "id": "fa9d0a80dca187f2",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Grid Info",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/grid/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1890,
+        "y": 900,
+        "wires": [
+            [
+                "a28e3901b5ce0196"
+            ]
+        ]
+    },
+    {
+        "id": "a28e3901b5ce0196",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Grid Info",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2200,
+        "y": 900,
+        "wires": [
+            [
+                "9cf21b094ff97af7"
+            ]
+        ]
+    },
+    {
+        "id": "344b2fc4204a7613",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Load Info",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/load/\" + sn.state + \"/realtime?sn=\" + sn.state ;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1890,
+        "y": 960,
+        "wires": [
+            [
+                "73279c20026b1ecd"
+            ]
+        ]
+    },
+    {
+        "id": "73279c20026b1ecd",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Load Info",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2200,
+        "y": 960,
+        "wires": [
+            [
+                "77fcb8bafc970497"
+            ]
+        ]
+    },
+    {
+        "id": "3fb3bc032845366e",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Input",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/input\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1870,
+        "y": 840,
+        "wires": [
+            [
+                "d68a59adc675710b"
+            ]
+        ]
+    },
+    {
+        "id": "d68a59adc675710b",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Input",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2190,
+        "y": 840,
+        "wires": [
+            [
+                "7d62172180218e63"
+            ]
+        ]
+    },
+    {
+        "id": "ebba5939353999fa",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Output",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/inverter/\" + sn.state + \"/realtime/output\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 720,
+        "wires": [
+            [
+                "848b8f79d4f34281"
+            ]
+        ]
+    },
+    {
+        "id": "848b8f79d4f34281",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Invertor Output",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2190,
+        "y": 720,
+        "wires": [
+            [
+                "31ddabd15f2244aa"
+            ]
+        ]
+    },
+    {
+        "id": "aa199e9afa5f38c3",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Invert Settings",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 1020,
+        "wires": [
+            [
+                "6f689ad77b0393e3"
+            ]
+        ]
+    },
+    {
+        "id": "1959dddd42415ffb",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Sunsynk Battery Data",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2460,
+        "y": 780,
+        "wires": [
+            [
+                "e73f52a59fe5b1eb"
+            ]
+        ]
+    },
+    {
+        "id": "7d62172180218e63",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Sunsynk Input Data",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2450,
+        "y": 840,
+        "wires": [
+            [
+                "7ddd3f40d9aa4618"
+            ]
+        ]
+    },
+    {
+        "id": "9cf21b094ff97af7",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Sunsynk Grid",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 900,
+        "wires": [
+            [
+                "0fd4d8cffe1e81c2"
+            ]
+        ]
+    },
+    {
+        "id": "77fcb8bafc970497",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Sunsynk Load",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 960,
+        "wires": [
+            [
+                "e37a9c6f3381bb91"
+            ]
+        ]
+    },
+    {
+        "id": "31ddabd15f2244aa",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Sunsynk Invertor Output",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg ;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2470,
+        "y": 720,
+        "wires": [
+            [
+                "c4487d9b62f079aa"
+            ]
+        ]
+    },
+    {
+        "id": "eaeda37e83daa3b8",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Events",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=1&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 1080,
+        "wires": [
+            [
+                "a2221fc60f2dd554"
+            ]
+        ]
+    },
+    {
+        "id": "a2221fc60f2dd554",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Events (1)",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2180,
+        "y": 1080,
+        "wires": [
+            [
+                "393176609ca6b18c"
+            ]
+        ]
+    },
+    {
+        "id": "393176609ca6b18c",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Process Events",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        temptime = msg.payload.data.record[i].time;\n        temperror = msg.payload.data.record[i].eventCode;\n        tempdesc = msg.payload.data.record[i].eventDescription;\n        recordtemp.push(temptime + \"    \" + temperror + \"    \" + tempdesc);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {};\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg;\n    node.error(origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 1080,
+        "wires": [
+            [
+                "a36e4e2aa8f7e680"
+            ]
+        ]
+    },
+    {
+        "id": "660cd3c1876fe0d5",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Events",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=2&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 1140,
+        "wires": [
+            [
+                "ca67008ccabd7c3f"
+            ]
+        ]
+    },
+    {
+        "id": "ca67008ccabd7c3f",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Events (2)",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2180,
+        "y": 1140,
+        "wires": [
+            [
+                "e2a2b7403c165e23"
+            ]
+        ]
+    },
+    {
+        "id": "e2a2b7403c165e23",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Process Events",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        temptime = msg.payload.data.record[i].time;\n        temperror = msg.payload.data.record[i].eventCode;\n        tempdesc = msg.payload.data.record[i].eventDescription;\n        recordtemp.push(temptime + \"    \" + temperror + \"    \" + tempdesc);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {} ;\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg ;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg ;\n    node.error( origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 1140,
+        "wires": [
+            [
+                "de0db27fd5917ed9"
+            ]
+        ]
+    },
+    {
+        "id": "e38a73912c36c0fa",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request for Getting Events",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar sn = states[\"sensor.sunsynk_serial_number_2\"];\n\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer)) { node.status(\"undefined\"); return null; }\nif (ErrorCk.includes(sn)) { node.status(\"undefined\"); return null; }\n\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar currentDate = (new Date().toJSON().slice(0, 10));\nvar fromdate = new Date();\nfromdate.setDate(fromdate.getDate() - 60);\nvar startdate = fromdate.toJSON().slice(0, 10);\nmsg.url = \"http://pv.inteless.com/api/v1/events\"\n    + \"?type=3&page=1&limit=50&lan=en&sdate=\" + startdate + \"&edate=\" + currentDate\n    ;\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1880,
+        "y": 1200,
+        "wires": [
+            [
+                "df5e65abe0faa450"
+            ]
+        ]
+    },
+    {
+        "id": "df5e65abe0faa450",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Events (3)",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2180,
+        "y": 1200,
+        "wires": [
+            [
+                "a2270f2020c9d658"
+            ]
+        ]
+    },
+    {
+        "id": "a2270f2020c9d658",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Process Events",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        temptime = msg.payload.data.record[i].time;\n        temperror = msg.payload.data.record[i].eventCode;\n        tempdesc = msg.payload.data.record[i].eventDescription;\n        recordtemp.push(temptime + \"    \" + temperror + \"    \" + tempdesc);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {} ;\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg ;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg ;\n    node.error( origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2440,
+        "y": 1200,
+        "wires": [
+            [
+                "8e1d7e8a5b7e2eb3"
+            ]
+        ]
+    },
+    {
+        "id": "c1e47387464f92d5",
+        "type": "delay",
+        "z": "fca77f132c7d5d8f",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "60",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1420,
+        "y": 660,
+        "wires": [
+            [
+                "ebba5939353999fa",
+                "7c3b9cd7d9217b2e",
+                "3fb3bc032845366e",
+                "fa9d0a80dca187f2",
+                "344b2fc4204a7613",
+                "9124ec17b99d19f1",
+                "eaeda37e83daa3b8",
+                "660cd3c1876fe0d5",
+                "e38a73912c36c0fa"
+            ]
+        ]
+    },
+    {
+        "id": "e73f52a59fe5b1eb",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_battery_2",
+        "name": "Update SunSynk Battery",
+        "x": 2750,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "c4487d9b62f079aa",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_output_2",
+        "name": "Update SunSynk Output",
+        "x": 2750,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "7ddd3f40d9aa4618",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_input_2",
+        "name": "Update SunSynk Input",
+        "x": 2740,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "0fd4d8cffe1e81c2",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_grid_2",
+        "name": "Update SunSynk Grid",
+        "x": 2740,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "e37a9c6f3381bb91",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_load_2",
+        "name": "Update SunSynk Load",
+        "x": 2740,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "6f689ad77b0393e3",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_settings_2",
+        "name": "Update SunSynk Settings",
+        "x": 2750,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "a36e4e2aa8f7e680",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_events_1_2",
+        "name": "Update Sunsynk Events Type 1",
+        "x": 2770,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "de0db27fd5917ed9",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_events_2_2",
+        "name": "Update Sunsynk Events Type 2",
+        "x": 2770,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "8e1d7e8a5b7e2eb3",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_events_3_2",
+        "name": "Update Sunsynk Events Type 3",
+        "x": 2770,
+        "y": 1200,
         "wires": []
     },
     {

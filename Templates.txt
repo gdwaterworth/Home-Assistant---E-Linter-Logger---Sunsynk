@@ -12,11 +12,11 @@ template:
       - name: "Sunsynk Invertor 1 index"
         state: "0"
         unique_id: "sensor.sunsynk_invertor_1_index"
-##### Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors. 1 should work
+##### Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
   - sensor: 
       - name: "Sunsynk Invertor 2 index"
-        state: "0"
-        unique_id: "sensor.sunsynk_invertor_1_index"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_invertor_2_index"
 #####
 #####
 ##### DO NOT EDIT ANYTHING UNDER HERE
@@ -39,9 +39,14 @@ template:
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_serial_number"
   - sensor: 
+      - name: "Sunsynk Serial Number 2"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_serial_number_2"
+  - sensor: 
       - name: "Sunsynk Plant List"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_plant_list"
+##### Core Sensors Invertor 1
   - sensor: 
       - name: "Sunsynk Flow"
         state: ""
@@ -70,6 +75,96 @@ template:
       - name: "Sunsynk Settings"
         state: ""
         unique_id: "sensor.sunsynk_settings"
+  - sensor: 
+      - name: "Sunsynk Events 1"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1"
+  - sensor: 
+      - name: "Sunsynk Events 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2"
+  - sensor: 
+      - name: "Sunsynk Events 3"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3"
+##### Core Sensors Invertor 2
+  - sensor: 
+      - name: "Sunsynk Flow 2"
+        state: ""
+        unique_id: "sensor.sunsynk_flow_2"
+  - sensor: 
+      - name: "Sunsynk Output 2"
+        state: ""
+        unique_id: "sensor.sunsynk_output_2"
+  - sensor: 
+      - name: "Sunsynk Battery 2"
+        state: ""
+        unique_id: "sensor.sunsynk_battery_2"
+  - sensor: 
+      - name: "Sunsynk Input 2"
+        state: ""
+        unique_id: "sensor.sunsynk_input_2"
+  - sensor: 
+      - name: "Sunsynk Grid 2"
+        state: ""
+        unique_id: "sensor.sunsynk_grid_2"
+  - sensor: 
+      - name: "Sunsynk Load 2"
+        state: ""
+        unique_id: "sensor.sunsynk_load_2"
+  - sensor: 
+      - name: "Sunsynk Settings 2"
+        state: ""
+        unique_id: "sensor.sunsynk_settings_2"
+  - sensor: 
+      - name: "Sunsynk Events 1 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1_2"
+  - sensor: 
+      - name: "Sunsynk Events 2 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2_2"
+  - sensor: 
+      - name: "Sunsynk Events 3 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3_2"
+##### Misc Sensors for Energy
+  - sensor:
+      - name: "Sunsynk Battery etotalchg"
+        state_class: total_increasing
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'etotalchg')|float}}
+  - sensor:
+      - name: "Sunsynk Battery etotaldischg"
+        state_class: total_increasing
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'etotaldischg')|float}}
+  - sensor:
+      - name: "Sunsynk PV Total"
+        state_class: total_increasing
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_input', 'pvtotal')|float}}
+  - sensor:
+      - name: "Sunsynk Grid Total"
+        state_class: total_increasing
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_grid', 'total')|float}}
+  - sensor:
+      - name: "Sunsynk Load Total"
+        state_class: total_increasing
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_load', 'total')|float}}
+##### Other Sensors 
   - sensor:
       - name: "Current Use Timer"
         state: >
@@ -87,20 +182,6 @@ template:
         state: >
             {{state_attr('sensor.sunsynk_battery', 'power')|float}}
   - sensor:
-      - name: "Sunsynk Battery etotalchg"
-        state_class: total_increasing
-        device_class: energy
-        unit_of_measurement: kWh
-        state: >
-            {{state_attr('sensor.sunsynk_battery', 'etotalchg')|float}}
-  - sensor:
-      - name: "Sunsynk Battery etotaldischg"
-        state_class: total_increasing
-        device_class: energy
-        unit_of_measurement: kWh
-        state: >
-            {{state_attr('sensor.sunsynk_battery', 'etotaldischg')|float}}
-  - sensor:
       - name: "Sunsynk PV1"
         state: >
             {{state_attr('sensor.sunsynk_input', 'pv1')|float}}
@@ -113,13 +194,6 @@ template:
         state: >
             {{state_attr('sensor.sunsynk_input', 'pv')|float}}
   - sensor:
-      - name: "Sunsynk PV Total"
-        state_class: total_increasing
-        device_class: energy
-        unit_of_measurement: kWh
-        state: >
-            {{state_attr('sensor.sunsynk_input', 'pvtotal')|float}}
-  - sensor:
       - name: "Sunsynk Grid Power"
         state: >
             {{state_attr('sensor.sunsynk_grid', 'power')|float}}
@@ -128,23 +202,9 @@ template:
         state: >
             {{state_attr('sensor.sunsynk_grid', 'gridonline')|float}}
   - sensor:
-      - name: "Sunsynk Grid Total"
-        state_class: total_increasing
-        device_class: energy
-        unit_of_measurement: kWh
-        state: >
-            {{state_attr('sensor.sunsynk_grid', 'total')|float}}
-  - sensor:
       - name: "Sunsynk Load Power"
         state: >
             {{state_attr('sensor.sunsynk_load', 'totalpower')|float}}
-  - sensor:
-      - name: "Sunsynk Load Total"
-        state_class: total_increasing
-        device_class: energy
-        unit_of_measurement: kWh
-        state: >
-            {{state_attr('sensor.sunsynk_load', 'total')|float}}
   - sensor:
       - name: "SunSynk Logger Status"
         state: >
@@ -191,18 +251,6 @@ template:
         unique_id: "sensor.calculated.current.solar.pred"
         state: >
          {{  ((float(states('sensor.power_production_now_2')) * 1 ) + (float(states('sensor.power_production_now')) * 1 ))|float  }}
-  - sensor: 
-      - name: "Sunsynk Events 1"
-        state: ""
-        unique_id: "sensor.sunsynk_events_1"
-  - sensor: 
-      - name: "Sunsynk Events 2"
-        state: ""
-        unique_id: "sensor.sunsynk_events_2"
-  - sensor: 
-      - name: "Sunsynk Events 3"
-        state: ""
-        unique_id: "sensor.sunsynk_events_3"
   - sensor: 
       - name: "Sunsynk Stats Last Update"
         device_class: timestamp
