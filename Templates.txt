@@ -7,23 +7,23 @@ template:
         state: "xxx"
   - sensor: 
       - name: "Sunsynk Invertor List"
-        state: ""
+        state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_invertor_list"
   - sensor: 
       - name: "SunSynk Access Token"
-        state: "NONE1"
+        state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_access_token"
   - sensor: 
       - name: "Plant Id No"
-        state: ""
+        state: "DONOTEDIT"
         unique_id: "sensor.plant_id_no"
   - sensor: 
       - name: "Sunsynk Serial Number"
-        state: ""
+        state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_serial_number"
   - sensor: 
       - name: "Sunsynk Plant List"
-        state: ""
+        state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_plant_list"
   - sensor: 
       - name: "Sunsynk Flow"
