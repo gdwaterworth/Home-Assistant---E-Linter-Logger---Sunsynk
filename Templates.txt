@@ -1,10 +1,27 @@
 template:
+##### Put in your SunSynk Login Here 
   - sensor:
       - name: "SunSynk Login"
         state: "xxx@xxx.com"
+##### Put in your SunSynk Password Here 
   - sensor:
       - name: "SunSynk password new"
         state: "xxx"
+##### Put in your Invertor Index for your 1st Invertor. 0 should work 
+  - sensor: 
+      - name: "Sunsynk Invertor 1 index"
+        state: "0"
+        unique_id: "sensor.sunsynk_invertor_1_index"
+##### Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors. 1 should work
+  - sensor: 
+      - name: "Sunsynk Invertor 2 index"
+        state: "0"
+        unique_id: "sensor.sunsynk_invertor_1_index"
+#####
+#####
+##### DO NOT EDIT ANYTHING UNDER HERE
+#####
+#####
   - sensor: 
       - name: "Sunsynk Invertor List"
         state: "DONOTEDIT"
