@@ -22,7 +22,8 @@
         "y": 160,
         "wires": [
             [
-                "6155d4c7e8e87975"
+                "6155d4c7e8e87975",
+                "21dae3e15cef46c9"
             ]
         ]
     },
@@ -49,7 +50,6 @@
                 "e53175753e61992a",
                 "90673d2b7f54dc55",
                 "890752c9c04ae832",
-                "21dae3e15cef46c9",
                 "dbbf5537800aee9d"
             ]
         ]
@@ -78,14 +78,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Invertor Serial Number ( 1st Invertor )",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_1_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 1 Index \" + invindex + \" Does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_1_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 1 Index \" + invindex + \" Does not exist in return data\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 830,
-        "y": 480,
+        "x": 390,
+        "y": 580,
         "wires": [
             [
                 "3014f46216bcf438",
@@ -104,8 +104,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
-        "y": 780,
+        "x": 390,
+        "y": 820,
         "wires": [
             [
                 "e522b35a8a127bb6"
@@ -128,8 +128,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 870,
-        "y": 780,
+        "x": 710,
+        "y": 820,
         "wires": [
             [
                 "84cc88872dfbd9bb"
@@ -147,8 +147,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 570,
-        "y": 1020,
+        "x": 410,
+        "y": 1060,
         "wires": [
             [
                 "1c1aed6a936a4fc2"
@@ -171,8 +171,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 860,
-        "y": 1020,
+        "x": 700,
+        "y": 1060,
         "wires": [
             [
                 "a07a57f4173a145d"
@@ -190,8 +190,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
-        "y": 900,
+        "x": 390,
+        "y": 940,
         "wires": [
             [
                 "0dbcf760fe6ec990"
@@ -214,8 +214,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 860,
-        "y": 900,
+        "x": 700,
+        "y": 940,
         "wires": [
             [
                 "82600efe878fe587"
@@ -233,8 +233,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
-        "y": 960,
+        "x": 390,
+        "y": 1000,
         "wires": [
             [
                 "cd1e22edbc0da295"
@@ -257,8 +257,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 860,
-        "y": 960,
+        "x": 700,
+        "y": 1000,
         "wires": [
             [
                 "70ec719d14f92732"
@@ -276,8 +276,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 840,
+        "x": 370,
+        "y": 880,
         "wires": [
             [
                 "caf5b68ee44cdaca"
@@ -300,8 +300,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 850,
-        "y": 840,
+        "x": 690,
+        "y": 880,
         "wires": [
             [
                 "095649a2b02e4ec2"
@@ -319,8 +319,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 720,
+        "x": 380,
+        "y": 760,
         "wires": [
             [
                 "45d5eef4e801a974"
@@ -343,8 +343,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 850,
-        "y": 720,
+        "x": 690,
+        "y": 760,
         "wires": [
             [
                 "70e66830d0ab0b90"
@@ -362,8 +362,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 1020,
+        "x": 940,
+        "y": 1060,
         "wires": [
             [
                 "127a0b93cf41d353"
@@ -375,14 +375,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Plant Info",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/plants?page=1&limit=10&name=&status=\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer.state)) { node.status(\"Access Token Not Available\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/plants?page=1&limit=10&name=&status=\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 830,
-        "y": 360,
+        "x": 1070,
+        "y": 220,
         "wires": [
             [
                 "a5e32263433166d3"
@@ -405,8 +405,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1080,
-        "y": 360,
+        "x": 1320,
+        "y": 220,
         "wires": [
             [
                 "6df5b52d7b770df4",
@@ -426,8 +426,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1250,
-        "y": 360,
+        "x": 1490,
+        "y": 220,
         "wires": [
             [
                 "ec3ce6ac52b04130",
@@ -440,14 +440,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Get Plant Flow Data",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar plant = states[\"sensor.plant_id_no\"];\n\n//error checking\nif ([undefined, \"unavailable\"].includes(bearer)) { node.status(\"Undefined\"); return null }\nif ([undefined, \"unavailable\"].includes(plant)) { node.status(\"Undefined\"); return null }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/plant/energy/\" + plant.state + \"/flow\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\nvar plant = states[\"sensor.plant_id_no\"];\n\n//error checking\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer.state)) { node.status(\"Access Token Not Available\"); return null; }\nif (ErrorCk.includes(plant.state)) { node.status(\"Plant ID Not Available\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"http://pv.inteless.com/api/v1/plant/energy/\" + plant.state + \"/flow\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
-        "y": 420,
+        "x": 1020,
+        "y": 280,
         "wires": [
             [
                 "d39e0694ad913862"
@@ -470,8 +470,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1120,
-        "y": 420,
+        "x": 1360,
+        "y": 280,
         "wires": [
             [
                 "6360d898e9fec6b9"
@@ -489,8 +489,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1120,
-        "y": 780,
+        "x": 960,
+        "y": 820,
         "wires": [
             [
                 "3e9feb5ff04bc328"
@@ -508,8 +508,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1110,
-        "y": 840,
+        "x": 950,
+        "y": 880,
         "wires": [
             [
                 "9cb3e2a71092678d"
@@ -527,8 +527,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 900,
+        "x": 940,
+        "y": 940,
         "wires": [
             [
                 "2eb2b3cada070416"
@@ -546,8 +546,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 960,
+        "x": 940,
+        "y": 1000,
         "wires": [
             [
                 "31dd21860cbc8c4c"
@@ -565,8 +565,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1130,
-        "y": 720,
+        "x": 970,
+        "y": 760,
         "wires": [
             [
                 "c4c01331b7a03f18"
@@ -584,8 +584,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1380,
-        "y": 420,
+        "x": 1620,
+        "y": 280,
         "wires": [
             [
                 "54907525a327c8f1"
@@ -603,8 +603,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
-        "y": 240,
+        "x": 1020,
+        "y": 340,
         "wires": [
             [
                 "c9592b52b355aebe"
@@ -622,8 +622,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1270,
-        "y": 300,
+        "x": 1510,
+        "y": 160,
         "wires": [
             [
                 "539daee32f23a903"
@@ -702,7 +702,7 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_access_token",
         "name": "Update sensor.sunsynk_access_token",
-        "x": 1690,
+        "x": 1930,
         "y": 100,
         "wires": []
     },
@@ -732,8 +732,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_invertor_list",
         "name": "Update sensor.sunsynk_invertor_list",
-        "x": 1690,
-        "y": 240,
+        "x": 1930,
+        "y": 340,
         "wires": []
     },
     {
@@ -743,8 +743,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.plant_id_no",
         "name": "Update Plant ID",
-        "x": 1620,
-        "y": 360,
+        "x": 1860,
+        "y": 220,
         "wires": []
     },
     {
@@ -758,8 +758,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1420,
-        "y": 360,
+        "x": 1680,
+        "y": 220,
         "wires": [
             [
                 "a57a72a33e0f7629"
@@ -773,8 +773,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_flow",
         "name": "Update SunSynk Flow",
-        "x": 1640,
-        "y": 420,
+        "x": 1880,
+        "y": 280,
         "wires": []
     },
     {
@@ -784,8 +784,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_battery",
         "name": "Update SunSynk Battery",
-        "x": 1370,
-        "y": 780,
+        "x": 1210,
+        "y": 820,
         "wires": []
     },
     {
@@ -795,8 +795,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_output",
         "name": "Update SunSynk Output",
-        "x": 1370,
-        "y": 720,
+        "x": 1210,
+        "y": 760,
         "wires": []
     },
     {
@@ -806,8 +806,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_input",
         "name": "Update SunSynk Input",
-        "x": 1360,
-        "y": 840,
+        "x": 1200,
+        "y": 880,
         "wires": []
     },
     {
@@ -817,8 +817,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_grid",
         "name": "Update SunSynk Grid",
-        "x": 1360,
-        "y": 900,
+        "x": 1200,
+        "y": 940,
         "wires": []
     },
     {
@@ -828,8 +828,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_load",
         "name": "Update SunSynk Load",
-        "x": 1360,
-        "y": 960,
+        "x": 1200,
+        "y": 1000,
         "wires": []
     },
     {
@@ -839,8 +839,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_settings",
         "name": "Update SunSynk Settings",
-        "x": 1370,
-        "y": 1020,
+        "x": 1210,
+        "y": 1060,
         "wires": []
     },
     {
@@ -850,8 +850,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_serial_number",
         "name": "Update Serial Number",
-        "x": 1640,
-        "y": 480,
+        "x": 1200,
+        "y": 580,
         "wires": []
     },
     {
@@ -865,8 +865,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 480,
+        "x": 780,
+        "y": 580,
         "wires": [
             [
                 "d8de0c3eeca8835a"
@@ -880,8 +880,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_plant_list",
         "name": "Update Sunsynk Plant List",
-        "x": 1660,
-        "y": 300,
+        "x": 1900,
+        "y": 160,
         "wires": []
     },
     {
@@ -895,8 +895,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 1080,
+        "x": 380,
+        "y": 1120,
         "wires": [
             [
                 "65e67786f3f66ed7"
@@ -919,8 +919,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 1080,
+        "x": 680,
+        "y": 1120,
         "wires": [
             [
                 "a78777ab17f8031f"
@@ -938,8 +938,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 1080,
+        "x": 940,
+        "y": 1120,
         "wires": [
             [
                 "a93e908a1496a9ac"
@@ -953,8 +953,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_1",
         "name": "Update Sunsynk Events Type 1",
-        "x": 1390,
-        "y": 1080,
+        "x": 1230,
+        "y": 1120,
         "wires": []
     },
     {
@@ -968,8 +968,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 1140,
+        "x": 380,
+        "y": 1180,
         "wires": [
             [
                 "70d1a3ff9766bfd2"
@@ -992,8 +992,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 1140,
+        "x": 680,
+        "y": 1180,
         "wires": [
             [
                 "653c2346ea7d304b"
@@ -1011,8 +1011,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 1140,
+        "x": 940,
+        "y": 1180,
         "wires": [
             [
                 "06b6ea4de1c8174b"
@@ -1026,8 +1026,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_2",
         "name": "Update Sunsynk Events Type 2",
-        "x": 1390,
-        "y": 1140,
+        "x": 1230,
+        "y": 1180,
         "wires": []
     },
     {
@@ -1041,8 +1041,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 1200,
+        "x": 380,
+        "y": 1240,
         "wires": [
             [
                 "24707d3b6683637a"
@@ -1065,8 +1065,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 1200,
+        "x": 680,
+        "y": 1240,
         "wires": [
             [
                 "70a6e292c9b5eac4"
@@ -1084,8 +1084,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 1200,
+        "x": 940,
+        "y": 1240,
         "wires": [
             [
                 "294b444a28eb4d3d"
@@ -1099,8 +1099,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_3",
         "name": "Update Sunsynk Events Type 3",
-        "x": 1390,
-        "y": 1200,
+        "x": 1230,
+        "y": 1240,
         "wires": []
     },
     {
@@ -1129,7 +1129,7 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_stats_last_update",
         "name": "Update Last Updated Date",
-        "x": 1660,
+        "x": 1900,
         "y": 40,
         "wires": []
     },
@@ -1150,8 +1150,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 260,
-        "y": 620,
+        "x": 100,
+        "y": 680,
         "wires": [
             [
                 "ad31dd1db4441737",
@@ -1171,14 +1171,14 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Invertor Serial Number ( 2nd Invertor )",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_2_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 2 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 2 Index \" + invindex + \" does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_2_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 2 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 2 Index \" + invindex + \" does not exist in return data\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 830,
-        "y": 560,
+        "x": 1730,
+        "y": 580,
         "wires": [
             [
                 "3036d4a5afe25e76",
@@ -1193,8 +1193,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_serial_number_2",
         "name": "Update Serial Number",
-        "x": 1640,
-        "y": 560,
+        "x": 2580,
+        "y": 580,
         "wires": []
     },
     {
@@ -1208,8 +1208,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1160,
-        "y": 560,
+        "x": 2060,
+        "y": 580,
         "wires": [
             [
                 "04a1de1b32dade78"
@@ -1227,8 +1227,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1890,
-        "y": 780,
+        "x": 1730,
+        "y": 820,
         "wires": [
             [
                 "7973fa1d71c22ff7"
@@ -1251,8 +1251,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2210,
-        "y": 780,
+        "x": 2050,
+        "y": 820,
         "wires": [
             [
                 "1959dddd42415ffb"
@@ -1270,8 +1270,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1910,
-        "y": 1020,
+        "x": 1750,
+        "y": 1060,
         "wires": [
             [
                 "8d90d48594ef4892"
@@ -1294,8 +1294,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2200,
-        "y": 1020,
+        "x": 2040,
+        "y": 1060,
         "wires": [
             [
                 "aa199e9afa5f38c3"
@@ -1313,8 +1313,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1890,
-        "y": 900,
+        "x": 1730,
+        "y": 940,
         "wires": [
             [
                 "a28e3901b5ce0196"
@@ -1337,8 +1337,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2200,
-        "y": 900,
+        "x": 2040,
+        "y": 940,
         "wires": [
             [
                 "9cf21b094ff97af7"
@@ -1356,8 +1356,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1890,
-        "y": 960,
+        "x": 1730,
+        "y": 1000,
         "wires": [
             [
                 "73279c20026b1ecd"
@@ -1380,8 +1380,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2200,
-        "y": 960,
+        "x": 2040,
+        "y": 1000,
         "wires": [
             [
                 "77fcb8bafc970497"
@@ -1399,8 +1399,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1870,
-        "y": 840,
+        "x": 1710,
+        "y": 880,
         "wires": [
             [
                 "d68a59adc675710b"
@@ -1423,8 +1423,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2190,
-        "y": 840,
+        "x": 2030,
+        "y": 880,
         "wires": [
             [
                 "7d62172180218e63"
@@ -1442,8 +1442,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1880,
-        "y": 720,
+        "x": 1720,
+        "y": 760,
         "wires": [
             [
                 "848b8f79d4f34281"
@@ -1466,8 +1466,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2190,
-        "y": 720,
+        "x": 2030,
+        "y": 760,
         "wires": [
             [
                 "31ddabd15f2244aa"
@@ -1485,8 +1485,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 1020,
+        "x": 2280,
+        "y": 1060,
         "wires": [
             [
                 "6f689ad77b0393e3"
@@ -1504,8 +1504,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2460,
-        "y": 780,
+        "x": 2300,
+        "y": 820,
         "wires": [
             [
                 "e73f52a59fe5b1eb"
@@ -1523,8 +1523,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2450,
-        "y": 840,
+        "x": 2290,
+        "y": 880,
         "wires": [
             [
                 "7ddd3f40d9aa4618"
@@ -1542,8 +1542,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 900,
+        "x": 2280,
+        "y": 940,
         "wires": [
             [
                 "0fd4d8cffe1e81c2"
@@ -1561,8 +1561,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 960,
+        "x": 2280,
+        "y": 1000,
         "wires": [
             [
                 "e37a9c6f3381bb91"
@@ -1580,8 +1580,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2470,
-        "y": 720,
+        "x": 2310,
+        "y": 760,
         "wires": [
             [
                 "c4487d9b62f079aa"
@@ -1599,8 +1599,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1880,
-        "y": 1080,
+        "x": 1720,
+        "y": 1120,
         "wires": [
             [
                 "a2221fc60f2dd554"
@@ -1623,8 +1623,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2180,
-        "y": 1080,
+        "x": 2020,
+        "y": 1120,
         "wires": [
             [
                 "393176609ca6b18c"
@@ -1642,8 +1642,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 1080,
+        "x": 2280,
+        "y": 1120,
         "wires": [
             [
                 "a36e4e2aa8f7e680"
@@ -1661,8 +1661,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1880,
-        "y": 1140,
+        "x": 1720,
+        "y": 1180,
         "wires": [
             [
                 "ca67008ccabd7c3f"
@@ -1685,8 +1685,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2180,
-        "y": 1140,
+        "x": 2020,
+        "y": 1180,
         "wires": [
             [
                 "e2a2b7403c165e23"
@@ -1704,8 +1704,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 1140,
+        "x": 2280,
+        "y": 1180,
         "wires": [
             [
                 "de0db27fd5917ed9"
@@ -1723,8 +1723,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1880,
-        "y": 1200,
+        "x": 1720,
+        "y": 1240,
         "wires": [
             [
                 "df5e65abe0faa450"
@@ -1747,8 +1747,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2180,
-        "y": 1200,
+        "x": 2020,
+        "y": 1240,
         "wires": [
             [
                 "a2270f2020c9d658"
@@ -1766,8 +1766,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2440,
-        "y": 1200,
+        "x": 2280,
+        "y": 1240,
         "wires": [
             [
                 "8e1d7e8a5b7e2eb3"
@@ -1791,8 +1791,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 1420,
-        "y": 660,
+        "x": 1440,
+        "y": 700,
         "wires": [
             [
                 "ebba5939353999fa",
@@ -1814,8 +1814,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_battery_2",
         "name": "Update SunSynk Battery",
-        "x": 2750,
-        "y": 780,
+        "x": 2590,
+        "y": 820,
         "wires": []
     },
     {
@@ -1825,8 +1825,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_output_2",
         "name": "Update SunSynk Output",
-        "x": 2750,
-        "y": 720,
+        "x": 2590,
+        "y": 760,
         "wires": []
     },
     {
@@ -1836,8 +1836,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_input_2",
         "name": "Update SunSynk Input",
-        "x": 2740,
-        "y": 840,
+        "x": 2580,
+        "y": 880,
         "wires": []
     },
     {
@@ -1847,8 +1847,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_grid_2",
         "name": "Update SunSynk Grid",
-        "x": 2740,
-        "y": 900,
+        "x": 2580,
+        "y": 940,
         "wires": []
     },
     {
@@ -1858,8 +1858,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_load_2",
         "name": "Update SunSynk Load",
-        "x": 2740,
-        "y": 960,
+        "x": 2580,
+        "y": 1000,
         "wires": []
     },
     {
@@ -1869,8 +1869,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_settings_2",
         "name": "Update SunSynk Settings",
-        "x": 2750,
-        "y": 1020,
+        "x": 2590,
+        "y": 1060,
         "wires": []
     },
     {
@@ -1880,8 +1880,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_1_2",
         "name": "Update Sunsynk Events Type 1",
-        "x": 2770,
-        "y": 1080,
+        "x": 2610,
+        "y": 1120,
         "wires": []
     },
     {
@@ -1891,8 +1891,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_2_2",
         "name": "Update Sunsynk Events Type 2",
-        "x": 2770,
-        "y": 1140,
+        "x": 2610,
+        "y": 1180,
         "wires": []
     },
     {
@@ -1902,15 +1902,15 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_3_2",
         "name": "Update Sunsynk Events Type 3",
-        "x": 2770,
-        "y": 1200,
+        "x": 2610,
+        "y": 1240,
         "wires": []
     },
     {
         "id": "dbbf5537800aee9d",
         "type": "debug",
         "z": "fca77f132c7d5d8f",
-        "name": "Debug Invertor Serial Debug",
+        "name": "Invertor Serial Debug",
         "active": false,
         "tosidebar": true,
         "console": false,
@@ -1919,8 +1919,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 800,
-        "y": 300,
+        "x": 700,
+        "y": 420,
         "wires": []
     },
     {
@@ -1954,7 +1954,37 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1260,
-        "y": 260,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "9fe4f826ab944385",
+        "type": "comment",
+        "z": "fca77f132c7d5d8f",
+        "name": "Inverter 1 Flows",
+        "info": "# Inverter 1 Flows",
+        "x": 380,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "ee5d1a7d359dac48",
+        "type": "comment",
+        "z": "fca77f132c7d5d8f",
+        "name": "Inverter 2 Flows",
+        "info": "# Inverter 2 Flows",
+        "x": 1740,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "69f04f357e01dbf0",
+        "type": "comment",
+        "z": "fca77f132c7d5d8f",
+        "name": "Set sunsynkdebug=1 for global debug",
+        "info": "",
+        "x": 370,
+        "y": 120,
         "wires": []
     },
     {
