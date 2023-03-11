@@ -44,7 +44,7 @@
         "senderr": false,
         "headers": [],
         "x": 440,
-        "y": 300,
+        "y": 460,
         "wires": [
             [
                 "e53175753e61992a",
@@ -66,7 +66,7 @@
         "finalize": "",
         "libs": [],
         "x": 160,
-        "y": 300,
+        "y": 460,
         "wires": [
             [
                 "53ea109abab17477"
@@ -85,7 +85,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 580,
+        "y": 740,
         "wires": [
             [
                 "3014f46216bcf438",
@@ -105,7 +105,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "e522b35a8a127bb6"
@@ -129,7 +129,7 @@
         "senderr": false,
         "headers": [],
         "x": 710,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "84cc88872dfbd9bb"
@@ -148,7 +148,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "1c1aed6a936a4fc2"
@@ -172,7 +172,7 @@
         "senderr": false,
         "headers": [],
         "x": 700,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "a07a57f4173a145d"
@@ -191,7 +191,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "0dbcf760fe6ec990"
@@ -215,7 +215,7 @@
         "senderr": false,
         "headers": [],
         "x": 700,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "82600efe878fe587"
@@ -234,7 +234,7 @@
         "finalize": "",
         "libs": [],
         "x": 390,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "cd1e22edbc0da295"
@@ -258,7 +258,7 @@
         "senderr": false,
         "headers": [],
         "x": 700,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "70ec719d14f92732"
@@ -277,7 +277,7 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "caf5b68ee44cdaca"
@@ -301,7 +301,7 @@
         "senderr": false,
         "headers": [],
         "x": 690,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "095649a2b02e4ec2"
@@ -320,7 +320,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "45d5eef4e801a974"
@@ -344,7 +344,7 @@
         "senderr": false,
         "headers": [],
         "x": 690,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "70e66830d0ab0b90"
@@ -363,7 +363,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "127a0b93cf41d353"
@@ -447,7 +447,7 @@
         "finalize": "",
         "libs": [],
         "x": 1020,
-        "y": 280,
+        "y": 440,
         "wires": [
             [
                 "d39e0694ad913862"
@@ -471,7 +471,7 @@
         "senderr": false,
         "headers": [],
         "x": 1360,
-        "y": 280,
+        "y": 440,
         "wires": [
             [
                 "6360d898e9fec6b9"
@@ -490,7 +490,7 @@
         "finalize": "",
         "libs": [],
         "x": 960,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "3e9feb5ff04bc328"
@@ -509,7 +509,7 @@
         "finalize": "",
         "libs": [],
         "x": 950,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "9cb3e2a71092678d"
@@ -528,7 +528,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "2eb2b3cada070416"
@@ -547,7 +547,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "31dd21860cbc8c4c"
@@ -566,7 +566,7 @@
         "finalize": "",
         "libs": [],
         "x": 970,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "c4c01331b7a03f18"
@@ -585,7 +585,7 @@
         "finalize": "",
         "libs": [],
         "x": 1620,
-        "y": 280,
+        "y": 440,
         "wires": [
             [
                 "54907525a327c8f1"
@@ -604,7 +604,7 @@
         "finalize": "",
         "libs": [],
         "x": 1020,
-        "y": 340,
+        "y": 500,
         "wires": [
             [
                 "c9592b52b355aebe"
@@ -733,7 +733,7 @@
         "entityid": "sensor.sunsynk_invertor_list",
         "name": "Update sensor.sunsynk_invertor_list",
         "x": 1930,
-        "y": 340,
+        "y": 500,
         "wires": []
     },
     {
@@ -762,7 +762,8 @@
         "y": 220,
         "wires": [
             [
-                "a57a72a33e0f7629"
+                "a57a72a33e0f7629",
+                "2acb6d253c978c52"
             ]
         ]
     },
@@ -774,7 +775,7 @@
         "entityid": "sensor.sunsynk_flow",
         "name": "Update SunSynk Flow",
         "x": 1880,
-        "y": 280,
+        "y": 440,
         "wires": []
     },
     {
@@ -785,7 +786,7 @@
         "entityid": "sensor.sunsynk_battery",
         "name": "Update SunSynk Battery",
         "x": 1210,
-        "y": 820,
+        "y": 980,
         "wires": []
     },
     {
@@ -796,7 +797,7 @@
         "entityid": "sensor.sunsynk_output",
         "name": "Update SunSynk Output",
         "x": 1210,
-        "y": 760,
+        "y": 920,
         "wires": []
     },
     {
@@ -807,7 +808,7 @@
         "entityid": "sensor.sunsynk_input",
         "name": "Update SunSynk Input",
         "x": 1200,
-        "y": 880,
+        "y": 1040,
         "wires": []
     },
     {
@@ -818,7 +819,7 @@
         "entityid": "sensor.sunsynk_grid",
         "name": "Update SunSynk Grid",
         "x": 1200,
-        "y": 940,
+        "y": 1100,
         "wires": []
     },
     {
@@ -829,7 +830,7 @@
         "entityid": "sensor.sunsynk_load",
         "name": "Update SunSynk Load",
         "x": 1200,
-        "y": 1000,
+        "y": 1160,
         "wires": []
     },
     {
@@ -840,7 +841,7 @@
         "entityid": "sensor.sunsynk_settings",
         "name": "Update SunSynk Settings",
         "x": 1210,
-        "y": 1060,
+        "y": 1220,
         "wires": []
     },
     {
@@ -851,7 +852,7 @@
         "entityid": "sensor.sunsynk_serial_number",
         "name": "Update Serial Number",
         "x": 1200,
-        "y": 580,
+        "y": 740,
         "wires": []
     },
     {
@@ -866,7 +867,7 @@
         "finalize": "",
         "libs": [],
         "x": 780,
-        "y": 580,
+        "y": 740,
         "wires": [
             [
                 "d8de0c3eeca8835a"
@@ -896,7 +897,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "65e67786f3f66ed7"
@@ -920,7 +921,7 @@
         "senderr": false,
         "headers": [],
         "x": 680,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "a78777ab17f8031f"
@@ -939,7 +940,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "a93e908a1496a9ac"
@@ -954,7 +955,7 @@
         "entityid": "sensor.sunsynk_events_1",
         "name": "Update Sunsynk Events Type 1",
         "x": 1230,
-        "y": 1120,
+        "y": 1280,
         "wires": []
     },
     {
@@ -969,7 +970,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "70d1a3ff9766bfd2"
@@ -993,7 +994,7 @@
         "senderr": false,
         "headers": [],
         "x": 680,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "653c2346ea7d304b"
@@ -1012,7 +1013,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "06b6ea4de1c8174b"
@@ -1027,7 +1028,7 @@
         "entityid": "sensor.sunsynk_events_2",
         "name": "Update Sunsynk Events Type 2",
         "x": 1230,
-        "y": 1180,
+        "y": 1340,
         "wires": []
     },
     {
@@ -1042,7 +1043,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "24707d3b6683637a"
@@ -1066,7 +1067,7 @@
         "senderr": false,
         "headers": [],
         "x": 680,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "70a6e292c9b5eac4"
@@ -1085,7 +1086,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "294b444a28eb4d3d"
@@ -1100,7 +1101,7 @@
         "entityid": "sensor.sunsynk_events_3",
         "name": "Update Sunsynk Events Type 3",
         "x": 1230,
-        "y": 1240,
+        "y": 1400,
         "wires": []
     },
     {
@@ -1151,7 +1152,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 100,
-        "y": 680,
+        "y": 840,
         "wires": [
             [
                 "ad31dd1db4441737",
@@ -1178,7 +1179,7 @@
         "finalize": "",
         "libs": [],
         "x": 1730,
-        "y": 580,
+        "y": 740,
         "wires": [
             [
                 "3036d4a5afe25e76",
@@ -1194,7 +1195,7 @@
         "entityid": "sensor.sunsynk_serial_number_2",
         "name": "Update Serial Number",
         "x": 2580,
-        "y": 580,
+        "y": 740,
         "wires": []
     },
     {
@@ -1209,7 +1210,7 @@
         "finalize": "",
         "libs": [],
         "x": 2060,
-        "y": 580,
+        "y": 740,
         "wires": [
             [
                 "04a1de1b32dade78"
@@ -1228,7 +1229,7 @@
         "finalize": "",
         "libs": [],
         "x": 1730,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "7973fa1d71c22ff7"
@@ -1252,7 +1253,7 @@
         "senderr": false,
         "headers": [],
         "x": 2050,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "1959dddd42415ffb"
@@ -1271,7 +1272,7 @@
         "finalize": "",
         "libs": [],
         "x": 1750,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "8d90d48594ef4892"
@@ -1295,7 +1296,7 @@
         "senderr": false,
         "headers": [],
         "x": 2040,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "aa199e9afa5f38c3"
@@ -1314,7 +1315,7 @@
         "finalize": "",
         "libs": [],
         "x": 1730,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "a28e3901b5ce0196"
@@ -1338,7 +1339,7 @@
         "senderr": false,
         "headers": [],
         "x": 2040,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "9cf21b094ff97af7"
@@ -1357,7 +1358,7 @@
         "finalize": "",
         "libs": [],
         "x": 1730,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "73279c20026b1ecd"
@@ -1381,7 +1382,7 @@
         "senderr": false,
         "headers": [],
         "x": 2040,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "77fcb8bafc970497"
@@ -1400,7 +1401,7 @@
         "finalize": "",
         "libs": [],
         "x": 1710,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "d68a59adc675710b"
@@ -1424,7 +1425,7 @@
         "senderr": false,
         "headers": [],
         "x": 2030,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "7d62172180218e63"
@@ -1443,7 +1444,7 @@
         "finalize": "",
         "libs": [],
         "x": 1720,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "848b8f79d4f34281"
@@ -1467,7 +1468,7 @@
         "senderr": false,
         "headers": [],
         "x": 2030,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "31ddabd15f2244aa"
@@ -1486,7 +1487,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 1060,
+        "y": 1220,
         "wires": [
             [
                 "6f689ad77b0393e3"
@@ -1505,7 +1506,7 @@
         "finalize": "",
         "libs": [],
         "x": 2300,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "e73f52a59fe5b1eb"
@@ -1524,7 +1525,7 @@
         "finalize": "",
         "libs": [],
         "x": 2290,
-        "y": 880,
+        "y": 1040,
         "wires": [
             [
                 "7ddd3f40d9aa4618"
@@ -1543,7 +1544,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 940,
+        "y": 1100,
         "wires": [
             [
                 "0fd4d8cffe1e81c2"
@@ -1562,7 +1563,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 1000,
+        "y": 1160,
         "wires": [
             [
                 "e37a9c6f3381bb91"
@@ -1581,7 +1582,7 @@
         "finalize": "",
         "libs": [],
         "x": 2310,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "c4487d9b62f079aa"
@@ -1600,7 +1601,7 @@
         "finalize": "",
         "libs": [],
         "x": 1720,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "a2221fc60f2dd554"
@@ -1624,7 +1625,7 @@
         "senderr": false,
         "headers": [],
         "x": 2020,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "393176609ca6b18c"
@@ -1643,7 +1644,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 1120,
+        "y": 1280,
         "wires": [
             [
                 "a36e4e2aa8f7e680"
@@ -1662,7 +1663,7 @@
         "finalize": "",
         "libs": [],
         "x": 1720,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "ca67008ccabd7c3f"
@@ -1686,7 +1687,7 @@
         "senderr": false,
         "headers": [],
         "x": 2020,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "e2a2b7403c165e23"
@@ -1705,7 +1706,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 1180,
+        "y": 1340,
         "wires": [
             [
                 "de0db27fd5917ed9"
@@ -1724,7 +1725,7 @@
         "finalize": "",
         "libs": [],
         "x": 1720,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "df5e65abe0faa450"
@@ -1748,7 +1749,7 @@
         "senderr": false,
         "headers": [],
         "x": 2020,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "a2270f2020c9d658"
@@ -1767,7 +1768,7 @@
         "finalize": "",
         "libs": [],
         "x": 2280,
-        "y": 1240,
+        "y": 1400,
         "wires": [
             [
                 "8e1d7e8a5b7e2eb3"
@@ -1792,7 +1793,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 1440,
-        "y": 700,
+        "y": 860,
         "wires": [
             [
                 "ebba5939353999fa",
@@ -1815,7 +1816,7 @@
         "entityid": "sensor.sunsynk_battery_2",
         "name": "Update SunSynk Battery",
         "x": 2590,
-        "y": 820,
+        "y": 980,
         "wires": []
     },
     {
@@ -1826,7 +1827,7 @@
         "entityid": "sensor.sunsynk_output_2",
         "name": "Update SunSynk Output",
         "x": 2590,
-        "y": 760,
+        "y": 920,
         "wires": []
     },
     {
@@ -1837,7 +1838,7 @@
         "entityid": "sensor.sunsynk_input_2",
         "name": "Update SunSynk Input",
         "x": 2580,
-        "y": 880,
+        "y": 1040,
         "wires": []
     },
     {
@@ -1848,7 +1849,7 @@
         "entityid": "sensor.sunsynk_grid_2",
         "name": "Update SunSynk Grid",
         "x": 2580,
-        "y": 940,
+        "y": 1100,
         "wires": []
     },
     {
@@ -1859,7 +1860,7 @@
         "entityid": "sensor.sunsynk_load_2",
         "name": "Update SunSynk Load",
         "x": 2580,
-        "y": 1000,
+        "y": 1160,
         "wires": []
     },
     {
@@ -1870,7 +1871,7 @@
         "entityid": "sensor.sunsynk_settings_2",
         "name": "Update SunSynk Settings",
         "x": 2590,
-        "y": 1060,
+        "y": 1220,
         "wires": []
     },
     {
@@ -1881,7 +1882,7 @@
         "entityid": "sensor.sunsynk_events_1_2",
         "name": "Update Sunsynk Events Type 1",
         "x": 2610,
-        "y": 1120,
+        "y": 1280,
         "wires": []
     },
     {
@@ -1892,7 +1893,7 @@
         "entityid": "sensor.sunsynk_events_2_2",
         "name": "Update Sunsynk Events Type 2",
         "x": 2610,
-        "y": 1180,
+        "y": 1340,
         "wires": []
     },
     {
@@ -1903,7 +1904,7 @@
         "entityid": "sensor.sunsynk_events_3_2",
         "name": "Update Sunsynk Events Type 3",
         "x": 2610,
-        "y": 1240,
+        "y": 1400,
         "wires": []
     },
     {
@@ -1920,7 +1921,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 700,
-        "y": 420,
+        "y": 580,
         "wires": []
     },
     {
@@ -1964,7 +1965,7 @@
         "name": "Inverter 1 Flows",
         "info": "# Inverter 1 Flows",
         "x": 380,
-        "y": 680,
+        "y": 840,
         "wires": []
     },
     {
@@ -1974,7 +1975,7 @@
         "name": "Inverter 2 Flows",
         "info": "# Inverter 2 Flows",
         "x": 1740,
-        "y": 680,
+        "y": 840,
         "wires": []
     },
     {
@@ -1985,6 +1986,66 @@
         "info": "",
         "x": 370,
         "y": 120,
+        "wires": []
+    },
+    {
+        "id": "2acb6d253c978c52",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request PLant Invertor List",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer.state)) { node.status(\"Access Token Not Available\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/plant/\"+ msg.payload.state +\"/inverters?page=1&limit=10&status=-1&type=-2\";\n//plant/{plantId}/inverters\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1920,
+        "y": 280,
+        "wires": [
+            [
+                "ec32acadb65f257a"
+            ]
+        ]
+    },
+    {
+        "id": "ec32acadb65f257a",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Plant Invertor List",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2200,
+        "y": 280,
+        "wires": [
+            [
+                "80420db5cf3aec58"
+            ]
+        ]
+    },
+    {
+        "id": "80420db5cf3aec58",
+        "type": "debug",
+        "z": "fca77f132c7d5d8f",
+        "name": "Debug PLant Invertor List",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2450,
+        "y": 280,
         "wires": []
     },
     {
