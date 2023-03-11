@@ -49,7 +49,8 @@
                 "e53175753e61992a",
                 "90673d2b7f54dc55",
                 "890752c9c04ae832",
-                "21dae3e15cef46c9"
+                "21dae3e15cef46c9",
+                "dbbf5537800aee9d"
             ]
         ]
     },
@@ -77,7 +78,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Invertor Serial Number ( 1st Invertor )",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_1_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor Index\" + invindex + \" Does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_1_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 1 Index \" + invindex + \" Does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -409,7 +410,8 @@
         "wires": [
             [
                 "6df5b52d7b770df4",
-                "cf949f3158a35e48"
+                "cf949f3158a35e48",
+                "a00ebeb6d0b61bba"
             ]
         ]
     },
@@ -688,7 +690,8 @@
         "wires": [
             [
                 "8ca6ebb9883a33b8",
-                "ca7f0e1c421c6e1c"
+                "ca7f0e1c421c6e1c",
+                "17f6322225b804af"
             ]
         ]
     },
@@ -1168,7 +1171,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Invertor Serial Number ( 2nd Invertor )",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_2_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 2 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor Index\" + invindex + \" does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nvar invindex = global.get('homeassistant.homeAssistant.states[\\'sensor.sunsynk_invertor_2_index\\'].state');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 2 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") { node.status(\"Invertor 2 Index \" + invindex + \" does not exist\"); return null; }\n\nif (origpayload.msg == \"Success\") {\n    msg.payload = msg.payload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1901,6 +1904,57 @@
         "name": "Update Sunsynk Events Type 3",
         "x": 2770,
         "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "dbbf5537800aee9d",
+        "type": "debug",
+        "z": "fca77f132c7d5d8f",
+        "name": "Debug Invertor Serial Debug",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "17f6322225b804af",
+        "type": "debug",
+        "z": "fca77f132c7d5d8f",
+        "name": "Login Debug",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 710,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a00ebeb6d0b61bba",
+        "type": "debug",
+        "z": "fca77f132c7d5d8f",
+        "name": "Plant List Debug",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1260,
+        "y": 260,
         "wires": []
     },
     {
