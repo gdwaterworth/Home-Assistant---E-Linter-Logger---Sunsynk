@@ -7,6 +7,11 @@ template:
   - sensor:
       - name: "SunSynk password new"
         state: "xxx"
+##### Put in your Plant Index for your Plant. 0 should work 
+  - sensor: 
+      - name: "Sunsynk plant index"
+        state: "0"
+        unique_id: "sensor.sunsynk_plant_index"
 ##### Put in your Invertor Index for your 1st Invertor. 0 should work 
   - sensor: 
       - name: "Sunsynk Invertor 1 index"
