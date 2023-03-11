@@ -43,13 +43,10 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 440,
-        "y": 460,
+        "x": 540,
+        "y": 260,
         "wires": [
             [
-                "e53175753e61992a",
-                "90673d2b7f54dc55",
-                "890752c9c04ae832",
                 "dbbf5537800aee9d"
             ]
         ]
@@ -58,15 +55,15 @@
         "id": "6155d4c7e8e87975",
         "type": "function",
         "z": "fca77f132c7d5d8f",
-        "name": "Add Bearer Auth",
+        "name": "Create Request Invertor List",
         "func": "msg.headers = {\n    Authorization: \"Bearer \" + msg.payload,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.payload=\"\"\nmsg.url = \"http://pv.inteless.com/api/v1/inverters?page=1&limit=10&status=-1&type=-1\";\n//msg.url = \"http://pv.inteless.com/api/v1/inverters?page=1&limit=10&total=0&status=-1&sn=&plantId=&type=-2&softVer=&hmiVer=&agentCompanyId=-1&gsn=\";\n// http://pv.inteless.com/api/v1/inverters?page=1&limit=10&total=0&status=-1&sn=&plantId=&type=-2&softVer=&hmiVer=&agentCompanyId=-1&gsn=\nnode.status(msg.payload);\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 160,
-        "y": 460,
+        "x": 180,
+        "y": 260,
         "wires": [
             [
                 "53ea109abab17477"
@@ -431,7 +428,8 @@
         "wires": [
             [
                 "ec3ce6ac52b04130",
-                "90cdfc715504431c"
+                "90cdfc715504431c",
+                "2acb6d253c978c52"
             ]
         ]
     },
@@ -446,8 +444,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1020,
-        "y": 440,
+        "x": 1180,
+        "y": 340,
         "wires": [
             [
                 "d39e0694ad913862"
@@ -470,8 +468,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1360,
-        "y": 440,
+        "x": 1400,
+        "y": 340,
         "wires": [
             [
                 "6360d898e9fec6b9"
@@ -584,8 +582,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1620,
-        "y": 440,
+        "x": 1660,
+        "y": 340,
         "wires": [
             [
                 "54907525a327c8f1"
@@ -603,8 +601,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1020,
-        "y": 500,
+        "x": 1180,
+        "y": 420,
         "wires": [
             [
                 "c9592b52b355aebe"
@@ -733,7 +731,7 @@
         "entityid": "sensor.sunsynk_invertor_list",
         "name": "Update sensor.sunsynk_invertor_list",
         "x": 1930,
-        "y": 500,
+        "y": 420,
         "wires": []
     },
     {
@@ -762,8 +760,7 @@
         "y": 220,
         "wires": [
             [
-                "a57a72a33e0f7629",
-                "2acb6d253c978c52"
+                "a57a72a33e0f7629"
             ]
         ]
     },
@@ -775,7 +772,7 @@
         "entityid": "sensor.sunsynk_flow",
         "name": "Update SunSynk Flow",
         "x": 1880,
-        "y": 440,
+        "y": 340,
         "wires": []
     },
     {
@@ -1920,8 +1917,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 700,
-        "y": 580,
+        "x": 800,
+        "y": 260,
         "wires": []
     },
     {
@@ -1999,8 +1996,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1920,
-        "y": 280,
+        "x": 220,
+        "y": 360,
         "wires": [
             [
                 "ec32acadb65f257a"
@@ -2023,11 +2020,14 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2200,
-        "y": 280,
+        "x": 520,
+        "y": 360,
         "wires": [
             [
-                "80420db5cf3aec58"
+                "80420db5cf3aec58",
+                "e53175753e61992a",
+                "890752c9c04ae832",
+                "90673d2b7f54dc55"
             ]
         ]
     },
@@ -2036,7 +2036,7 @@
         "type": "debug",
         "z": "fca77f132c7d5d8f",
         "name": "Debug PLant Invertor List",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -2044,8 +2044,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 2450,
-        "y": 280,
+        "x": 910,
+        "y": 360,
         "wires": []
     },
     {
