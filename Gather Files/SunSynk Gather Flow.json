@@ -428,8 +428,7 @@
         "wires": [
             [
                 "ec3ce6ac52b04130",
-                "90cdfc715504431c",
-                "2acb6d253c978c52"
+                "90cdfc715504431c"
             ]
         ]
     },
@@ -760,7 +759,8 @@
         "y": 220,
         "wires": [
             [
-                "a57a72a33e0f7629"
+                "a57a72a33e0f7629",
+                "2acb6d253c978c52"
             ]
         ]
     },
@@ -2036,7 +2036,7 @@
         "type": "debug",
         "z": "fca77f132c7d5d8f",
         "name": "Debug PLant Invertor List",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
