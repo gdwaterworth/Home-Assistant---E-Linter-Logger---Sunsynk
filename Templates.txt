@@ -261,7 +261,16 @@ template:
         device_class: timestamp
         state: 0
         unique_id: "sensor.sunsynk_stats_last_update"
-
+#####
+#####
+##### Sensors For Debugging Can be removed if not using the debug flows
+#####
+#####
+  - sensor: 
+      - name: "Sunsynk DEBUG permissions"
+        device_class: timestamp
+        state: ""
+        unique_id: "sensor.sunsynk_debug_permissions"
 
 input_boolean:
   enable_ups_manual_override:
