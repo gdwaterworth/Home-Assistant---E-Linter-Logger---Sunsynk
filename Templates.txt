@@ -261,6 +261,8 @@ template:
         device_class: timestamp
         state: 0
         unique_id: "sensor.sunsynk_stats_last_update"
+
+
 #####
 #####
 ##### Sensors For Debugging Can be removed if not using the debug flows
@@ -272,6 +274,12 @@ template:
         state: ""
         unique_id: "sensor.sunsynk_debug_permissions"
 
+
+#####
+#####
+##### Input Switches used in Automation Flows 
+#####
+#####
 input_boolean:
   enable_ups_manual_override:
     initial: false
