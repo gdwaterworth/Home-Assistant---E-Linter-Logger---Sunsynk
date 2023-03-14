@@ -27,14 +27,16 @@ template:
 ##### DO NOT EDIT ANYTHING UNDER HERE
 #####
 #####
-  - sensor: 
-      - name: "Sunsynk Invertor List"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_invertor_list"
+##### Access Information
   - sensor: 
       - name: "SunSynk Access Token"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_access_token"
+##### Plant Information
+  - sensor: 
+      - name: "Sunsynk Invertor List"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_invertor_list"
   - sensor: 
       - name: "Plant Id No"
         state: "DONOTEDIT"
@@ -51,6 +53,10 @@ template:
       - name: "Sunsynk Plant List"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_plant_list"
+  - sensor: 
+      - name: "Sunsynk Notifications"
+        state: ""
+        unique_id: "sensor.sunsynk_notifications"
 ##### Core Sensors Invertor 1
   - sensor: 
       - name: "Sunsynk Flow"
@@ -133,6 +139,10 @@ template:
       - name: "Sunsynk Events 3 2"
         state: ""
         unique_id: "sensor.sunsynk_events_3_2"
+  - sensor: 
+      - name: "Sunsynk Notifications 2"
+        state: ""
+        unique_id: "sensor.sunsynk_notofications_2"
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg"
@@ -291,4 +301,5 @@ input_boolean:
     initial: true
   enable_electric_weather_override:
     initial: true
+    
     

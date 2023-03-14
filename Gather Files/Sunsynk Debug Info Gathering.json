@@ -21,6 +21,7 @@
         "id": "3438e39f4d759842",
         "type": "inject",
         "z": "64959bbc3605279c",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -51,7 +52,7 @@
         "type": "function",
         "z": "64959bbc3605279c",
         "name": "Create Request to get all permissions",
-        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer.state)) { node.status(\"Access Token Not Available\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/permission/company?lan=en\";\n//plant/{plantId}/inverters\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var states = global.get('homeassistant.homeAssistant.states');\nvar bearer = states[\"sensor.sunsynk_access_token\"];\n//error checking\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\"]; //Error types to check against \nif (ErrorCk.includes(bearer.state)) { node.status(\"Access Token Not Available\"); return null; }\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer.state,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nmsg.url = \"https://pv.inteless.com/api/v1/permission?lan=en\";\n//plant/{plantId}/inverters\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -85,7 +86,8 @@
         "y": 180,
         "wires": [
             [
-                "3c0ac72a38bdb64a"
+                "3c0ac72a38bdb64a",
+                "f36e0a609068066b"
             ]
         ]
     },
@@ -133,7 +135,7 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_debug_permissions",
         "name": "Debug - All Permissions",
-        "x": 1310,
+        "x": 1330,
         "y": 180,
         "wires": []
     },
