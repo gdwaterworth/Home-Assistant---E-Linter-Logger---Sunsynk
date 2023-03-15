@@ -1115,7 +1115,8 @@
                 "8840cdead8881df7",
                 "88abea85be217c44",
                 "de549111356c836d",
-                "7ceb62668ca5b355"
+                "7ceb62668ca5b355",
+                "2646c560d1e87567"
             ]
         ]
     },
@@ -2172,6 +2173,114 @@
         "statusType": "auto",
         "x": 2070,
         "y": 640,
+        "wires": []
+    },
+    {
+        "id": "84690d6ed37d4b76",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Create Request to get realtime output",
+        "func": "function dateToYMD(date) {\n    var d = date.getDate();\n    var m = date.getMonth() + 1; //Month from 0 to 11\n    var y = date.getFullYear();\n    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n}\n\nvar bearer = msg.payload.bearer;\nvar sn = msg.payload.sn;\n\nmsg.headers = {\n    Authorization: \"Bearer \" + bearer,\n    \"Content-Type\": \"application/json\",\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n    \"Connection\": \"keep-alive\",\n    \"Accept\": \"*/*\",\n    \"Cache-Control\": \"no-cache\",\n    \"Origin\": \"https://sunsynk.net\",\n    \"Referrer\": \"https://sunsynk.net\"\n}\nvar graphdate = new Date();\nmsg.url = \"https://pv.inteless.com/api/v1/inverter/\" + sn + \"/output/day?lan=en&date=\" + dateToYMD(graphdate) + \"&column=dc_temp,igbt_temp\";\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 1440,
+        "wires": [
+            [
+                "6ed98090704a265e"
+            ]
+        ]
+    },
+    {
+        "id": "6ed98090704a265e",
+        "type": "http request",
+        "z": "fca77f132c7d5d8f",
+        "name": "Get Request",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 810,
+        "y": 1440,
+        "wires": [
+            [
+                "43eea96247bfb09b"
+            ]
+        ]
+    },
+    {
+        "id": "43eea96247bfb09b",
+        "type": "function",
+        "z": "fca77f132c7d5d8f",
+        "name": "Parse Temp",
+        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\nvar dctemp = msg.payload.data.infos[0].records[(msg.payload.data.infos[0].records.length) - 1].value;\nvar actemp = msg.payload.data.infos[1].records[(msg.payload.data.infos[1].records.length) - 1].value;\nif (global.get(\"SunSynkDebug\") === 1) \n{ \n    node.error(dctemp + \" - \" + msg.payload.data.infos[0].label);\n    node.error(actemp + \" - \" + msg.payload.data.infos[1].label);\n    node.error(msg); \n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {};\n    msg.payload.attributes = {};\n    msg.payload.attributes.data = origpayload.data;\n    msg.payload.attributes.dctemp = dctemp;\n    msg.payload.attributes.actemp = actemp;\n    msg.payload.state = origpayload.msg;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg;\n    node.error(origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; \n ",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1070,
+        "y": 1440,
+        "wires": [
+            [
+                "5b3d8af4f8cfc897"
+            ]
+        ]
+    },
+    {
+        "id": "08855abebfd6bba0",
+        "type": "comment",
+        "z": "fca77f132c7d5d8f",
+        "name": "Inverter 1 Graphs",
+        "info": "# Inverter 1 Graphs",
+        "x": 480,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "2646c560d1e87567",
+        "type": "delay",
+        "z": "fca77f132c7d5d8f",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "180",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 260,
+        "y": 1440,
+        "wires": [
+            [
+                "84690d6ed37d4b76"
+            ]
+        ]
+    },
+    {
+        "id": "5b3d8af4f8cfc897",
+        "type": "hass-post",
+        "z": "fca77f132c7d5d8f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_temp_data",
+        "name": "Update Sunsynk Inv 1 Temperature Data",
+        "x": 1400,
+        "y": 1440,
         "wires": []
     },
     {

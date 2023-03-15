@@ -98,6 +98,10 @@ template:
       - name: "Sunsynk Events 3"
         state: ""
         unique_id: "sensor.sunsynk_events_3"
+  - sensor: 
+      - name: "Sunsynk Temp Data"
+        state: ""
+        unique_id: "sensor.sunsynk_temp_data"
 ##### Core Sensors Invertor 2
   - sensor: 
       - name: "Sunsynk Flow 2"
@@ -139,10 +143,6 @@ template:
       - name: "Sunsynk Events 3 2"
         state: ""
         unique_id: "sensor.sunsynk_events_3_2"
-  - sensor: 
-      - name: "Sunsynk Notifications 2"
-        state: ""
-        unique_id: "sensor.sunsynk_notofications_2"
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg"
@@ -301,5 +301,3 @@ input_boolean:
     initial: true
   enable_electric_weather_override:
     initial: true
-    
-    
