@@ -1,0 +1,31 @@
+type: custom:apexcharts-card
+graph_span: 6h
+header:
+  show: true
+  title: AC/DC Temperatures
+  show_states: true
+  colorize_states: true
+all_series_config:
+  stroke_width: 1.5
+  opacity: 0.3
+  group_by:
+    func: avg
+    duration: 1min
+  show:
+    legend_value: false
+color_list:
+  - red
+  - yellow
+series:
+  - entity: sensor.sunsynk_temp_data
+    name: AC Temp
+    data_generator: |
+      return entity.attributes.actime.map((actime, index) => {
+        return [new Date(actime).getTime(), entity.attributes.acvalue[index]];
+      });
+  - entity: sensor.sunsynk_temp_data
+    name: DC Temp
+    data_generator: |
+      return entity.attributes.dctime.map((dctime, index) => {
+        return [new Date(dctime).getTime(), entity.attributes.dcvalue[index]];
+      });
