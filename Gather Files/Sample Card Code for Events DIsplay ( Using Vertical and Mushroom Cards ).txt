@@ -3,9 +3,9 @@ cards:
   - type: custom:mushroom-title-card
     title: SunSynk Events
     alignment: center
-    subtitle: Last 60 Days, 50 Entries
+    subtitle: ''
   - type: custom:mushroom-template-card
-    primary: SunSynk Events Type 1
+    primary: Info SunSynk Events
     secondary: |-
       {% for event in state_attr("sensor.sunsynk_events_1","events") %} 
       {{event}} 
@@ -22,7 +22,7 @@ cards:
       action: none
     fill_container: true
   - type: custom:mushroom-template-card
-    primary: SunSynk Events Type 2
+    primary: Warning SunSynk Events
     secondary: |-
       {% for event in state_attr("sensor.sunsynk_events_2","events") %} 
       {{event}} 
@@ -39,13 +39,30 @@ cards:
       action: none
     fill_container: true
   - type: custom:mushroom-template-card
-    primary: SunSynk Events Type 3
+    primary: SunSynk Fault Events
     secondary: |-
       {% for event in state_attr("sensor.sunsynk_events_3","events") %} 
       {{event}} 
       {%- endfor %}
     icon: ''
     entity: sensor.sunsynk_events_3
+    multiline_secondary: true
+    layout: horizontal
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    fill_container: true
+  - type: custom:mushroom-template-card
+    primary: Sunsynk Notifications
+    secondary: |-
+      {% for event in state_attr("sensor.sunsynk_notifications","ev") %} 
+      {{event}} 
+      {%- endfor %}
+    icon: ''
+    entity: sensor.sunsynk_notifications
     multiline_secondary: true
     layout: horizontal
     tap_action:
