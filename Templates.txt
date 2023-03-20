@@ -27,28 +27,11 @@ template:
 ##### DO NOT EDIT ANYTHING UNDER HERE
 #####
 #####
-##### Access Information
-  - sensor: 
-      - name: "SunSynk Access Token"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_access_token"
 ##### Plant Information
   - sensor: 
       - name: "Sunsynk Invertor List"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_invertor_list"
-  - sensor: 
-      - name: "Plant Id No"
-        state: "DONOTEDIT"
-        unique_id: "sensor.plant_id_no"
-  - sensor: 
-      - name: "Sunsynk Serial Number"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_serial_number"
-  - sensor: 
-      - name: "Sunsynk Serial Number 2"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_serial_number_2"
   - sensor: 
       - name: "Sunsynk Plant List"
         state: "DONOTEDIT"
@@ -143,10 +126,15 @@ template:
       - name: "Sunsynk Events 3 2"
         state: ""
         unique_id: "sensor.sunsynk_events_3_2"
+  - sensor: 
+      - name: "Sunsynk Temp Data 2"
+        state: ""
+        unique_id: "sensor.sunsynk_temp_data_2"
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg"
         state_class: total_increasing
+        unique_id: "sensor.sunsynk_battery_etotalchg"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -154,6 +142,7 @@ template:
   - sensor:
       - name: "Sunsynk Battery etotaldischg"
         state_class: total_increasing
+        unique_id: "sensor.sunsynk_battery_etotaldischg"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -161,6 +150,7 @@ template:
   - sensor:
       - name: "Sunsynk PV Total"
         state_class: total_increasing
+        unique_id: "sensor.sunsynk_pv_total"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -168,6 +158,7 @@ template:
   - sensor:
       - name: "Sunsynk Grid Total"
         state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_total"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -175,6 +166,7 @@ template:
   - sensor:
       - name: "Sunsynk Load Total"
         state_class: total_increasing
+        unique_id: "sensor.sunsynk_load_total"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -188,6 +180,10 @@ template:
           {% else %}
             Use Timer Disabled
           {% endif %}
+  - sensor:
+      - name: "Sunsynk Battery Temp"
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'temp')|float}}
   - sensor:
       - name: "Sunsynk Battery Soc"
         state: >
@@ -271,9 +267,10 @@ template:
         device_class: timestamp
         state: 0
         unique_id: "sensor.sunsynk_stats_last_update"
-
-
-#####
+  - sensor: 
+      - name: "Sunsynk Battery Depletion"
+        state: 0
+        unique_id: "sensor.sunsynk_battery_depletion"
 #####
 ##### Sensors For Debugging Can be removed if not using the debug flows
 #####

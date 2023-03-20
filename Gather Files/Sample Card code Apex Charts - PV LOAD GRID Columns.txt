@@ -1,0 +1,36 @@
+type: custom:apexcharts-card
+graph_span: 20day
+stacked: true
+yaxis:
+  - id: first
+    decimals: 1
+    min: 0
+span:
+  end: day
+header:
+  show: true
+  title: 20 Day Graph
+  show_states: true
+  colorize_states: true
+all_series_config:
+  stroke_width: 4
+  opacity: 1
+  group_by:
+    func: diff
+    duration: 1day
+  show:
+    legend_value: false
+color_list:
+  - cyan
+  - blue
+  - red
+series:
+  - entity: sensor.sunsynk_grid_total
+    type: column
+    name: Grid
+  - entity: sensor.sunsynk_pv_total
+    type: column
+    name: PV
+  - entity: sensor.sunsynk_load_total
+    type: line
+    name: Load
