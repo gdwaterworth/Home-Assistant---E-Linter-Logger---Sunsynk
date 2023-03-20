@@ -1,0 +1,34 @@
+type: custom:apexcharts-card
+graph_span: 12h
+yaxis:
+  - id: first
+    align_to: 1000
+    decimals: 0
+    apex_config:
+      tickAmount: 5
+header:
+  show: true
+  title: Solar ( Current vs Predicted )
+  show_states: true
+  colorize_states: true
+all_series_config:
+  stroke_width: 4
+  opacity: 0.3
+  show:
+    legend_value: false
+color_list:
+  - cyan
+  - blue
+series:
+  - entity: sensor.sunsynk_pv
+    yaxis_id: first
+    type: area
+    name: Actual Solar
+  - entity: sensor.calculated_current_solar_pred
+    curve: smooth
+    group_by:
+      duration: 10min
+      func: avg
+    yaxis_id: first
+    type: area
+    name: Predicated Solar

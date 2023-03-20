@@ -1,0 +1,55 @@
+type: custom:apexcharts-card
+graph_span: 3h
+yaxis:
+  - id: first
+    align_to: 1000
+    decimals: 0
+    apex_config:
+      tickAmount: 10
+  - id: second
+    align_to: 1000
+    opposite: true
+    decimals: 0
+    apex_config:
+      tickAmount: 10
+header:
+  show: true
+  title: Realtime Solar 3 Hour - 1 minute average
+  show_states: true
+  colorize_states: true
+all_series_config:
+  stroke_width: 1.5
+  opacity: 0.3
+  group_by:
+    func: avg
+    duration: 30sec
+  show:
+    legend_value: false
+color_list:
+  - orange
+  - orange
+  - blue
+  - brown
+  - green
+series:
+  - entity: sensor.sunsynk_pv1
+    yaxis_id: first
+    type: line
+    name: PV1 - Front
+  - entity: sensor.sunsynk_pv2
+    yaxis_id: first
+    type: line
+    name: PV2 - Back
+  - entity: sensor.sunsynk_load_power
+    yaxis_id: first
+    type: area
+    name: Load
+  - entity: sensor.sunsynk_grid_power
+    yaxis_id: first
+    type: area
+    name: Grid
+  - entity: sensor.sunsynk_battery_power
+    yaxis_id: first
+    type: area
+    opacity: 0.3
+    name: Battery
