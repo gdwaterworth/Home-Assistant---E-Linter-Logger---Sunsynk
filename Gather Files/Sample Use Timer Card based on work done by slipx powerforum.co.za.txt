@@ -1,0 +1,164 @@
+name: Current Solar
+type: custom:sunsynk-card
+entities: null
+content: >-
+  <style>
+     div {
+         border: solid 10px rgba(100, 100, 100, 0.1);
+         border-radius: 10px;
+         background-color: var(--card-background-color);
+         padding: 5px;
+         box-shadow: 0 1px 0px 0 rgba(0, 0, 0, 0.4)
+     }
+  </style> <div> <svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%"
+  height="100%" viewBox="-0.5 -0.5 457 383">
+         <defs />
+         <g>
+             <style type="text/css">
+                 .st1 { fill: #ffcf30; }
+                 .st2 { fill: #f3b3ca; }
+                 .st3 { font-size: 9px; }
+                 .st4 { font-size: 20px; }
+                 .st5 { fill: #969696; }
+                 .st6 { fill: #5fb6ad; }
+                 .st7 { fill: #10c23c; }
+                 .st8 { font-weight: 500 }
+                 .st9 { font-size: 30px; }
+                 text { text-anchor: middle; alignment-baseline: middle; }
+             </style> 
+             <text x="50%" y="5%" class="text st9 st7 st8">Use Timer Settings</text>
+             <text x="30%" y="20%" class="text st4 st6 st8">Time</text>
+             <text x="57%" y="20%" class="text st4 st6 st8">Power</text>
+             <text x="75%" y="20%" class="text st4 st6 st8">Enabled</text>
+             <text x="90%" y="20%" class="text st4 st6 st8">Gen</text>
+             <text x="10%" y="25%" class="text st4 st6 st8">Slot 1</text>
+             <text x="10%" y="35%" class="text st4 st6 st8">Slot 2</text>
+             <text x="10%" y="45%" class="text st4 st6 st8">Slot 3</text>
+             <text x="10%" y="55%" class="text st4 st6 st8">Slot 4</text>
+             <text x="10%" y="65%" class="text st4 st6 st8">Slot 5</text>
+             <text x="10%" y="75%" class="text st4 st6 st8">Slot 6</text>
+             <text id="slot1time" x="30%" y="25%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot2time" x="30%" y="35%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot3time" x="30%" y="45%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot4time" x="30%" y="55%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot5time" x="30%" y="65%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot6time" x="30%" y="75%" class="st1 st4 st8 ">XX:XX</text>    
+             <text id="slot1pc" x="45%" y="25%" class="st1 st4 st8 ">%</text>    
+             <text id="slot2pc" x="45%" y="35%" class="st1 st4 st8 ">%</text>    
+             <text id="slot3pc" x="45%" y="45%" class="st1 st4 st8 ">%</text>    
+             <text id="slot4pc" x="45%" y="55%" class="st1 st4 st8 ">%</text>    
+             <text id="slot5pc" x="45%" y="65%" class="st1 st4 st8 ">%</text>    
+             <text id="slot6pc" x="45%" y="75%" class="st1 st4 st8 ">%</text>
+             <text id="slot1pac" x="57%" y="25%" class="st1 st4 st8 ">8000</text>
+             <text id="slot2pac" x="57%" y="35%" class="st1 st4 st8 ">8000</text>
+             <text id="slot3pac" x="57%" y="45%" class="st1 st4 st8 ">8000</text>
+             <text id="slot4pac" x="57%" y="55%" class="st1 st4 st8 ">8000</text>
+             <text id="slot5pac" x="57%" y="65%" class="st1 st4 st8 ">8000</text>
+             <text id="slot6pac" x="57%" y="75%" class="st1 st4 st8 ">8000</text>
+             <text id="slot1ena" x="75%" y="25%" class="st1 st4 st8 ">false</text>
+             <text id="slot2ena" x="75%" y="35%" class="st1 st4 st8 ">false</text>
+             <text id="slot3ena" x="75%" y="45%" class="st1 st4 st8 ">false</text>
+             <text id="slot4ena" x="75%" y="55%" class="st1 st4 st8 ">false</text>
+             <text id="slot5ena" x="75%" y="65%" class="st1 st4 st8 ">false</text>
+             <text id="slot6ena" x="75%" y="75%" class="st1 st4 st8 ">false</text>
+             <text id="slot1gen" x="90%" y="25%" class="st1 st4 st8 ">false</text>
+             <text id="slot2gen" x="90%" y="35%" class="st1 st4 st8 ">false</text>
+             <text id="slot3gen" x="90%" y="45%" class="st1 st4 st8 ">false</text>
+             <text id="slot4gen" x="90%" y="55%" class="st1 st4 st8 ">false</text>
+             <text id="slot5gen" x="90%" y="65%" class="st1 st4 st8 ">false</text>
+             <text id="slot6gen" x="90%" y="75%" class="st1 st4 st8 ">false</text>
+         </g>
+     </svg> 
+  </div>
+bindings:
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime1
+    selector: '#slot1time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap1 + "%"
+    selector: '#slot1pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime2
+    selector: '#slot2time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap2 + "%"
+    selector: '#slot2pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime3
+    selector: '#slot3time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap3 + "%"
+    selector: '#slot3pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime4
+    selector: '#slot4time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap4 + "%"
+    selector: '#slot4pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime5
+    selector: '#slot5time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap5 + "%"
+    selector: '#slot5pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime6
+    selector: '#slot6time'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.cap6 + "%"
+    selector: '#slot6pc'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime1Pac
+    selector: '#slot1pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime2Pac
+    selector: '#slot2pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime3Pac
+    selector: '#slot3pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime4Pac
+    selector: '#slot4pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime5Pac
+    selector: '#slot5pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.sellTime6Pac
+    selector: '#slot6pac'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time1on
+    selector: '#slot1ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time2on
+    selector: '#slot2ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time3on
+    selector: '#slot3ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time4on
+    selector: '#slot4ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time5on
+    selector: '#slot5ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.time6on
+    selector: '#slot6ena'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime1on
+    selector: '#slot1gen'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime2on
+    selector: '#slot2gen'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime3on
+    selector: '#slot3gen'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime4on
+    selector: '#slot4gen'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime5on
+    selector: '#slot5gen'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_settings"].attributes.genTime6on
+    selector: '#slot6gen'
+    type: html
