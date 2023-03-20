@@ -1,4 +1,4 @@
-Integratiosn required :
+Integrations required :
 
 ![image](https://user-images.githubusercontent.com/87119523/226266467-d5b2c2f3-7304-4601-9dd8-5bf182bdfa43.png)
 
