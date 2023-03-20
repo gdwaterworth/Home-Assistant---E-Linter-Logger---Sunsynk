@@ -12,7 +12,9 @@ To check for sunrise time
 
 Use of Timeslots 
 Slot 3 is set to sunrise time 
+
 Slot 2 and Slot 3 percentages are set according to type of weather expected 
+
 Timer Use feature is toggled on and off for forced charging based on loadshedding time and duration 
 
 ![image](https://user-images.githubusercontent.com/87119523/226268254-fe5b784f-c357-4b89-a59d-dc95bf31c40b.png)
