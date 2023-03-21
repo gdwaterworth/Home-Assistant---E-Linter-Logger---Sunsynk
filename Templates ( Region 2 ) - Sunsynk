@@ -1,0 +1,300 @@
+template:
+##### Put in your SunSynk Login Here 
+  - sensor:
+      - name: "SunSynk Login"
+        state: "xxx@xxx.com"
+##### Put in your SunSynk Password Here 
+  - sensor:
+      - name: "SunSynk password new"
+        state: "xxx"
+##### Put in your Plant Index for your Plant. 0 should work 
+  - sensor: 
+      - name: "Sunsynk plant index"
+        state: "0"
+        unique_id: "sensor.sunsynk_plant_index"
+##### Put in your Invertor Index for your 1st Invertor. 0 should work 
+  - sensor: 
+      - name: "Sunsynk Invertor 1 index"
+        state: "0"
+        unique_id: "sensor.sunsynk_invertor_1_index"
+##### Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
+  - sensor: 
+      - name: "Sunsynk Invertor 2 index"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_invertor_2_index"
+#####
+#####
+##### DO NOT EDIT ANYTHING UNDER HERE
+#####
+#####
+##### Plant Information
+  - sensor: 
+      - name: "Sunsynk Invertor List"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_invertor_list"
+  - sensor: 
+      - name: "Sunsynk Plant List"
+        state: "DONOTEDIT"
+        unique_id: "sensor.sunsynk_plant_list"
+  - sensor: 
+      - name: "Sunsynk Notifications"
+        state: ""
+        unique_id: "sensor.sunsynk_notifications"
+##### Core Sensors Invertor 1
+  - sensor: 
+      - name: "Sunsynk Flow"
+        state: ""
+        unique_id: "sensor.sunsynk_flow"
+  - sensor: 
+      - name: "Sunsynk Output"
+        state: ""
+        unique_id: "sensor.sunsynk_output"
+  - sensor: 
+      - name: "Sunsynk Battery"
+        state: ""
+        unique_id: "sensor.sunsynk_battery"
+  - sensor: 
+      - name: "Sunsynk Input"
+        state: ""
+        unique_id: "sensor.sunsynk_input"
+  - sensor: 
+      - name: "Sunsynk Grid"
+        state: ""
+        unique_id: "sensor.sunsynk_grid"
+  - sensor: 
+      - name: "Sunsynk Load"
+        state: ""
+        unique_id: "sensor.sunsynk_load"
+  - sensor: 
+      - name: "Sunsynk Settings"
+        state: ""
+        unique_id: "sensor.sunsynk_settings"
+  - sensor: 
+      - name: "Sunsynk Events 1"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1"
+  - sensor: 
+      - name: "Sunsynk Events 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2"
+  - sensor: 
+      - name: "Sunsynk Events 3"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3"
+  - sensor: 
+      - name: "Sunsynk Temp Data"
+        state: ""
+        unique_id: "sensor.sunsynk_temp_data"
+##### Core Sensors Invertor 2
+  - sensor: 
+      - name: "Sunsynk Flow 2"
+        state: ""
+        unique_id: "sensor.sunsynk_flow_2"
+  - sensor: 
+      - name: "Sunsynk Output 2"
+        state: ""
+        unique_id: "sensor.sunsynk_output_2"
+  - sensor: 
+      - name: "Sunsynk Battery 2"
+        state: ""
+        unique_id: "sensor.sunsynk_battery_2"
+  - sensor: 
+      - name: "Sunsynk Input 2"
+        state: ""
+        unique_id: "sensor.sunsynk_input_2"
+  - sensor: 
+      - name: "Sunsynk Grid 2"
+        state: ""
+        unique_id: "sensor.sunsynk_grid_2"
+  - sensor: 
+      - name: "Sunsynk Load 2"
+        state: ""
+        unique_id: "sensor.sunsynk_load_2"
+  - sensor: 
+      - name: "Sunsynk Settings 2"
+        state: ""
+        unique_id: "sensor.sunsynk_settings_2"
+  - sensor: 
+      - name: "Sunsynk Events 1 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1_2"
+  - sensor: 
+      - name: "Sunsynk Events 2 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2_2"
+  - sensor: 
+      - name: "Sunsynk Events 3 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3_2"
+  - sensor: 
+      - name: "Sunsynk Temp Data 2"
+        state: ""
+        unique_id: "sensor.sunsynk_temp_data_2"
+##### Misc Sensors for Energy
+  - sensor:
+      - name: "Sunsynk Battery etotalchg"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_battery_etotalchg"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'etotalchg')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Battery etotaldischg"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_battery_etotaldischg"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'etotaldischg')|float(0)}}
+  - sensor:
+      - name: "Sunsynk PV Total"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_pv_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_input', 'pvtotal')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Grid Total"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_grid', 'total')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Load Total"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_load_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+            {{state_attr('sensor.sunsynk_load', 'total')|float(0)}}
+##### Other Sensors 
+  - sensor:
+      - name: "Current Use Timer"
+        state: >
+          {% if is_state_attr('sensor.sunsynk_settings', 'peakAndVallery', '1' ) %}
+            Use Timer Enabled
+          {% else %}
+            Use Timer Disabled
+          {% endif %}
+  - sensor:
+      - name: "Sunsynk Battery Temp"
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'temp')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Battery Soc"
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'soc')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Battery Power"
+        state: >
+            {{state_attr('sensor.sunsynk_battery', 'power')|float(0)}}
+  - sensor:
+      - name: "Sunsynk PV1"
+        state: >
+            {{state_attr('sensor.sunsynk_input', 'pv1')|float(0)}}
+  - sensor:
+      - name: "Sunsynk PV2"
+        state: >
+            {{state_attr('sensor.sunsynk_input', 'pv2')|float(0)}}
+  - sensor:
+      - name: "Sunsynk PV"
+        state: >
+            {{state_attr('sensor.sunsynk_input', 'pv')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Grid Power"
+        state: >
+            {{state_attr('sensor.sunsynk_grid', 'power')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Grid Online"
+        state: >
+            {{state_attr('sensor.sunsynk_grid', 'gridonline')|float(0)}}
+  - sensor:
+      - name: "Sunsynk Load Power"
+        state: >
+            {{state_attr('sensor.sunsynk_load', 'totalpower')|float(0)}}
+  - sensor:
+      - name: "SunSynk Logger Status"
+        state: >
+         {% if state_attr("sensor.sunsynk_invertor_list", "infos_0_status") == 0 -%}
+            Offline
+         {%- elif state_attr("sensor.sunsynk_invertor_list", "infos_0_status") == 1 -%}
+            Online
+         {%- elif state_attr("sensor.sunsynk_invertor_list", "infos_0_status") == 2 -%}
+            Warning
+         {%- elif state_attr("sensor.sunsynk_invertor_list", "infos_0_status") == 3 -%}
+            Fault
+         {%- elif state_attr("sensor.sunsynk_invertor_list", "infos_0_status") == 4 -%}
+            Upgrading
+         {%- else -%}
+            {{state_attr("sensor.sunsynk_invertor_list", "infos_0_status")}}
+         {%- endif %}
+  - sensor:
+      - name: "SunSynk Logger Last Update"
+        device_class: timestamp
+        state: >
+         {{ state_attr("sensor.sunsynk_invertor_list", "infos_0_updateAt") }}
+  - sensor: 
+      - name: "Weather Forecast Calc Result"
+        state: ""
+        unique_id: "sensor.weather_forecast_calc_result"
+  - sensor: 
+      - name: "New Minutes To Load Shedding"
+        state: 99999
+        unique_id: "sensor.new_minutes_to_load_shedding"
+  - sensor: 
+      - name: "New SunSynk Override Result"
+        state: " " 
+        unique_id: "sensor.new_sunsynk_override_result"
+  - sensor: 
+      - name: "New Length Load Shedding"
+        state: " "
+        unique_id: "sensor.new_length_load_shedding"
+  - sensor: 
+      - name: "New SunSynk Update Status"
+        state: "Not Been Called Yet"
+        unique_id: "sensor.new_sunsynk_update_status"
+  - sensor: 
+      - name: "Calculated Current Solar Pred"
+        unique_id: "sensor.calculated.current.solar.pred"
+        state: >
+         {{  ((float(0)(states('sensor.power_production_now_2')) * 1 ) + (float(0)(states('sensor.power_production_now')) * 1 ))|float(0)  }}
+  - sensor: 
+      - name: "Sunsynk Stats Last Update"
+        device_class: timestamp
+        state: 0
+        unique_id: "sensor.sunsynk_stats_last_update"
+  - sensor: 
+      - name: "Sunsynk Battery Depletion"
+        state: 0
+        unique_id: "sensor.sunsynk_battery_depletion"
+#####
+##### Sensors For Debugging Can be removed if not using the debug flows
+#####
+#####
+  - sensor: 
+      - name: "Sunsynk DEBUG permissions"
+        device_class: timestamp
+        state: ""
+        unique_id: "sensor.sunsynk_debug_permissions"
+
+
+#####
+#####
+##### Input Switches used in Automation Flows 
+#####
+#####
+input_boolean:
+  enable_ups_manual_override:
+    initial: false
+  enable_sunsynk_auto_mode:
+    initial: true
+  enable_auto_outside_lights:
+    initial: true
+  enable_auto_gary_office:
+    initial: true
+  enable_electric_weather_override:
+    initial: true
