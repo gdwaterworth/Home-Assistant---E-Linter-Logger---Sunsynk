@@ -185,6 +185,14 @@ template:
         state: >
             {{state_attr('sensor.sunsynk_battery', 'temp')|float}}
   - sensor:
+      - name: "Sunsynk AC Temp"
+        state: >
+            {{state_attr('sensor.sunsynk_ac_temp', 'actemp')|float}}
+  - sensor:
+      - name: "Sunsynk DC Temp"
+        state: >
+            {{state_attr('sensor.sunsynk_dc_temp', 'dctemp')|float}}
+  - sensor:
       - name: "Sunsynk Battery Soc"
         state: >
             {{state_attr('sensor.sunsynk_battery', 'soc')|float}}

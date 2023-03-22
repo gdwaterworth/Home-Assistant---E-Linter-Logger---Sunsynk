@@ -15,17 +15,9 @@ color_list:
   - green
   - pink
 series:
-  - entity: sensor.sunsynk_temp_data
+  - entity: sensor.sunsynk_ac_temp
     name: AC Temp
-    data_generator: |
-      return entity.attributes.actime.map((actime, index) => {
-        return [new Date(actime).getTime(), entity.attributes.acvalue[index]];
-      });
-  - entity: sensor.sunsynk_temp_data
+  - entity: sensor.sunsynk_dc_temp
     name: DC Temp
-    data_generator: |
-      return entity.attributes.dctime.map((dctime, index) => {
-        return [new Date(dctime).getTime(), entity.attributes.dcvalue[index]];
-      });
   - entity: sensor.sunsynk_battery_temp
     name: Battery Temp
