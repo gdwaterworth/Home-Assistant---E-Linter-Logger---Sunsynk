@@ -1,5 +1,5 @@
 type: custom:apexcharts-card
-graph_span: 20day
+graph_span: 30 Day
 stacked: true
 yaxis:
   - id: first
@@ -9,7 +9,7 @@ span:
   end: day
 header:
   show: true
-  title: 20 Day Graph
+  title: 30 Day Graph
   show_states: true
   colorize_states: true
 all_series_config:
@@ -28,9 +28,18 @@ series:
   - entity: sensor.sunsynk_grid_total
     type: column
     name: Grid
+    statistics:
+      type: sum
+      align: middle
   - entity: sensor.sunsynk_pv_total
     type: column
     name: PV
+    statistics:
+      type: sum
+      align: middle
   - entity: sensor.sunsynk_load_total
     type: line
     name: Load
+    statistics:
+      type: sum
+      align: middle
