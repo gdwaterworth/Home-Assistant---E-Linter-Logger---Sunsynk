@@ -43,3 +43,4 @@ series:
     statistics:
       type: sum
       align: middle
+
