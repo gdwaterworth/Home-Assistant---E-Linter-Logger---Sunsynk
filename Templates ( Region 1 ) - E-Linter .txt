@@ -288,8 +288,19 @@ template:
         device_class: timestamp
         state: ""
         unique_id: "sensor.sunsynk_debug_permissions"
-
-
+#####
+##### Statistics Sensors
+#####
+#####
+##### Sensor to calculate cost of grid used
+  - sensor:
+      - name: "Sunsynk Grid Cost"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_cost"
+        device_class: monetary
+        unit_of_measurement: ZAR
+        state: >
+            {{float(states('sensor.sunsynk_grid_total')) * (1.7367*1.15) }}
 #####
 #####
 ##### Input Switches used in Automation Flows 
@@ -306,3 +317,4 @@ input_boolean:
     initial: true
   enable_electric_weather_override:
     initial: true
+
