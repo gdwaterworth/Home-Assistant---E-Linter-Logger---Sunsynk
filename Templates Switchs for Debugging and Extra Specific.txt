@@ -1,0 +1,24 @@
+#####
+##### Sensors For Debugging Can be removed if not using the debug flows
+#####
+#####
+  - sensor: 
+      - name: "Sunsynk DEBUG permissions"
+        device_class: timestamp
+        state: ""
+        unique_id: "sensor.sunsynk_debug_permissions"
+
+#####
+##### Statistics Sensors
+#####
+#####
+##### Sensor to calculate cost of grid used
+##### Number of units used * Calculated average cost per unit
+  - sensor:
+      - name: "Sunsynk Grid Cost"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_cost"
+        device_class: monetary
+        unit_of_measurement: ZAR
+        state: >
+            {{float(states('sensor.sunsynk_grid_total')) * (1.9972) }}

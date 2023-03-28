@@ -1,0 +1,87 @@
+#####
+##### Sensors for Slipx Power Flow Cards
+##### Github page : https://github.com/slipx06/Sunsynk-Home-Assistant-Power-Flow-Card
+#####
+##### return hass.states["sensor.pv1_power"].state + ' W'
+  - sensor: 
+      - name: "pv1 power"
+        state: >
+            {{state_attr('sensor.sunsynk_input','pv1')}}
+##### return hass.states["sensor.pv2_power"].state + ' W'
+  - sensor: 
+      - name: "pv2 power"
+        state: >
+            {{state_attr('sensor.sunsynk_input','pv2')}}
+##### return hass.states["sensor.sunsynk_totalsolar"].state + ' W'
+  - sensor: 
+      - name: "sunsynk totalsolar"
+        state: >
+            {{state_attr('sensor.sunsynk_input','pv')}}
+##### return hass.states["sensor.battery_voltage"].state + ' V'
+  - sensor: 
+      - name: "battery voltage"
+        state: >
+            {{state_attr('sensor.sunsynk_battery','voltage')}}
+##### return hass.states["sensor.battery_soc"].state + ' %'
+  - sensor: 
+      - name: "battery soc"
+        state: >
+            {{state_attr('sensor.sunsynk_battery','soc')}}
+##### return hass.states["sensor.battery_output_power"].state + ' W'
+  - sensor: 
+      - name: "battery output power"
+        state: >
+            {{state_attr('sensor.sunsynk_battery','power')}}
+##### return hass.states["sensor.inverter_output_power"].state + ' W'
+  - sensor: 
+      - name: "invertor output power"
+        state: >
+            {{state_attr('sensor.sunsynk_load','totalpower')}}
+##### return hass.states["sensor.inverter_output_current"].state + ' A'
+  - sensor: 
+      - name: "invertor output current"
+        state: >
+            {{state_attr('sensor.sunsynk_load','calc_current')}}
+##### return hass.states["sensor.aux_output_power"].state + ' W'
+  - sensor: 
+      - name: "aux output power"
+        state: 0
+##### return hass.states["sensor.sunsynk_essential_load"].state + ' W'
+  - sensor: 
+      - name: "sunsynk essential load"
+        state: 0
+##### return hass.states["sensor.grid_inverter_voltage"].state + ' V'
+  - sensor: 
+      - name: "grid inverter voltage"
+        state: >
+            {{state_attr('sensor.sunsynk_grid','volt')}}
+##### return hass.states["sensor.load_frequency"].state + ' Hz'
+  - sensor: 
+      - name: "load frequency"
+        state: >
+            {{state_attr('sensor.sunsynk_output','fac')}}
+##### return hass.states["sensor.grid_inverter_load"].state + ' W'
+  - sensor: 
+      - name: "grid invertor load"
+        state: >
+            {{state_attr('sensor.sunsynk_grid','power')}}
+##### return hass.states["sensor.grid_external_power"].state + ' W'
+  - sensor: 
+      - name: "grid external power"
+        state: >
+            {{state_attr('sensor.sunsynk_grid','power')}}
+##### return hass.states["sensor.overall_state"].state == "0" ? "blue" 
+  - sensor: 
+      - name: "overall state"
+        state: >
+            {{state_attr('sunsynk_invertor_list','infos_0_status')}}
+##### return hass.states["binary_sensor.grid_connected_status"].state == "off" ?
+##### Slipx Custom 
+#  - sensor: 
+#     -name: "sunsynk solar load"
+#       state: > 
+#        {{ (states('sensor.daily_pv_power_kwh') | float(0) - states('sensor.battery_charge_day') | float(0)) |round(1) }}
+#  - sensor: 
+#     -name: "sunsynk_essential_load"
+#       state: >
+#        {{ (states('sensor.inverter_output_power') |float(0)  - (states('sensor.aux_output_power') |float(0) - states('sensor.grid_inverter_load') |float(0) )) | round(0)}}
