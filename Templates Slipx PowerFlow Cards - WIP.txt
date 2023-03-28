@@ -49,7 +49,8 @@
 ##### return hass.states["sensor.sunsynk_essential_load"].state + ' W'
   - sensor: 
       - name: "sunsynk essential load"
-        state: 0
+        state: >
+            {{state_attr('sensor.sunsynk_load','totalpower')}}
 ##### return hass.states["sensor.grid_inverter_voltage"].state + ' V'
   - sensor: 
       - name: "grid inverter voltage"
