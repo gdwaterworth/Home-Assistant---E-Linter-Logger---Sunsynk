@@ -77,6 +77,10 @@
         state: >
             {{state_attr('sunsynk_invertor_list','infos_0_status')}}
 ##### return hass.states["binary_sensor.grid_connected_status"].state == "off" ?
+  - binary_sensor: 
+      - name: "grid connected status"
+        state: >
+            {{state_attr('sensor.sunsynk_grid','gridonline')}}
 ##### Slipx Custom 
 #  - sensor: 
 #     -name: "sunsynk solar load"
