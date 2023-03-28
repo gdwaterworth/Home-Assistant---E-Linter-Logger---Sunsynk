@@ -22,6 +22,16 @@ template:
       - name: "Sunsynk Invertor 2 index"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_invertor_2_index"
+##### Number of Items to return in queries. Default 10
+  - sensor: 
+      - name: "Sunsynk Return Items"
+        state: 10
+        unique_id: "sensor.sunsynk_return_items"
+##### Source for Invertor List - P;ant based  
+  - sensor: 
+      - name: "Sunsynk Inverter URL"
+        state: true
+        unique_id: "sensor.sunsynk_inverter_url"
 #####
 #####
 ##### DO NOT EDIT ANYTHING UNDER HERE
@@ -293,6 +303,7 @@ template:
 #####
 #####
 ##### Sensor to calculate cost of grid used
+##### Number of units used * Calculated average cost per unit
   - sensor:
       - name: "Sunsynk Grid Cost"
         state_class: total_increasing
@@ -300,7 +311,7 @@ template:
         device_class: monetary
         unit_of_measurement: ZAR
         state: >
-            {{float(states('sensor.sunsynk_grid_total')) * (1.7367*1.15) }}
+            {{float(states('sensor.sunsynk_grid_total')) * (1.9972) }}
 #####
 #####
 ##### Input Switches used in Automation Flows 
@@ -317,4 +328,3 @@ input_boolean:
     initial: true
   enable_electric_weather_override:
     initial: true
-
