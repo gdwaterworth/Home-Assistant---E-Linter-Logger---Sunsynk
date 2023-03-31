@@ -1,7 +1,7 @@
 #####
 ##### Sensors for Slipx Power Flow Cards
 ##### Github page : https://github.com/slipx06/Sunsynk-Home-Assistant-Power-Flow-Card
-#####
+##### Slipx Simple ( 1 invertor no sux non essentials ) 
 ##### return hass.states["sensor.pv1_power"].state + ' W'
   - sensor: 
       - name: "pv1 power"
