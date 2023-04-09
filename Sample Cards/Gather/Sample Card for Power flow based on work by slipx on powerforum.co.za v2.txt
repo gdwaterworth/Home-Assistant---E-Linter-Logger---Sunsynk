@@ -21,11 +21,10 @@ content: >-
     .st9{fill:#959595;} 
   </style>
 
-  <rect x="1%" y="65.5%" width="200" height="50" rx="7.5" ry="7.5" fill="none"
-  stroke="#959595" pointer-events="all"/> <text id="battery_left" x="23%"
-  y="74%" class="st2 st4 st8">0</text> <text x="22%" y="69%" class="st3 st7
-  st8">Battery Left to 20% SOC if no other power</text> 
-             
+  <text id="battery_left" x="56%"  y="47.3%" class="st6 st4 st8
+  left-align">0</text>  <text id="battery_left_load" x="39%" y="79%" class="st2
+  st4 st8 right-align">0</text>
+               
   <text id="inverter_grid_voltage_154" x="56%" y="63.25%" class="st3 st9
   left-align" >0</text> <text id="inverter_load_freq_192" x="56%" y="66.25%"
   class="st3 st9 left-align">0</text> <text id="inverter_out_164" x="56%"
@@ -49,7 +48,7 @@ content: >-
   132.03 197 132.03 L 205 132.03" fill="none" stroke="#ff9933" stroke-width="2"
   stroke-miterlimit="10" stroke-dasharray="2 2" pointer-events="stroke"/>
    <circle id="pv1-dot" cx="0" cy="0" r="3" fill="#ff9933">
-    <animateMotion dur="1s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+    <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
       <mpath xlink:href="#pv1-line"/>
     </animateMotion>
    </circle>
@@ -57,7 +56,7 @@ content: >-
   131.5" fill="none" stroke="#ff9933" stroke-width="2" stroke-miterlimit="10"
   stroke-dasharray="2 2" pointer-events="stroke"/>
    <circle id="pv2-dot" cx="0" cy="0" r="3" fill="#ff9933">
-    <animateMotion dur="1s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+    <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
       <mpath xlink:href="#pv2-line"/>
     </animateMotion>
    </circle>
@@ -67,12 +66,12 @@ content: >-
   stroke="#f3b1c9" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2
   2" pointer-events="stroke"/> <circle id="power-dot-charge" cx="0" cy="0" r="3"
   fill="transparent">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#bat-line"/>
    </animateMotion>
   </circle> <circle id="power-dot-discharge" cx="0" cy="0" r="3"
   fill="transparent">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#bat-line"/>
    </animateMotion> </circle>
   <image x="213.5" y="179.5" width="50.45" height="80"
@@ -83,21 +82,21 @@ content: >-
   239 148" fill="none" stroke="#ff9933" stroke-width="2" stroke-miterlimit="10"
   stroke-dasharray="2 2" pointer-events="stroke"/> <circle id="so-dot" cx="0"
   cy="0" r="3" fill="#ff9933">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#so-line"/>
    </animateMotion>
   </circle> <path id="grid-line" d="M 173 218.25 L 214 218" fill="none"
   stroke="#558fc1" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2
   2" pointer-events="stroke"/> <circle id="grid-dot" cx="0" cy="0" r="3"
   fill="#558fc1">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#grid-line"/>
    </animateMotion>
   </circle> <path id="grid-line1" d="M 103 218.25 L 64.5 218.25" fill="none"
   stroke="#558fc1" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2
   2" pointer-events="stroke"/> <circle id="grid-dot1" cx="0" cy="0" r="3"
   fill="#558fc1">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#grid-line1"/>
    </animateMotion>
   </circle> <rect x="103" y="203.5" width="70" height="29.5" rx="4.42" ry="4.42"
@@ -105,14 +104,14 @@ content: >-
   304 218.5 L 264.7 218.48" fill="none" stroke="#5fb5ab" stroke-width="2"
   stroke-miterlimit="10" stroke-dasharray="2 2" pointer-events="stroke"/>
   <circle id="es-dot" cx="0" cy="0" r="3" fill="#5fb5ab">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#es-line"/>
    </animateMotion>
   </circle> <path id="es-line1" d="M 374 218.5 L 402.38 218.52" fill="none"
   stroke="#5fb5ab" stroke-width="2" stroke-miterlimit="10" stroke-dasharray="2
   2" pointer-events="stroke"/> <circle id="es-dot" cx="0" cy="0" r="3"
   fill="#5fb5ab">
-   <animateMotion dur="1s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+   <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
     <mpath xlink:href="#es-line1"/>
    </animateMotion>
   </circle> <rect x="304" y="203.5" width="70" height="30" rx="4.5" ry="4.5"
@@ -228,12 +227,12 @@ bindings:
     selector: '#fault'
     type: fill
   - bind: >-
-      return hass.states["binary_sensor.grid_connected_status"].state == "off" ?
-      "red" : "transparent"
+      return hass.states["sensor.grid_connected_status"].state === "off" ? 
+      "red" :  "transparent"
     selector: '#grid'
     type: fill
   - bind: >-
-      return hass.states["binary_sensor.grid_connected_status"].state == "on" ?
+      return hass.states["sensor.grid_connected_status"].state === "on" ?
       "green" : "transparent"
     selector: '#grid'
     type: fill
@@ -297,4 +296,7 @@ bindings:
     type: opacity
   - bind: return hass.states["sensor.sunsynk_battery_depletion"].state
     selector: '#battery_left'
+    type: html
+  - bind: return hass.states["sensor.sunsynk_battery_depletion_load"].state
+    selector: '#battery_left_load'
     type: html

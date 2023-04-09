@@ -289,3 +289,7 @@ template:
       - name: "Sunsynk Battery Depletion"
         state: 0
         unique_id: "sensor.sunsynk_battery_depletion"
+  - sensor: 
+      - name: "Sunsynk Battery Depletion Load"
+        state: 0
+        unique_id: "sensor.sunsynk_battery_depletion_load"

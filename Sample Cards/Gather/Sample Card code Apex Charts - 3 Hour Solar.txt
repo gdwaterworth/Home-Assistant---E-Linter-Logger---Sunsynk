@@ -18,8 +18,8 @@ header:
   show_states: true
   colorize_states: true
 all_series_config:
-  stroke_width: 1.5
-  opacity: 0.3
+  stroke_width: 3
+  opacity: 0.5
   group_by:
     func: avg
     duration: 30sec
