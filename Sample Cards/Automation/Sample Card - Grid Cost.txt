@@ -1,0 +1,41 @@
+type: custom:apexcharts-card
+graph_span: 1 month
+yaxis:
+  - id: first
+    decimals: 0
+    min: 15
+span:
+  end: day
+header:
+  show: true
+  title: Grid Cost
+  show_states: true
+  colorize_states: true
+all_series_config:
+  stroke_width: 6
+  opacity: 3
+  group_by:
+    func: diff
+    duration: 1day
+  show:
+    legend_value: false
+experimental:
+  color_threshold: true
+series:
+  - entity: sensor.sunsynk_grid_cost
+    type: line
+    name: Grid Cost
+    statistics:
+      type: sum
+      align: middle
+    color_threshold:
+      - value: 45
+        color: steelblue
+      - value: 10
+        color: midnightblue
+      - value: 50
+        color: yellow
+      - value: 55
+        color: orangered
+      - value: 70
+        color: red

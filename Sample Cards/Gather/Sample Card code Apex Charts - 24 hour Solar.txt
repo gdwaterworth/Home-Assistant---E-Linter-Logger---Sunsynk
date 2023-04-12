@@ -4,8 +4,10 @@ yaxis:
   - id: first
     align_to: 1000
     decimals: 0
+    max: 7000
+    min: -5000
     apex_config:
-      tickAmount: 5
+      tickAmount: 12
   - id: second
     min: 0
     max: 100
@@ -20,7 +22,7 @@ header:
   colorize_states: true
 all_series_config:
   stroke_width: 1.5
-  opacity: 0.3
+  opacity: 0.7
   group_by:
     func: avg
     duration: 10min
@@ -48,10 +50,11 @@ series:
   - entity: sensor.sunsynk_battery_power
     yaxis_id: first
     type: line
-    opacity: 0.3
+    opacity: 0.5
     name: Battery
   - entity: sensor.sunsynk_battery_soc
     type: line
-    opacity: 0.5
+    opacity: 1
+    stroke_width: 3
     yaxis_id: second
     name: Soc

@@ -251,7 +251,7 @@
             [
                 "539a99f6c7f7d9c3",
                 "f79c2dc4aeb080f0",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -340,7 +340,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -404,7 +404,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -468,7 +468,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -532,7 +532,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -596,7 +596,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -660,7 +660,7 @@
         "wires": [
             [
                 "539a99f6c7f7d9c3",
-                "3d33801b9e6abdb8"
+                "425a72a811c00bdb"
             ]
         ]
     },
@@ -907,7 +907,7 @@
         "type": "function",
         "z": "8058a44447c9337f",
         "name": "Create Request for Setting Invertor Settings - cap3",
-        "func": "var sn = global.get(\"SS.Invertor1sn\");\nvar currcap3 = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \n\n//error checking\nif (ErrorCk.includes(sn)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(currcap3)) { node.status(\"Undefined\"); return null }\nmsg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.set\");\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn, \"cap3\": msg.payload }\nnode.status(\"Action Sent cap3 - \" + msg.payload.cap2);\nreturn msg;",
+        "func": "var sn = global.get(\"SS.Invertor1sn\");\nvar currcap3 = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_settings\\'].attributes.cap3');\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \n\n//error checking\nif (ErrorCk.includes(sn)) { node.status(\"Undefined sn\"); return null }\nif (ErrorCk.includes(currcap3)) { node.status(\"Undefined cap3\"); return null }\nmsg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.set\");\n//msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\nmsg.payload = { \"sn\": sn, \"cap3\": msg.payload }\nnode.status(\"Action Sent cap3 - \" + msg.payload.cap3);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -987,7 +987,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 500,
+        "x": 680,
         "y": 840,
         "wires": [
             [
@@ -1002,9 +1002,65 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_battery_depletion",
         "name": "Battery Depletion Time",
-        "x": 780,
+        "x": 1100,
         "y": 840,
         "wires": []
+    },
+    {
+        "id": "2f1bef6cc37e91b6",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Calculate Time Left Till 20% Current Battery Load",
+        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = global.get(\"SunSynkDebug\");\nvar totalw = 3500 * 3; //total wattage of batteries\nvar socmin = 20; // Min Soc Value to Use for Calculations \nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"somin:\" + socmin + \" totalw:\" + totalw ) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd   = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else \n{\n  var startdate = new Date(estatus);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else\n{\n  var startdate = new Date(loggerupd);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") {} else\n{ node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \"+ loggerstat ); return null; } \n\n// Custom variables\nvar soc = parseFloat(global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_battery\\'].attributes.soc'));\nvar load = parseFloat(global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_battery\\'].attributes.power'));\nif (debugme === 1) { node.error(\"soc:\" + soc + \" load:\" + load) }\n\n\n// Error Checking\nif (ErrorCk.includes(soc))       { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(load))       { node.status(\"Undefined/Error\"); return null }\n\nvar tminutes = (secondstemp / 60);\nvar thours = (secondstemp / (60 * 60));\nvar tthours = \"\";\nvar ttime = \"\";\n\nif ( soc < 20 ) { ttime = \"Battery Below \" + socmin +\"%\" } else \nif ( load < 0 ) { ttime = \" \"} else\nif ( load == 0) { ttime = \" \" } else\nif ( (load > 0) || ( load < 30 )) { ttime = \" \" } else\n{\n var secondstemp = 0;\n var soctemp = 0;\n secondstemp = ((((soc - socmin) / 100 * totalw) / ( load )) * 60 * 60);\n current = current + \" secondstemp:\" + secondstemp;\n var thours = parseInt((secondstemp / (60*60)));\n var tminutes = (secondstemp / 60) - (thours*60);\n var ttime =\"\";\n  if ((tminutes <= 1) && ( thours === 0)) \n { \n   ttime = \" Less than 1 Minute \" \n } else if ( thours === 0 )\n { \n   ttime = \" 0:\" + tminutes.toFixed(0) + \" Left\" ;\n } else \n {\n   ttime = thours + \":\" + tminutes.toFixed(0) + \" Left\";\n }\n}\n\n// Setup status \nnode.status(ttime);\nmsg.payload = {};\nmsg.payload.state = ttime; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 900,
+        "wires": [
+            [
+                "a0449fa93a9eb188"
+            ]
+        ]
+    },
+    {
+        "id": "a0449fa93a9eb188",
+        "type": "hass-post",
+        "z": "8058a44447c9337f",
+        "endpoint": "bc1c0f273da7bbae",
+        "entityid": "sensor.sunsynk_battery_depletion_load",
+        "name": "Battery Depletion Time Current Battery Load",
+        "x": 1170,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "425a72a811c00bdb",
+        "type": "delay",
+        "z": "8058a44447c9337f",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "60",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "5",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 400,
+        "y": 840,
+        "wires": [
+            [
+                "3d33801b9e6abdb8",
+                "2f1bef6cc37e91b6"
+            ]
+        ]
     },
     {
         "id": "49784c25.476704",

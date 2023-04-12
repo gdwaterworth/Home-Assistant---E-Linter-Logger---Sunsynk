@@ -1,0 +1,16 @@
+#####
+#####
+##### Put These After the Sensor Templtes
+##### Used By Automation Flows
+#####
+input_boolean:
+  enable_ups_manual_override:
+    initial: false
+  enable_sunsynk_auto_mode:
+    initial: true
+  enable_auto_outside_lights:
+    initial: true
+  enable_auto_gary_office:
+    initial: true
+  enable_electric_weather_override:
+    initial: true
