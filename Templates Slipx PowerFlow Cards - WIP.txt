@@ -90,3 +90,22 @@
 #     -name: "sunsynk_essential_load"
 #       state: >
 #        {{ (states('sensor.inverter_output_power') |float(0)  - (states('sensor.aux_output_power') |float(0) - states('sensor.grid_inverter_load') |float(0) )) | round(0)}}
+
+          {{state_attr('sensor.sunsynk_grid','gridonline')}}
+  - sensor:
+      - name: "battery_discharge_day"
+        state: >
+          {{state_attr('sensor.sunsynk_battery','etodayDischg')}}
+  - sensor:
+      - name: "battery_charge_day"
+        state: >
+          {{state_attr('sensor.sunsynk_battery','etodayChg')}}
+  - sensor:
+      - name: "grid_import_day_buy"
+        state: >
+          {{state_attr('sensor.sunsynk_grid','etodayFrom')}}
+  - sensor:
+      - name: "daily_load_power_kwh"
+        state: >
+          {{state_attr('sensor.sunsynk_load','dailyUsed')}}
+
