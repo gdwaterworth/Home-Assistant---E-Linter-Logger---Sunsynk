@@ -91,7 +91,6 @@
 #       state: >
 #        {{ (states('sensor.inverter_output_power') |float(0)  - (states('sensor.aux_output_power') |float(0) - states('sensor.grid_inverter_load') |float(0) )) | round(0)}}
 
-          {{state_attr('sensor.sunsynk_grid','gridonline')}}
   - sensor:
       - name: "battery_discharge_day"
         state: >
