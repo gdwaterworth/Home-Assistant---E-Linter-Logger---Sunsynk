@@ -12,6 +12,13 @@ template:
       - name: "Sunsynk plant index"
         state: "0"
         unique_id: "sensor.sunsynk_plant_index"
+##### Select which method must be used to get the invertor list
+##### 0 - Get invertor list based on plant id ---- Should work for most people
+##### 1 - Get invertor list from account ---- Not all people will have permission to do this
+  - sensor: 
+      - name: "Sunsynk Invertor listopt"
+        state: 0
+        unique_id: "sensor.sunsynk_invertor_listopt"
 ##### Put in your Invertor Index for your 1st Invertor. 0 should work 
   - sensor: 
       - name: "Sunsynk Invertor 1 index"

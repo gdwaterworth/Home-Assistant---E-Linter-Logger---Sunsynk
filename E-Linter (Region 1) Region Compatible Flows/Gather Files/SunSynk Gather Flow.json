@@ -24,53 +24,7 @@
             [],
             [
                 "eee8ed2580ed91fb",
-                "21dae3e15cef46c9",
-                "6155d4c7e8e87975"
-            ]
-        ]
-    },
-    {
-        "id": "53ea109abab17477",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Serial Number",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 1460,
-        "y": 120,
-        "wires": [
-            [
-                "dbbf5537800aee9d"
-            ]
-        ]
-    },
-    {
-        "id": "6155d4c7e8e87975",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request Invertor List",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.invertor_list\");\nmsg.payload=\"\"\nnode.status(msg.payload);\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1160,
-        "y": 120,
-        "wires": [
-            [
-                "53ea109abab17477"
+                "21dae3e15cef46c9"
             ]
         ]
     },
@@ -1461,24 +1415,6 @@
         "wires": []
     },
     {
-        "id": "dbbf5537800aee9d",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Invertor Serial Debug",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1760,
-        "y": 120,
-        "wires": []
-    },
-    {
         "id": "17f6322225b804af",
         "type": "debug",
         "z": "fca77f132c7d5d8f",
@@ -1547,7 +1483,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Create Request PLant Invertor List",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.plantinvlist\");\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
+        "func": "var ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nmsg.headers = global.get(\"SS.Header.Bearer\");\nvar invlistopt = parseFloat(global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_invertor_listopt\\'].state'));\nif (ErrorCk.includes(invlistopt)) { node.status(\"Invertor List Option Unconfigured\"); return null; }\nif (invlistopt === 0) \n{\n   msg.url = global.get(\"SS.url.plantinvlist\");\n   node.status(\"Plant Invertor List Used\");\n} else if (invlistopt === 1) \n{\n    msg.url = global.get(\"SS.url.invertor_list\");\n    node.status(\"Account Invertor List Used\");\n} else\n{\n    node.status(\"Invalid List Invertor Option\");\n    return null;\n}\nmsg.payload = \"\"\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
