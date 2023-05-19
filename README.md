@@ -1,4 +1,8 @@
 # Home-Assistant---SunSynk-Logger
+Video by Sc00bs to Assist with Configuration 
+
+https://youtu.be/VxhmD2GAJv4
+
 Home Assistant - SunSynk Logger 
 
 
