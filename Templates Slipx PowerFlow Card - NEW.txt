@@ -18,31 +18,31 @@ template:
   - sensor:
       - name: "Sunsynk Daily PV 108"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'etoday')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'etoday')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV1 186"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pv1')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_input', 'pv1')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk PV2 187"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pv2')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_input', 'pv2')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk PV1 Voltage 109"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_0_vpv')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'pvIV_0_vpv')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV1 Current 110"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_0_ipv')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'pvIV_0_ipv')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV2 Voltage 111"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_1_vpv')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'pvIV_1_vpv')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV2 Current 112"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_2_ipv')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'pvIV_2_ipv')|float(0)|round(1)}}
 		  
 ####Battery Sensors
 ####batchargeday_70: sensor.sunsynk_battery_daily_charge_70
@@ -55,27 +55,27 @@ template:
   - sensor:
       - name: "Sunsynk Battery Daily Charge 70"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'etodayChg')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_battery', 'etodayChg')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Battery Daily Discharge 71"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'etodayDischg')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_battery', 'etodayDischg')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Battery Voltage 183"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'voltage')|float}}
+          {{state_attr('sensor.sunsynk_battery', 'voltage')|float(0)}}
   - sensor:
       - name: "Sunsynk Battery Soc 184"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'soc')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_battery', 'soc')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk Battery Power 190"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'power')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_battery', 'power')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk Battery Current 191"
         state: >
-          {{state_attr('sensor.sunsynk_battery', 'current')|float}}
+          {{state_attr('sensor.sunsynk_battery', 'current')|float(0)}}
 
 ####Grid Sensors
 ####grid_buy_day_76: sensor.sunsynk_daily_grid_buy_76
@@ -86,19 +86,19 @@ template:
   - sensor:
       - name: "Sunsynk Grid Power 169"
         state: >
-          {{state_attr('sensor.sunsynk_grid', 'power')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_grid', 'power')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk Grid Power 172"
         state: >
-          {{state_attr('sensor.sunsynk_grid', 'limiterTotalPower')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_grid', 'limiterTotalPower')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk Daily Grid Buy 76"
         state: >
-          {{state_attr('sensor.sunsynk_grid', 'etodayFrom')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_grid', 'etodayFrom')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Daily Grid Sell 77"
         state: >
-          {{state_attr('sensor.sunsynk_grid', 'etodayTo')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_grid', 'etodayTo')|float(0)|round(1)}}
 		  
 ####Load Sensors
 ####loadday_84: sensor.sunsynk_daily_load_84
@@ -108,15 +108,15 @@ template:
   - sensor:
       - name: "Sunsynk Daily Load 84"
         state: >
-          {{state_attr('sensor.sunsynk_load', 'dailyUsed')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_load', 'dailyUsed')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Load Power Ess"
         state: >
-          {{state_attr('sensor.sunsynk_load', 'totalpower')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_load', 'totalpower')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk Output Aux Power 166"
         state: >
-          {{state_attr('sensor.sunsynk_output', 'poweraux')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_output', 'poweraux')|float(0)|round(0)}}
 		  
 ####Inverter Sensors
 ####use_timer_248: sensor.current_use_timer_248
@@ -147,19 +147,19 @@ template:
   - sensor:
       - name: "Sunsynk Output Voltage 154"
         state: >
-          {{state_attr('sensor.sunsynk_output', 'vip_0_volt')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_output', 'vip_0_volt')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Output current 164"
         state: >
-          {{state_attr('sensor.sunsynk_output', 'vip_0_current')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_output', 'vip_0_current')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Output Frequency 192"
         state: >
-          {{state_attr('sensor.sunsynk_output', 'fac')|float|round(1)}}
+          {{state_attr('sensor.sunsynk_output', 'fac')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk Output Total Power 175"
         state: >
-          {{state_attr('sensor.sunsynk_output', 'totalpower')|float|round(0)}}
+          {{state_attr('sensor.sunsynk_output', 'totalpower')|float(0)|round(0)}}
   - sensor:
       - name: "SunSynk Inverter Status 59"
         state: >
