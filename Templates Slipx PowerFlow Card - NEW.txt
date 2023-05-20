@@ -43,7 +43,7 @@ template:
       - name: "Sunsynk PV2 Current 112"
         state: >
           {{state_attr('sensor.sunsynk_input', 'pvIV_2_ipv')|float(0)|round(1)}}
-		  
+
 ####Battery Sensors
 ####batchargeday_70: sensor.sunsynk_battery_daily_charge_70
 ####batdischargeday_71: sensor.sunsynk_battery_daily_discharge_71
@@ -99,7 +99,7 @@ template:
       - name: "Sunsynk Daily Grid Sell 77"
         state: >
           {{state_attr('sensor.sunsynk_grid', 'etodayTo')|float(0)|round(1)}}
-		  
+
 ####Load Sensors
 ####loadday_84: sensor.sunsynk_daily_load_84
 ####essential_power: sensor.sunsynk_load_power_ess
@@ -117,7 +117,7 @@ template:
       - name: "Sunsynk Output Aux Power 166"
         state: >
           {{state_attr('sensor.sunsynk_output', 'poweraux')|float(0)|round(0)}}
-		  
+
 ####Inverter Sensors
 ####use_timer_248: sensor.current_use_timer_248
 ####priority_load_243: sensor.energy_mode_243
