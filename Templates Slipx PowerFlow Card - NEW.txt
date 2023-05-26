@@ -139,7 +139,7 @@ template:
   - sensor:
       - name: "Energy Mode 243"
         state: >
-          {% if state_attr('sensor.sunsynk_settings', 'energyMode:') == 1 %}
+          {% if (state_attr('sensor.sunsynk_settings', 'energyMode') | float) == 1 %}
             on
           {% else %}
             off
