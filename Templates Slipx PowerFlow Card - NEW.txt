@@ -42,7 +42,7 @@ template:
   - sensor:
       - name: "Sunsynk PV2 Current 112"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_2_ipv')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_input', 'pvIV_1_ipv')|float(0)|round(1)}}
 
 ####Battery Sensors
 ####batchargeday_70: sensor.sunsynk_battery_daily_charge_70
@@ -131,7 +131,7 @@ template:
   - sensor:
       - name: "Current Use Timer 248"
         state: >
-          {% if state_attr('sensor.sunsynk_settings', 'peakAndVallery') == 1 %}
+          {% if (state_attr('sensor.sunsynk_settings', 'peakAndVallery') | float) == 1 %}
             on
           {% else %}
             off
@@ -139,7 +139,7 @@ template:
   - sensor:
       - name: "Energy Mode 243"
         state: >
-          {% if state_attr('sensor.sunsynk_settings', 'energyMode:') == 1 %}
+          {% if (state_attr('sensor.sunsynk_settings', 'energyMode') | float) == 1 %}
             on
           {% else %}
             off
