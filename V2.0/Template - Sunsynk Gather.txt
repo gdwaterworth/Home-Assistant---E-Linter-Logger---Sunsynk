@@ -1,11 +1,8 @@
-##### Put in your SunSynk Login Here 
-  - sensor:
-      - name: "SunSynk Login"
-        state: "xxx@xxx.com"
-##### Put in your SunSynk Password Here 
-  - sensor:
-      - name: "SunSynk password new"
-        state: "xxx"
+#####
+#####
+##### Setup Parameters
+#####
+#####
 ############################################
 ##### Main Config Sensor
 ############################################
@@ -14,44 +11,27 @@
         state: "Config Sensor"
         unique_id: "sensor.sunsynk_config"
         attributes:
+          login: "xxx@xxx.com"
+          password: "xxx"
           region: 1
           plant_index: 0
           invertor_list_opt: 0
           invertor_1_index: 0
           invertor_2_index: "DONOTEDIT"
           return_items: 10
-##### Put in your Plant Index for your Plant. 0 should work 
-  - sensor: 
-      - name: "Sunsynk plant index"
-        state: "0"
-        unique_id: "sensor.sunsynk_plant_index"
+          sn_data: 2106054422
+          unit_cost: 2.37
+##### plant_index : Put in your Plant Index for your Plant. 0 should work 
+#####
+##### invertor_list_opt:
 ##### Select which method must be used to get the invertor list
 ##### 0 - Get invertor list based on plant id ---- Should work for most people
 ##### 1 - Get invertor list from account ---- Not all people will have permission to do this
-  - sensor: 
-      - name: "Sunsynk Invertor listopt"
-        state: 0
-        unique_id: "sensor.sunsynk_invertor_listopt"
-##### Put in your Invertor Index for your 1st Invertor. 0 should work 
-  - sensor: 
-      - name: "Sunsynk Invertor 1 index"
-        state: "0"
-        unique_id: "sensor.sunsynk_invertor_1_index"
-##### Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
-  - sensor: 
-      - name: "Sunsynk Invertor 2 index"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_invertor_2_index"
-##### Number of Items to return in queries. Default 10
-  - sensor: 
-      - name: "Sunsynk Return Items"
-        state: 10
-        unique_id: "sensor.sunsynk_return_items"
-##### Source for Invertor List - P;ant based  
-  - sensor: 
-      - name: "Sunsynk Inverter URL"
-        state: true
-        unique_id: "sensor.sunsynk_inverter_url"
+#####
+##### invertor_1_index: Put in your Invertor Index for your 1st Invertor. 0 should work 
+##### invertor_2_index: Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
+##### return_items:     Number of Items to return in queries. Default 10
+##### sn_data:          Inverter SN to use for single data values
 #####
 #####
 ##### DO NOT EDIT ANYTHING UNDER HERE
@@ -66,6 +46,22 @@
       - name: "Sunsynk Usable"
         state: ""
         unique_id: "sensor.sunsynk_usable"
+  - sensor: 
+      - name: "Sunsynk Events 1"
+        state: ""
+        unique_id: "sensor.sunsynk_events_1"
+  - sensor: 
+      - name: "Sunsynk Events 2"
+        state: ""
+        unique_id: "sensor.sunsynk_events_2"
+  - sensor: 
+      - name: "Sunsynk Events 3"
+        state: ""
+        unique_id: "sensor.sunsynk_events_3"
+  - sensor: 
+      - name: "Sunsynk Notifications"
+        state: ""
+        unique_id: "sensor.sunsynk_notifications"
 ##### Plant Information
   - sensor: 
       - name: "Sunsynk Invertor List"
@@ -75,10 +71,6 @@
       - name: "Sunsynk Plant List"
         state: "DONOTEDIT"
         unique_id: "sensor.sunsynk_plant_list"
-  - sensor: 
-      - name: "Sunsynk Notifications"
-        state: ""
-        unique_id: "sensor.sunsynk_notifications"
 ##### Core Sensors Invertor 1
   - sensor: 
       - name: "Sunsynk Flow"
@@ -112,18 +104,6 @@
       - name: "Sunsynk Settings"
         state: ""
         unique_id: "sensor.sunsynk_settings"
-  - sensor: 
-      - name: "Sunsynk Events 1"
-        state: ""
-        unique_id: "sensor.sunsynk_events_1"
-  - sensor: 
-      - name: "Sunsynk Events 2"
-        state: ""
-        unique_id: "sensor.sunsynk_events_2"
-  - sensor: 
-      - name: "Sunsynk Events 3"
-        state: ""
-        unique_id: "sensor.sunsynk_events_3"
   - sensor: 
       - name: "Sunsynk Temp Data"
         state: ""
@@ -162,26 +142,9 @@
         state: ""
         unique_id: "sensor.sunsynk_settings_2"
   - sensor: 
-      - name: "Sunsynk Events 1 2"
-        state: ""
-        unique_id: "sensor.sunsynk_events_1_2"
-  - sensor: 
-      - name: "Sunsynk Events 2 2"
-        state: ""
-        unique_id: "sensor.sunsynk_events_2_2"
-  - sensor: 
-      - name: "Sunsynk Events 3 2"
-        state: ""
-        unique_id: "sensor.sunsynk_events_3_2"
-  - sensor: 
       - name: "Sunsynk Temp Data 2"
         state: ""
         unique_id: "sensor.sunsynk_temp_data_2"
-##### Calculated Sensors
-  - sensor: 
-      - name: "Sunsynk Consolidated"
-        state: ""
-        unique_id: "sensor.sunsynk_consolidated"        
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg"
