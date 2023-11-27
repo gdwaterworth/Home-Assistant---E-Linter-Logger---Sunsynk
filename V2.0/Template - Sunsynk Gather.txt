@@ -1,8 +1,15 @@
-#####
-#####
 ##### Setup Parameters
 #####
 #####
+#
+##### Put in your SunSynk Login Here 
+  - sensor:
+      - name: "SunSynk Login"
+        state: "gdwaterworth@gmail.com"
+##### Put in your SunSynk Password Here 
+  - sensor:
+      - name: "SunSynk password new"
+        state: "quu10Kee"
 ############################################
 ##### Main Config Sensor
 ############################################
@@ -19,7 +26,7 @@
           invertor_1_index: 0
           invertor_2_index: "DONOTEDIT"
           return_items: 10
-          sn_data: 2106054422
+          sn_data: 9999999999
           unit_cost: 2.37
 ##### plant_index : Put in your Plant Index for your Plant. 0 should work 
 #####
@@ -32,7 +39,7 @@
 ##### invertor_2_index: Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
 ##### return_items:     Number of Items to return in queries. Default 10
 ##### sn_data:          Inverter SN to use for single data values
-#####
+##### unit_cost:        Power unit cost for some calculations
 #####
 ##### DO NOT EDIT ANYTHING UNDER HERE
 #####
@@ -331,4 +338,3 @@
         unique_id: "sensor.sunsynk_expected_cost"
         state: >
             {{float((600*2.37)/30)}}
-
