@@ -1,3 +1,4 @@
+#####
 ##### Sensors for Slipx Power Flow Cards
 ##### Github page : https://github.com/slipx06/Sunsynk-Home-Assistant-Power-Flow-Card
 #####
@@ -20,31 +21,31 @@
   - sensor:
       - name: "Sunsynk Daily PV 108"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'etoday')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_usable_pv', 'etoday')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV1 186"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pv1')|float(0)|round(0)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '1_power')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk PV2 187"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pv2')|float(0)|round(0)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '2_power')|float(0)|round(0)}}
   - sensor:
       - name: "Sunsynk PV1 Voltage 109"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_0_vpv')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '1_volt')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV1 Current 110"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_0_ipv')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '1_current')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV2 Voltage 111"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_1_vpv')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '2_volt')|float(0)|round(1)}}
   - sensor:
       - name: "Sunsynk PV2 Current 112"
         state: >
-          {{state_attr('sensor.sunsynk_input', 'pvIV_1_ipv')|float(0)|round(1)}}
+          {{state_attr('sensor.sunsynk_usable_pv', '2_current')|float(0)|round(1)}}
 
 ####Battery Sensors
 ####batchargeday_70: sensor.sunsynk_battery_daily_charge_70
@@ -133,7 +134,7 @@
   - sensor:
       - name: "Current Use Timer 248"
         state: >
-          {% if state_attr('sensor.sunsynk_settings', 'peakAndVallery') == 1 %}
+          {% if state_attr('sensor.sunsynk_usable_inverter', 'usetimer') == true %}
             on
           {% else %}
             off
@@ -141,7 +142,7 @@
   - sensor:
       - name: "Energy Mode 243"
         state: >
-          {% if state_attr('sensor.sunsynk_settings', 'energyMode:') == 1 %}
+          {% if state_attr('sensor.sunsynk_usable_inverter', 'energymode') == "1" %}
             on
           {% else %}
             off
