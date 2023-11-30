@@ -31,6 +31,7 @@
         "id": "e53175753e61992a",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Invertor Serial Number ( 1st Invertor )",
         "func": "var graphdate = new Date();\nfunction dateToYMD(date) {\n    var d = date.getDate();\n    var m = date.getMonth() + 1; //Month from 0 to 11\n    var y = date.getFullYear();\n    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n}\n\nif (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nvar invindex = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.invertor_1_index');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") \n{ \n    node.error(msg.payload); \n    node.status(\"Invertor 1 Index \" + invindex + \" Does not exist in return data\"); \n    return null; \n}\n\n\nif (origpayload.msg == \"Success\") {\n    global.set(\"SS.Invertor1sn\",origpayload.data.infos[invindex].sn);\n    if (ErrorCk.includes(global.get(\"SS.Invertor1sn\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) {\n        node.error(\"Inv 1 SN\"); node.status(\"Inv 1 SN\");\n        global.set(\"SS.url.i1.output\", \"\");\n        global.set(\"SS.url.i1.battery\", \"\");\n        global.set(\"SS.url.i1.input\", \"\");\n        global.set(\"SS.url.i1.grid\", \"\");\n        global.set(\"SS.url.i1.load\", \"\");\n        global.set(\"SS.url.i1.settings\", \"\");\n        global.set(\"SS.url.i1.acdc\", \"\");\n        global.set(\"SS.url.i1.set\", \"\");\n        return null;\n    } else {\n        global.set(\"SS.url.i1.output\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/realtime/output\");\n        global.set(\"SS.url.i1.battery\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/battery/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\") + \"&lan\");\n        global.set(\"SS.url.i1.input\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/realtime/input\");\n        global.set(\"SS.url.i1.grid\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/grid/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\"));\n        global.set(\"SS.url.i1.load\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/load/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\"));\n        global.set(\"SS.url.i1.settings\", global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + global.get(\"SS.Invertor1sn\") + \"/read\");\n        global.set(\"SS.url.i1.acdc\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/output/day?lan=en&date=\" + dateToYMD(graphdate) + \"&column=dc_temp,igbt_temp\");\n        global.set(\"SS.url.i1.set\", global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + global.get(\"SS.Invertor1sn\") + \"/set\");\n    }\n    msg.payload = {};\n    msg.payload.sn = origpayload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString() + \" Index:\" + invindex);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    var msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = origpayload.data.infos[invindex].sn;\n    return [msgstatus,msg];\n} else {\n    msg.payload = {};\n    global.set(\"SS.url.i1.output\", \"\");\n    global.set(\"SS.url.i1.battery\", \"\");\n    global.set(\"SS.url.i1.input\", \"\");\n    global.set(\"SS.url.i1.grid\", \"\");\n    global.set(\"SS.url.i1.load\", \"\");\n    global.set(\"SS.url.i1.settings\", \"\");\n    global.set(\"SS.url.i1.acdc\", \"\");\n    global.set(\"SS.url.i1.set\", \"\");\n    node.status(origpayload.msg + \" Index:\" + invindex)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 2,
@@ -39,13 +40,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 560,
+        "x": 670,
+        "y": 1400,
         "wires": [
             [],
             [
-                "418a96f5f1b651c9",
-                "db81ff1cdfd1f449"
+                "418a96f5f1b651c9"
             ]
         ]
     },
@@ -53,6 +53,7 @@
         "id": "f51f0fbe061d9cd7",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting battery Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.battery\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -60,8 +61,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 860,
+        "x": 490,
+        "y": 1660,
         "wires": [
             [
                 "e522b35a8a127bb6"
@@ -72,6 +73,7 @@
         "id": "e522b35a8a127bb6",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Battery Info",
         "method": "GET",
         "ret": "obj",
@@ -84,12 +86,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 850,
-        "y": 860,
+        "x": 810,
+        "y": 1660,
         "wires": [
             [
-                "84cc88872dfbd9bb",
-                "9f89a4a9a2258261"
+                "84cc88872dfbd9bb"
             ]
         ]
     },
@@ -97,6 +98,7 @@
         "id": "8840cdead8881df7",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting Invertor Settings",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.settings\");\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -104,8 +106,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
-        "y": 1100,
+        "x": 510,
+        "y": 1900,
         "wires": [
             [
                 "1c1aed6a936a4fc2"
@@ -116,6 +118,7 @@
         "id": "1c1aed6a936a4fc2",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Settings",
         "method": "GET",
         "ret": "obj",
@@ -128,12 +131,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 1100,
+        "x": 800,
+        "y": 1900,
         "wires": [
             [
-                "a07a57f4173a145d",
-                "9f89a4a9a2258261"
+                "a07a57f4173a145d"
             ]
         ]
     },
@@ -141,6 +143,7 @@
         "id": "5cbff0fad88c676e",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting Grid Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.grid\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -148,8 +151,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 980,
+        "x": 490,
+        "y": 1780,
         "wires": [
             [
                 "0dbcf760fe6ec990"
@@ -160,6 +163,7 @@
         "id": "0dbcf760fe6ec990",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Grid Info",
         "method": "GET",
         "ret": "obj",
@@ -172,12 +176,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 980,
+        "x": 800,
+        "y": 1780,
         "wires": [
             [
-                "82600efe878fe587",
-                "9f89a4a9a2258261"
+                "82600efe878fe587"
             ]
         ]
     },
@@ -185,6 +188,7 @@
         "id": "d985fcb00600c3b9",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting Load Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.load\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -192,8 +196,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 530,
-        "y": 1040,
+        "x": 490,
+        "y": 1840,
         "wires": [
             [
                 "cd1e22edbc0da295"
@@ -204,6 +208,7 @@
         "id": "cd1e22edbc0da295",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Load Info",
         "method": "GET",
         "ret": "obj",
@@ -216,12 +221,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 1040,
+        "x": 800,
+        "y": 1840,
         "wires": [
             [
-                "70ec719d14f92732",
-                "9f89a4a9a2258261"
+                "70ec719d14f92732"
             ]
         ]
     },
@@ -229,6 +233,7 @@
         "id": "db5cc86a829e8bca",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting Input",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.input\");\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -236,8 +241,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
-        "y": 920,
+        "x": 470,
+        "y": 1720,
         "wires": [
             [
                 "caf5b68ee44cdaca"
@@ -248,6 +253,7 @@
         "id": "caf5b68ee44cdaca",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Input",
         "method": "GET",
         "ret": "obj",
@@ -260,12 +266,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 830,
-        "y": 920,
+        "x": 790,
+        "y": 1720,
         "wires": [
             [
-                "095649a2b02e4ec2",
-                "9f89a4a9a2258261"
+                "095649a2b02e4ec2"
             ]
         ]
     },
@@ -273,6 +278,7 @@
         "id": "ad31dd1db4441737",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request for Getting Output",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.output\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -280,8 +286,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 520,
-        "y": 800,
+        "x": 480,
+        "y": 1600,
         "wires": [
             [
                 "45d5eef4e801a974"
@@ -292,6 +298,7 @@
         "id": "45d5eef4e801a974",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Invertor Output",
         "method": "GET",
         "ret": "obj",
@@ -304,12 +311,11 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 830,
-        "y": 800,
+        "x": 790,
+        "y": 1600,
         "wires": [
             [
-                "70e66830d0ab0b90",
-                "9f89a4a9a2258261"
+                "70e66830d0ab0b90"
             ]
         ]
     },
@@ -317,6 +323,7 @@
         "id": "a07a57f4173a145d",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Invert Settings",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
@@ -324,8 +331,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 1100,
+        "x": 1040,
+        "y": 1900,
         "wires": [
             [
                 "127a0b93cf41d353"
@@ -367,13 +374,16 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 860,
-        "y": 280,
+        "x": 180,
+        "y": 500,
         "wires": [
             [
-                "6df5b52d7b770df4",
-                "a00ebeb6d0b61bba",
-                "24adcf4d1d651c2c"
+                "cd89913c0ad409c1",
+                "a3a54a683f15572c",
+                "01cb8514858f13f8",
+                "b14537970115dc42",
+                "2d8860a1221cca90",
+                "bd7124fd85316bc5"
             ]
         ]
     },
@@ -381,6 +391,7 @@
         "id": "6df5b52d7b770df4",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Plant ID No",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n//sensor.sunsynk_plant_index\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nvar plantindex = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.plant_index');\nif (ErrorCk.includes(plantindex)) { node.status(\"Plant Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[plantindex] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"Plant Index \" + plantindex + \" Does not exist in return data\");\n    return null;\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    global.set(\"SS.Plantid\", msg.payload.data.infos[plantindex].id);\n    // Setup variables\n    var items = global.get(\"SS.ReturnItems\");\n    if (ErrorCk.includes(items)) { let e = \"No Items Set\"; node.error(e); node.status(e); return null };\n    if (ErrorCk.includes(global.get(\"SS.Plantid\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) {\n        node.error(\"Plant ID\"); node.status(\"Pant ID\");\n        global.set(\"SS.url.flow\", \"\");\n        global.set(\"SS.url.plantinvlist\", \"\");\n        return null;\n    } else {\n        global.set(\"SS.url.flow\", global.get(\"SS.url.hostname\") + \"/api/v1/plant/energy/\" + global.get(\"SS.Plantid\") + \"/flow\");\n        global.set(\"SS.url.plantinvlist\", global.get(\"SS.url.hostname\") + \"/api/v1/plant/\" + global.get(\"SS.Plantid\") + \"/inverters?page=1&limit=\" + items +\"&status=-1&type=-2\");\n    }\n    msg.payload = msg.payload.data.infos[plantindex].id;\n    node.status(\"Success\" + \" Index:\" + plantindex)\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    var msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = msg.payload;\n    return [msg, msgstatus];\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg + \" Index:\" + plantindex)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 2,
@@ -389,14 +400,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1110,
-        "y": 320,
+        "x": 70,
+        "y": 1360,
         "wires": [
+            [],
             [
-                "90cdfc715504431c"
-            ],
-            [
-                "c3c8000fc9172df8",
                 "2acb6d253c978c52"
             ]
         ]
@@ -405,6 +413,7 @@
         "id": "84cc88872dfbd9bb",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Battery Data",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = parseFloat(msg.payload.data.soc);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.soc = parseFloat(msg.payload.data.soc);\n    msg.payload.attributes.capacity = parseFloat(msg.payload.data.capacity);\n    msg.payload.attributes.correctcapacity = parseFloat(msg.payload.data.correctCap);\n    msg.payload.attributes.power = parseFloat(msg.payload.data.power);\n    msg.payload.attributes.etotalchg = parseFloat(msg.payload.data.etotalChg);\n    msg.payload.attributes.etotaldischg = parseFloat(msg.payload.data.etotalDischg);\n    msg.payload.attributes.temp = parseFloat(msg.payload.data.temp);\n    msg.payload.attributes.current = parseFloat(msg.payload.data.current);\n    msg.payload.attributes.voltage = parseFloat(msg.payload.data.voltage);\n    msg.payload.attributes.status = parseFloat(msg.payload.data.status);    \n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
@@ -412,8 +421,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1100,
-        "y": 860,
+        "x": 1060,
+        "y": 1660,
         "wires": [
             [
                 "3e9feb5ff04bc328"
@@ -424,6 +433,7 @@
         "id": "095649a2b02e4ec2",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Input Data",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = parseFloat(msg.payload.data.pvIV[0].ppv) + parseFloat(msg.payload.data.pvIV[1].ppv);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.pv = parseFloat(msg.payload.data.pvIV[0].ppv) + parseFloat(msg.payload.data.pvIV[1].ppv);\n    msg.payload.attributes.pv1 = parseFloat(msg.payload.data.pvIV[0].ppv) ;\n    msg.payload.attributes.pv1_volt = parseFloat(msg.payload.data.pvIV[0].vpv);\n    msg.payload.attributes.pv1_current = parseFloat(msg.payload.data.pvIV[0].ipv);\n    msg.payload.attributes.pv2 = parseFloat(msg.payload.data.pvIV[1].ppv);\n    msg.payload.attributes.pv2_volt = parseFloat(msg.payload.data.pvIV[1].vpv);\n    msg.payload.attributes.pv2_current = parseFloat(msg.payload.data.pvIV[1].ipv);\n    msg.payload.attributes.pvtotal = parseFloat(msg.payload.data.etotal);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n\n",
         "outputs": 1,
@@ -431,8 +441,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1090,
-        "y": 920,
+        "x": 1050,
+        "y": 1720,
         "wires": [
             [
                 "9cb3e2a71092678d"
@@ -443,6 +453,7 @@
         "id": "82600efe878fe587",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Grid",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = msg.payload.data.vip[0].current;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.total = parseFloat(msg.payload.data.etotalFrom);\n    msg.payload.attributes.volt = msg.payload.data.vip[0].volt;\n    msg.payload.attributes.current = msg.payload.data.vip[0].current;\n    var gridonline = false;\n    if (parseFloat(msg.payload.data.vip[0].volt) < 200) { var gridonline = false } else { var gridonline = true }\n    msg.payload.attributes.gridonline = gridonline ;\n    msg.payload.attributes.power = parseFloat(msg.payload.data.pac);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
@@ -451,8 +462,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 980,
+        "x": 1040,
+        "y": 1780,
         "wires": [
             [
                 "2eb2b3cada070416"
@@ -463,6 +474,7 @@
         "id": "70ec719d14f92732",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Load",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = msg.payload.data.totalPower;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.total = parseFloat(msg.payload.data.totalUsed);\n    msg.payload.attributes.volt = msg.payload.data.vip[0].volt;\n    msg.payload.attributes.power = msg.payload.data.totalPower;\n    msg.payload.attributes.totalpower = msg.payload.data.totalPower;\n    var tempcurrent = parseFloat(msg.payload.attributes.power) / parseFloat(msg.payload.attributes.volt);\n    msg.payload.attributes.calc_current = tempcurrent.toFixed(2);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg ;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
         "outputs": 1,
@@ -470,8 +482,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 1040,
+        "x": 1040,
+        "y": 1840,
         "wires": [
             [
                 "31dd21860cbc8c4c"
@@ -482,6 +494,7 @@
         "id": "70e66830d0ab0b90",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Invertor Output",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    msg.payload.attributes.poweressentials = parseFloat(msg.payload.data.pac);\n    msg.payload.attributes.totalpower = parseFloat(msg.payload.data.pInv) + parseFloat(msg.payload.data.pac);\n    msg.payload.attributes.poweraux = parseFloat(msg.payload.data.pInv);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg ;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
         "outputs": 1,
@@ -489,8 +502,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1110,
-        "y": 800,
+        "x": 1070,
+        "y": 1600,
         "wires": [
             [
                 "c4c01331b7a03f18"
@@ -501,6 +514,7 @@
         "id": "90673d2b7f54dc55",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Invertor List",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {};\n    msg.payload.attributes = {};\n    scroll_all_items(origpayload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = origpayload.msg;\n    node.status(origpayload.msg)\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
         "outputs": 1,
@@ -508,8 +522,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1380,
-        "y": 420,
+        "x": 980,
+        "y": 1340,
         "wires": [
             [
                 "c9592b52b355aebe"
@@ -531,8 +545,7 @@
         "y": 160,
         "wires": [
             [
-                "7c8b53ad04cf5062",
-                "17f6322225b804af"
+                "7c8b53ad04cf5062"
             ]
         ]
     },
@@ -575,8 +588,7 @@
         "y": 160,
         "wires": [
             [
-                "8ca6ebb9883a33b8",
-                "17f6322225b804af"
+                "8ca6ebb9883a33b8"
             ]
         ]
     },
@@ -584,77 +596,84 @@
         "id": "c9592b52b355aebe",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_invertor_list",
         "name": "Update sensor.sunsynk_invertor_list",
-        "x": 1730,
-        "y": 420,
+        "x": 1330,
+        "y": 1340,
         "wires": []
     },
     {
         "id": "3e9feb5ff04bc328",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_battery",
         "name": "Update SunSynk Battery",
-        "x": 1350,
-        "y": 860,
+        "x": 1310,
+        "y": 1660,
         "wires": []
     },
     {
         "id": "c4c01331b7a03f18",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_output",
         "name": "Update SunSynk Output",
-        "x": 1350,
-        "y": 800,
+        "x": 1310,
+        "y": 1600,
         "wires": []
     },
     {
         "id": "9cb3e2a71092678d",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_input",
         "name": "Update SunSynk Input",
-        "x": 1340,
-        "y": 920,
+        "x": 1300,
+        "y": 1720,
         "wires": []
     },
     {
         "id": "2eb2b3cada070416",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_grid",
         "name": "Update SunSynk Grid",
-        "x": 1340,
-        "y": 980,
+        "x": 1300,
+        "y": 1780,
         "wires": []
     },
     {
         "id": "31dd21860cbc8c4c",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_load",
         "name": "Update SunSynk Load",
-        "x": 1340,
-        "y": 1040,
+        "x": 1300,
+        "y": 1840,
         "wires": []
     },
     {
         "id": "127a0b93cf41d353",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_settings",
         "name": "Update SunSynk Settings",
-        "x": 1350,
-        "y": 1100,
+        "x": 1310,
+        "y": 1900,
         "wires": []
     },
     {
@@ -662,7 +681,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Calc Last Update Time & General Status Check",
-        "func": "var origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.state = currdate; \nmsg.payload.attributes.device_class = \"timestamp\"; \n\nfunction errorstatus(errorvar)\n{\n    node.status(\" Error Found : \" + errorvar);\n    node.error(errorvar + \" - Error With Data \"); \n    node.status(currdate.toLocaleString() + \" - \" + errorvar + \" - Error_ With Data \"); \n    msg.payload.state = \"Error With Incoming Data\";\n    msg.payload.attributes = {} ; \n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\") ; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { errorstatus(\"Logger Update\") }\nif (ErrorCk.includes(loggerstat)) { errorstatus(\"Logger Status\") }\nif (ErrorCk.includes(estatus)) { errorstatus(\"Stats Last Update\") }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { errorstatus(\"Bad Gather Data\") } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\") }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { errorstatus(\" Bad Last Logger Update \") } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { errorstatus(\"Logger Not Online\") }\n\n// Specific Checks \nvar s_input = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_input\\'].attributes');\nif (typeof s_input.pvIV_0_ppv === \"undefined\") { errorstatus(\"Input(Input)\") }\nvar s_input = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_grid\\'].attributes');\nif (typeof s_input.vip_0_power === \"undefined\") { errorstatus(\"Input(Grid)\") }\nvar s_input = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_load\\'].attributes');\nif (typeof s_input.vip_0_volt === \"undefined\") { errorstatus(\"Input(Load)\") }\n// Null value in Flow\nvar s_input = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_flow\\'].attributes');\nif (s_input.pvPower == null) { errorstatus(\"Input(Flow)\") }\n\nreturn msg; ",
+        "func": "var origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.state = currdate; \nmsg.payload.attributes.device_class = \"timestamp\"; \n\nfunction errorstatus(errorvar)\n{\n    node.status(\" Error Found : \" + errorvar);\n    node.error(errorvar + \" - Error With Data \"); \n    node.status(currdate.toLocaleString() + \" - \" + errorvar + \" - Error_ With Data \"); \n    msg.payload.state = \"Error With Incoming Data\";\n    msg.payload.attributes = {} ; \n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\") ; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { errorstatus(\"Logger Update\") }\nif (ErrorCk.includes(loggerstat)) { errorstatus(\"Logger Status\") }\nif (ErrorCk.includes(estatus)) { errorstatus(\"Stats Last Update\") }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { errorstatus(\"Bad Gather Data\") } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\") }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { errorstatus(\" Bad Last Logger Update \") } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { errorstatus(\"Logger Not Online\") }\n\nreturn msg; ",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -692,6 +711,7 @@
         "id": "418a96f5f1b651c9",
         "type": "delay",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "",
         "pauseType": "rate",
         "timeout": "5",
@@ -705,8 +725,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 240,
-        "y": 720,
+        "x": 200,
+        "y": 1560,
         "wires": [
             [
                 "ad31dd1db4441737",
@@ -719,47 +739,14 @@
         ]
     },
     {
-        "id": "17f6322225b804af",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Login Debug",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 850,
-        "y": 120,
-        "wires": []
-    },
-    {
-        "id": "a00ebeb6d0b61bba",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Plant List Debug",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1120,
-        "y": 280,
-        "wires": []
-    },
-    {
         "id": "9fe4f826ab944385",
         "type": "comment",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Inverter 1 Flows",
         "info": "# Inverter 1 Flows",
-        "x": 520,
-        "y": 720,
+        "x": 480,
+        "y": 1560,
         "wires": []
     },
     {
@@ -776,6 +763,7 @@
         "id": "2acb6d253c978c52",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Create Request PLant Invertor List",
         "func": "var ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nmsg.headers = global.get(\"SS.Header.Bearer\");\nvar invlistopt = parseFloat(global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.invertor_list_opt'));\nif (ErrorCk.includes(invlistopt)) { node.status(\"Invertor List Option Unconfigured\"); return null; }\nif (invlistopt === 0) \n{\n   msg.url = global.get(\"SS.url.plantinvlist\");\n   node.status(\"Plant Invertor List Used\");\n} else if (invlistopt === 1) \n{\n    msg.url = global.get(\"SS.url.invertor_list\");\n    node.status(\"Account Invertor List Used\");\n} else\n{\n    node.status(\"Invalid List Invertor Option\");\n    return null;\n}\nmsg.payload = \"\"\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -784,8 +772,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 420,
+        "x": 300,
+        "y": 1340,
         "wires": [
             [
                 "ec32acadb65f257a"
@@ -796,6 +784,7 @@
         "id": "ec32acadb65f257a",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Plant Invertor List",
         "method": "GET",
         "ret": "obj",
@@ -808,32 +797,14 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1000,
-        "y": 420,
+        "x": 600,
+        "y": 1340,
         "wires": [
             [
-                "80420db5cf3aec58",
                 "e53175753e61992a",
                 "90673d2b7f54dc55"
             ]
         ]
-    },
-    {
-        "id": "80420db5cf3aec58",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Debug PLant Invertor List",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1390,
-        "y": 380,
-        "wires": []
     },
     {
         "id": "4450275588ced110",
@@ -841,8 +812,8 @@
         "z": "fca77f132c7d5d8f",
         "name": "Created by Gary Waterworth on powerforum.co.za",
         "info": "Topic Link : https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/\n\nFeel free to use",
-        "x": 210,
-        "y": 440,
+        "x": 1230,
+        "y": 240,
         "wires": []
     },
     {
@@ -851,42 +822,8 @@
         "z": "fca77f132c7d5d8f",
         "name": "https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/",
         "info": "Topic Link : https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/\n\nFeel free to use",
-        "x": 310,
-        "y": 480,
-        "wires": []
-    },
-    {
-        "id": "c3c8000fc9172df8",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Debug PantID",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1360,
-        "y": 340,
-        "wires": []
-    },
-    {
-        "id": "db81ff1cdfd1f449",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Debug Invertor 1",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1030,
-        "y": 560,
+        "x": 1230,
+        "y": 280,
         "wires": []
     },
     {
@@ -894,7 +831,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Setup Global Vars",
-        "func": "node.status(\"\");\n//var graphdate = new Date();\n//\n//function dateToYMD(date) {\n//    var d = date.getDate();\n//    var m = date.getMonth() + 1; //Month from 0 to 11\n//    var y = date.getFullYear();\n//    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n//}\n\nvar currentDate = (new Date().toJSON().slice(0, 10));\nfunction start_date() {\n    var fromdate = new Date();\n    fromdate.setDate(fromdate.getDate() - 60);\n    return fromdate.toJSON().slice(0, 10);\n}\n\n//  SET TO 1 TO ENABLE DEBUG MESSAGES \nglobal.set(\"SunSynkDebug\", 0);\n\n// Set HomeAssistant Gobal Context\nglobal.set(\"HA\", \"homeassistant.homeAssistant\");\n\n//Errors to Check\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\", \"\", \"0000000\", \"xxx@xxx.com\", \"xxx\" ]; \nglobal.set(\"SS.ErrorCk\",ErrorCk);\n//global.get(\"SS.ErrorCk\")\n\n\n// Setup variables\nvar items = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.return_items');\nif (ErrorCk.includes(items)) { let e = \"No Items Set\"; node.error(e); node.status(e); return null};\nglobal.set(\"SS.ReturnItems\",items);\n\nif (ErrorCk.includes(global.get(\"SS.Plantid\"))) { let e = \"PlantID Set\" ; node.error(e); node.status(e); global.set(\"SS.Plantid\", \"DONOTEDIT\") };\nif (ErrorCk.includes(global.get(\"SS.Invertor1sn\"))) { let e = \"Invertor 1 Set\"; node.error(e); node.status(e); global.set(\"SS.Invertor1sn\", \"DONOTEDIT\") };\nif (ErrorCk.includes(global.get(\"SS.Invertor2sn\"))) { global.set(\"SS.Invertor2sn\", \"DONOTEDIT\") };\n\n// Login String \nvar login = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.login');\nvar password = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.password');\nvar region = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.region');\nif (ErrorCk.includes(global.get(\"SS.Plantid\"))) { let e = \"PlantID Set\" ; node.error(e); node.status(e); global.set(\"SS.Plantid\", \"DONOTEDIT\") };\nif (ErrorCk.includes(global.get(\"SS.Invertor1sn\"))) { let e = \"Invertor 1 Set\"; node.error(e); node.status(e); global.set(\"SS.Invertor1sn\", \"DONOTEDIT\") };\n\n// error checking\nif ((ErrorCk.includes(login)) || (ErrorCk.includes(password)))\n{ \n     node.error(\"Edit state setting in template please for login/password\"); \n     node.status(\"Edit state setting in template please for login/password\"); \n     global.set(\"SS.loginstring\", \"\");\n     global.set(\"SS.Header.Bearer\", \"\");     \n     global.set(\"SS.url.token\", \"\");\n     global.set(\"SS.url.plants\", \"\");\n     global.set(\"SS.url.notifications\", \"\");\n     global.set(\"SS.url.invertor_list\", \"\");\n     global.set(\"SS.url.events.1\", \"\");\n     global.set(\"SS.url.events.2\", \"\");\n     global.set(\"SS.url.events.3\", \"\");\n     return null ; \n} else\n{\n    // Setup Login Load\n    var loginstr = {};\n    loginstr.username = login;\n    loginstr.password = password;\n    loginstr.grant_type = \"password\";\n    loginstr.client_id = \"csp-web\";\n    // Sunsynk Region 2 extra info \n    // loginstr.source = \"sunsynk\";\n    // loginstr.areaCode = \"sunsynk\";\n    //   Mew Auth String format ---- > {\"username\":\"xxx\",\"password\":\"xxx\",\"grant_type\":\"password\",\"client_id\":\"csp-web\",\"source\":\"sunsynk\",\"areaCode\":\"sunsynk\"}\n    if (region === 2) \n     { \n     loginstr.source = \"sunsynk\";\n     loginstr.areaCode = \"sunsynk\";\n     }\n    global.set(\"SS.loginstring\", loginstr);\n    // Headers\n    var headers_with_bearer = {\n        Authorization: \"Bearer \" + global.get(\"SS.Bearer\"),\n        \"Content-Type\": \"application/json\",\n        \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n        \"Connection\": \"keep-alive\",\n        \"Accept\": \"*/*\",\n        \"Cache-Control\": \"no-cache\",\n        \"Origin\": \"https://sunsynk.net\",\n        \"Referrer\": \"https://sunsynk.net\"\n    }\n    global.set(\"SS.Header.Bearer\", headers_with_bearer);\n    global.set(\"SS.url.hostname\", \"https://pv.inteless.com\");\n    // Sunsynk V2 extra info \n    // global.set(\"SS.url.hostname\",\"https://api.sunsynk.net\") ;\n    if (region === 2) { global.set(\"SS.url.hostname\", \"https://api.sunsynk.net\"); }\n    node.status(global.get(\"SS.url.hostname\"));\n\n    global.set(\"SS.url.token\",global.get(\"SS.url.hostname\") + \"/oauth/token\");\n    global.set(\"SS.url.plants\", global.get(\"SS.url.hostname\") + \"/api/v1/plants?page=1&limit=\" + items + \"&name=&status=\");\n    global.set(\"SS.url.notifications\", global.get(\"SS.url.hostname\") + \"/api/v1/messages?pageSize=10&pageNumber=1&status=-1&lan=en\");\n    global.set(\"SS.url.invertor_list\",global.get(\"SS.url.hostname\") + \"/api/v1/inverters?page=1&limit=\" + items + \"&status=-1&type=-1\");\n\n    // Events\n    global.set(\"SS.url.events.1\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=1&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n    global.set(\"SS.url.events.2\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=2&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n    global.set(\"SS.url.events.3\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=3&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n}\n\nif (ErrorCk.includes(global.get(\"SS.Plantid\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) \n{ \n    node.error(\"Plant ID\"); node.status(\"Pant ID\"); \n    global.set(\"SS.url.flow\", \"\");\n    global.set(\"SS.url.plantinvlist\", \"\");\n} else {}\n\nif (ErrorCk.includes(global.get(\"SS.Invertor1sn\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) \n{ \n    node.error(\"Inv 1 SN\"); node.status(\"Inv 1 SN\"); \n    global.set(\"SS.url.i1.output\", \"\");\n    global.set(\"SS.url.i1.battery\", \"\");\n    global.set(\"SS.url.i1.input\", \"\");\n    global.set(\"SS.url.i1.grid\", \"\");\n    global.set(\"SS.url.i1.load\", \"\");\n    global.set(\"SS.url.i1.settings\", \"\");\n    global.set(\"SS.url.i1.acdc\", \"\");\n    global.set(\"SS.url.i1.set\", \"\");\n\n} else {}\n\nif (ErrorCk.includes(global.get(\"SS.Invertor2sn\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) \n{  \n    global.set(\"SS.url.i2.output\",\"\");\n    global.set(\"SS.url.i2.battery\", \"\");\n    global.set(\"SS.url.i2.input\", \"\");\n    global.set(\"SS.url.i2.grid\", \"\");\n    global.set(\"SS.url.i2.load\", \"\");\n    global.set(\"SS.url.i2.settings\", \"\");\n    global.set(\"SS.url.i2.acdc\", \"\");\n    global.set(\"SS.url.i2.set\", \"\");\n} else {} \n\nreturn msg;",
+        "func": "node.status(\"\");\n//var graphdate = new Date();\n//\n//function dateToYMD(date) {\n//    var d = date.getDate();\n//    var m = date.getMonth() + 1; //Month from 0 to 11\n//    var y = date.getFullYear();\n//    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n//}\n\nvar currentDate = (new Date().toJSON().slice(0, 10));\nfunction start_date() {\n    var fromdate = new Date();\n    fromdate.setDate(fromdate.getDate() - 60);\n    return fromdate.toJSON().slice(0, 10);\n}\n\n//  SET TO 1 TO ENABLE DEBUG MESSAGES \nglobal.set(\"SunSynkDebug\", 0);\n\n// Set HomeAssistant Gobal Context\nglobal.set(\"HA\", \"homeassistant.homeAssistant\");\n\n//Errors to Check\nvar ErrorCk = [undefined, \"unavailable\", \"DONOTEDIT\", \"\", \"0000000\", \"xxx@xxx.com\", \"xxx\" ]; \nglobal.set(\"SS.ErrorCk\",ErrorCk);\n//global.get(\"SS.ErrorCk\")\n\n\n// Setup variables\nvar items = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.return_items');\nif (ErrorCk.includes(items)) { let e = \"No Items Set\"; node.error(e); node.status(e); return null};\nglobal.set(\"SS.ReturnItems\",items);\n\n\n// Login String \nvar login = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.login');\nvar password = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.password');\nvar region = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.region');\n\n// error checking\nif ((ErrorCk.includes(login)) || (ErrorCk.includes(password)))\n{ \n     node.error(\"Edit state setting in template please for login/password\"); \n     node.status(\"Edit state setting in template please for login/password\"); \n     global.set(\"SS.loginstring\", \"\");\n     global.set(\"SS.Header.Bearer\", \"\");     \n     global.set(\"SS.url.token\", \"\");\n     global.set(\"SS.url.plants\", \"\");\n     global.set(\"SS.url.notifications\", \"\");\n     global.set(\"SS.url.events.1\", \"\");\n     global.set(\"SS.url.events.2\", \"\");\n     global.set(\"SS.url.events.3\", \"\");\n     return null ; \n} else\n{\n    // Setup Login Load\n    var loginstr = {};\n    loginstr.username = login;\n    loginstr.password = password;\n    loginstr.grant_type = \"password\";\n    loginstr.client_id = \"csp-web\";\n    // Sunsynk Region 2 extra info \n    // loginstr.source = \"sunsynk\";\n    // loginstr.areaCode = \"sunsynk\";\n    //   Mew Auth String format ---- > {\"username\":\"xxx\",\"password\":\"xxx\",\"grant_type\":\"password\",\"client_id\":\"csp-web\",\"source\":\"sunsynk\",\"areaCode\":\"sunsynk\"}\n    if (region === 2) \n     { \n     loginstr.source = \"sunsynk\";\n     loginstr.areaCode = \"sunsynk\";\n     }\n    global.set(\"SS.loginstring\", loginstr);\n    // Headers\n    var headers_with_bearer = {\n        Authorization: \"Bearer \" + global.get(\"SS.Bearer\"),\n        \"Content-Type\": \"application/json\",\n        \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\",\n        \"Connection\": \"keep-alive\",\n        \"Accept\": \"*/*\",\n        \"Cache-Control\": \"no-cache\",\n        \"Origin\": \"https://sunsynk.net\",\n        \"Referrer\": \"https://sunsynk.net\"\n    }\n    global.set(\"SS.Header.Bearer\", headers_with_bearer);\n    global.set(\"SS.url.hostname\", \"https://pv.inteless.com\");\n    // Sunsynk V2 extra info \n    // global.set(\"SS.url.hostname\",\"https://api.sunsynk.net\") ;\n    if (region === 2) { global.set(\"SS.url.hostname\", \"https://api.sunsynk.net\"); }\n    node.status(global.get(\"SS.url.hostname\"));\n\n    global.set(\"SS.url.token\",global.get(\"SS.url.hostname\") + \"/oauth/token\");\n    global.set(\"SS.url.plants\", global.get(\"SS.url.hostname\") + \"/api/v1/plants?page=1&limit=\" + items + \"&name=&status=\");\n    global.set(\"SS.url.notifications\", global.get(\"SS.url.hostname\") + \"/api/v1/messages?pageSize=10&pageNumber=1&status=-1&lan=en\");\n    \n    // Events\n    global.set(\"SS.url.events.1\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=1&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n    global.set(\"SS.url.events.2\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=2&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n    global.set(\"SS.url.events.3\",global.get(\"SS.url.hostname\") + \"/api/v1/events\" + \"?type=3&page=1&limit=50&lan=en&sdate=\" + start_date() + \"&edate=\" + currentDate);\n}\n\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -911,39 +848,10 @@
         ]
     },
     {
-        "id": "9f89a4a9a2258261",
-        "type": "debug",
-        "z": "fca77f132c7d5d8f",
-        "name": "Debug Requests",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1090,
-        "y": 740,
-        "wires": []
-    },
-    {
-        "id": "24adcf4d1d651c2c",
-        "type": "link out",
-        "z": "fca77f132c7d5d8f",
-        "name": "Plant List",
-        "mode": "link",
-        "links": [
-            "7eb19f796e5a3624"
-        ],
-        "x": 885,
-        "y": 340,
-        "wires": []
-    },
-    {
         "id": "90cdfc715504431c",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Plant Flow Data",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.flow\");\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -951,8 +859,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1380,
-        "y": 280,
+        "x": 1400,
+        "y": 80,
         "wires": [
             [
                 "d39e0694ad913862"
@@ -963,6 +871,7 @@
         "id": "d39e0694ad913862",
         "type": "http request",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Get Flow Data",
         "method": "GET",
         "ret": "obj",
@@ -975,8 +884,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1600,
-        "y": 280,
+        "x": 1620,
+        "y": 80,
         "wires": [
             [
                 "6360d898e9fec6b9"
@@ -987,6 +896,7 @@
         "id": "6360d898e9fec6b9",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Plant Flow Data",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
         "outputs": 1,
@@ -994,8 +904,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1820,
-        "y": 280,
+        "x": 1840,
+        "y": 80,
         "wires": [
             [
                 "54907525a327c8f1"
@@ -1006,17 +916,19 @@
         "id": "54907525a327c8f1",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_flow",
         "name": "Update SunSynk Flow",
-        "x": 2040,
-        "y": 280,
+        "x": 2060,
+        "y": 80,
         "wires": []
     },
     {
         "id": "cf949f3158a35e48",
         "type": "function",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "name": "Sunsynk Plant List",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = s_payload }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    node.status(origpayload.msg);\n    msg.payload.state = \"Success\";\n    msg.payload.attributes = returnvalue;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
         "outputs": 1,
@@ -1024,8 +936,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1130,
-        "y": 220,
+        "x": 1390,
+        "y": 40,
         "wires": [
             [
                 "539daee32f23a903"
@@ -1036,46 +948,18 @@
         "id": "539daee32f23a903",
         "type": "hass-post",
         "z": "fca77f132c7d5d8f",
+        "d": true,
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_plant_list",
         "name": "Update Sunsynk Plant List",
-        "x": 1380,
-        "y": 220,
+        "x": 1640,
+        "y": 40,
         "wires": []
     },
     {
-        "id": "80bf706fc22f04f9",
-        "type": "tab",
-        "label": "Consolidated Data Gather",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "7eb19f796e5a3624",
-        "type": "link in",
-        "z": "80bf706fc22f04f9",
-        "name": "PLant List",
-        "links": [
-            "24adcf4d1d651c2c"
-        ],
-        "x": 55,
-        "y": 40,
-        "wires": [
-            [
-                "c183e34a349328c5",
-                "a8e114f06545f4e8",
-                "a37faadb2b410f56",
-                "683f4fd102255e25",
-                "9b7ed41f3c1adae9",
-                "a38b70fa759f13a1"
-            ]
-        ]
-    },
-    {
-        "id": "c183e34a349328c5",
+        "id": "2d8860a1221cca90",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Plant List",
         "active": false,
         "tosidebar": true,
@@ -1085,14 +969,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 480,
-        "y": 300,
+        "x": 570,
+        "y": 700,
         "wires": []
     },
     {
-        "id": "a8e114f06545f4e8",
+        "id": "bd7124fd85316bc5",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Run Through Plant List",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Plant Information Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar msg2={};\nglobal.set(\"SS_Consolid.PlantTotal\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].id, origpayload.data.infos[i]);\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.PlantProcessing\", origpayload.data.infos[i].id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].id;\n    node.send([msg,null]);\n    await delay(10000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].id);\n}\nmsg2.payload=\"done\";\nnode.send([null,msg2]);\nreturn ;\n",
         "outputs": 2,
@@ -1101,25 +985,25 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 360,
+        "x": 490,
+        "y": 760,
         "wires": [
             [
-                "ec10bf5d8ef4ca46",
-                "87e5a3c729295ff6",
-                "08ea83914b8a4342",
-                "85ad9cc3adb95cf1"
+                "f27b0a86d44e7ad7",
+                "859cbea3d383c5c2",
+                "ae05f31378cc3aa7",
+                "d8bae3df7a1de13f"
             ],
             [
-                "4f89165e4a428622",
-                "d6ec021b51b01602"
+                "bc15378d370ed938",
+                "341eed38e396a6df"
             ]
         ]
     },
     {
-        "id": "ec10bf5d8ef4ca46",
+        "id": "f27b0a86d44e7ad7",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Plant Index Info",
         "active": false,
         "tosidebar": true,
@@ -1129,14 +1013,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 760,
-        "y": 300,
+        "x": 850,
+        "y": 700,
         "wires": []
     },
     {
-        "id": "87e5a3c729295ff6",
+        "id": "859cbea3d383c5c2",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Plant Flow Data",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/plant/energy/\" + msg.payload + \"/flow\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1145,19 +1029,19 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 760,
-        "y": 360,
+        "x": 850,
+        "y": 760,
         "wires": [
             [
-                "3924f106061a13e2",
-                "da74130ff8fa287b"
+                "3f1e10a41c547cbe",
+                "cb5e31b5f205b1cb"
             ]
         ]
     },
     {
-        "id": "3924f106061a13e2",
+        "id": "3f1e10a41c547cbe",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Flow Data",
         "method": "GET",
         "ret": "obj",
@@ -1170,19 +1054,19 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1000,
-        "y": 360,
+        "x": 1090,
+        "y": 760,
         "wires": [
             [
-                "69ba658d0f79e1c4",
-                "4628bbf1be72d4a5"
+                "1b15bb487595d619",
+                "30d14bcb479cd295"
             ]
         ]
     },
     {
-        "id": "da74130ff8fa287b",
+        "id": "cb5e31b5f205b1cb",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Flow Data",
         "active": false,
         "tosidebar": true,
@@ -1192,14 +1076,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
-        "y": 300,
+        "x": 1090,
+        "y": 700,
         "wires": []
     },
     {
-        "id": "69ba658d0f79e1c4",
+        "id": "1b15bb487595d619",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Ret Flow Data",
         "active": false,
         "tosidebar": true,
@@ -1209,14 +1093,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1250,
-        "y": 300,
+        "x": 1340,
+        "y": 700,
         "wires": []
     },
     {
-        "id": "4628bbf1be72d4a5",
+        "id": "30d14bcb479cd295",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Plant Flow Data",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.custCode === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Plant Flow Information Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".flow\", origpayload.data);\nnode.status(\"Processing:\" + global.get(\"SS_Consolid.PlantProcessing\"));\nreturn null;\n",
         "outputs": 1,
@@ -1225,16 +1109,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1270,
-        "y": 360,
+        "x": 1360,
+        "y": 760,
         "wires": [
             []
         ]
     },
     {
-        "id": "08ea83914b8a4342",
+        "id": "ae05f31378cc3aa7",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Plant Inverter List",
         "func": "var ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nvar items = global.get(\"SS.ReturnItems\");\nif (ErrorCk.includes(items)) { let e = \"No Items Set\"; node.error(e); node.status(e); return null };\nvar origpayload=msg.payload;\nmsg.payload={};\nmsg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/plant/\" +origpayload + \"/inverters?page=1&limit=\" + items + \"&status=-1&type=-2\";\nnode.status(\"Processing:\"+ origpayload);\nreturn msg;",
         "outputs": 1,
@@ -1243,18 +1127,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 760,
-        "y": 480,
+        "x": 850,
+        "y": 880,
         "wires": [
             [
-                "cfc5833426d39c80"
+                "5b5632a90b6a5fe2"
             ]
         ]
     },
     {
-        "id": "f0c673e3b76f0732",
+        "id": "ccb305032b38748d",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Inv List",
         "active": false,
         "tosidebar": true,
@@ -1264,14 +1148,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1230,
-        "y": 420,
+        "x": 1320,
+        "y": 820,
         "wires": []
     },
     {
-        "id": "cfc5833426d39c80",
+        "id": "5b5632a90b6a5fe2",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Plant Invertor List",
         "method": "GET",
         "ret": "obj",
@@ -1284,19 +1168,19 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1020,
-        "y": 480,
+        "x": 1110,
+        "y": 880,
         "wires": [
             [
-                "f0c673e3b76f0732",
-                "7e047388b555a974"
+                "ccb305032b38748d",
+                "b74c2534bf1f0ad2"
             ]
         ]
     },
     {
-        "id": "7e047388b555a974",
+        "id": "b74c2534bf1f0ad2",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Run Through Plant Inv List",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nnode.status(\"Plant ID:\" + global.get(\"SS_Consolid.PlantProcessing\") + \" -- \" + origpayload.data.total);\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".TotalInverters\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".Inverter.\" + origpayload.data.infos[i].sn , origpayload.data.infos[i]);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".ProcessingInverter\", origpayload.data.infos[i].sn);\n    global.set(\"SS_Consolid.Config_Data.InverterPlant.\"+ origpayload.data.infos[i].sn , origpayload.data.infos[i].plant.id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].sn;\n    node.send(msg);\n    await delay(5000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].sn);\n}\nreturn null;\n",
         "outputs": 1,
@@ -1305,26 +1189,26 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1280,
-        "y": 480,
+        "x": 1370,
+        "y": 880,
         "wires": [
             [
-                "8d8f1145246cece5",
-                "fd9d3bb588cf52b3",
-                "357919a49fe68b74",
-                "5248a4d1e28f17f8",
-                "72ed2fbeee45285c",
-                "f02d88283557d791",
-                "0beb08319d512ac2",
-                "43471a88b5bcdd4b",
-                "bcf1c33f3aee0975"
+                "39de3c431e2ef292",
+                "12dc04fcb73039d4",
+                "e8d0f03a24c4df39",
+                "aed9b850dbc9ecc2",
+                "47da4f55b1ed63e3",
+                "9eca4f9c8542d48c",
+                "eed8b076c8305f38",
+                "5dbac2e429d54b80",
+                "390a6d803a3f2044"
             ]
         ]
     },
     {
-        "id": "8d8f1145246cece5",
+        "id": "39de3c431e2ef292",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Process Inv",
         "active": false,
         "tosidebar": true,
@@ -1334,14 +1218,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1550,
-        "y": 420,
+        "x": 1640,
+        "y": 820,
         "wires": []
     },
     {
-        "id": "357919a49fe68b74",
+        "id": "e8d0f03a24c4df39",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting battery Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/battery/\" + msg.payload + \"/realtime?sn=\" + msg.payload + \"&lan\";\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1350,18 +1234,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1610,
-        "y": 540,
+        "x": 1700,
+        "y": 940,
         "wires": [
             [
-                "48fac9d7d9d31115"
+                "6ad20c7a74f5b09d"
             ]
         ]
     },
     {
-        "id": "0beb08319d512ac2",
+        "id": "eed8b076c8305f38",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Invertor Settings",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + msg.payload + \"/read\";\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1370,18 +1254,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1630,
-        "y": 780,
+        "x": 1720,
+        "y": 1180,
         "wires": [
             [
-                "88be6e31203b0a68"
+                "ad062873d09020b8"
             ]
         ]
     },
     {
-        "id": "72ed2fbeee45285c",
+        "id": "47da4f55b1ed63e3",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Grid Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/grid/\" + msg.payload + \"/realtime?sn=\" + msg.payload;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1390,18 +1274,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1610,
-        "y": 660,
+        "x": 1700,
+        "y": 1060,
         "wires": [
             [
-                "fe13c91c6d38d5c3"
+                "c6b56dcc61ee0ac0"
             ]
         ]
     },
     {
-        "id": "f02d88283557d791",
+        "id": "9eca4f9c8542d48c",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Load Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/load/\" + msg.payload + \"/realtime?sn=\" + msg.payload;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1410,18 +1294,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1610,
-        "y": 720,
+        "x": 1700,
+        "y": 1120,
         "wires": [
             [
-                "df6bb5262d6197bd"
+                "b254d03c2acc8a2f"
             ]
         ]
     },
     {
-        "id": "5248a4d1e28f17f8",
+        "id": "aed9b850dbc9ecc2",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Input",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + msg.payload + \"/realtime/input\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1430,18 +1314,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1590,
-        "y": 600,
+        "x": 1680,
+        "y": 1000,
         "wires": [
             [
-                "903e64b9fdd68dd0"
+                "4539b1323b8d910d"
             ]
         ]
     },
     {
-        "id": "fd9d3bb588cf52b3",
+        "id": "12dc04fcb73039d4",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Output",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + msg.payload + \"/realtime/output\";\nnode.status(msg.url);\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1450,18 +1334,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1600,
-        "y": 480,
+        "x": 1690,
+        "y": 880,
         "wires": [
             [
-                "3520265ddab8fee3"
+                "7a314cd6efbcf01b"
             ]
         ]
     },
     {
-        "id": "48fac9d7d9d31115",
+        "id": "6ad20c7a74f5b09d",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Battery Info",
         "method": "GET",
         "ret": "obj",
@@ -1474,18 +1358,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1970,
-        "y": 540,
+        "x": 2060,
+        "y": 940,
         "wires": [
             [
-                "ac412f2347cdbd20"
+                "0c830c55b9bd7aa3"
             ]
         ]
     },
     {
-        "id": "88be6e31203b0a68",
+        "id": "ad062873d09020b8",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Settings",
         "method": "GET",
         "ret": "obj",
@@ -1498,18 +1382,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1960,
-        "y": 780,
+        "x": 2050,
+        "y": 1180,
         "wires": [
             [
-                "5fbc9605d31411df"
+                "17ce4af29efbbaa3"
             ]
         ]
     },
     {
-        "id": "fe13c91c6d38d5c3",
+        "id": "c6b56dcc61ee0ac0",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Grid Info",
         "method": "GET",
         "ret": "obj",
@@ -1522,18 +1406,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1960,
-        "y": 660,
+        "x": 2050,
+        "y": 1060,
         "wires": [
             [
-                "8cf1615655da81ca"
+                "1ef15ad3c7857990"
             ]
         ]
     },
     {
-        "id": "df6bb5262d6197bd",
+        "id": "b254d03c2acc8a2f",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Load Info",
         "method": "GET",
         "ret": "obj",
@@ -1546,18 +1430,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1960,
-        "y": 720,
+        "x": 2050,
+        "y": 1120,
         "wires": [
             [
-                "1b85351ed66ca779"
+                "598f5675e87ee423"
             ]
         ]
     },
     {
-        "id": "903e64b9fdd68dd0",
+        "id": "4539b1323b8d910d",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Input",
         "method": "GET",
         "ret": "obj",
@@ -1570,18 +1454,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1950,
-        "y": 600,
+        "x": 2040,
+        "y": 1000,
         "wires": [
             [
-                "f4fd7c317badd547"
+                "5d2184e1520ae60d"
             ]
         ]
     },
     {
-        "id": "3520265ddab8fee3",
+        "id": "7a314cd6efbcf01b",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Output",
         "method": "GET",
         "ret": "obj",
@@ -1594,18 +1478,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1950,
-        "y": 480,
+        "x": 2040,
+        "y": 880,
         "wires": [
             [
-                "3f991f37d73d1362"
+                "0e69ef61c8a28067"
             ]
         ]
     },
     {
-        "id": "3f991f37d73d1362",
+        "id": "0e69ef61c8a28067",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".output\", origpayload.data);\nnode.status(\"Processing:\" + origpayload.msg + \"::\" + TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1614,16 +1498,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 480,
+        "x": 2320,
+        "y": 880,
         "wires": [
             []
         ]
     },
     {
-        "id": "ac412f2347cdbd20",
+        "id": "0c830c55b9bd7aa3",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".battery\", origpayload.data);\nnode.status(\"Processing:\"  + origpayload.msg + \"::\"+ TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1632,16 +1516,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 540,
+        "x": 2320,
+        "y": 940,
         "wires": [
             []
         ]
     },
     {
-        "id": "f4fd7c317badd547",
+        "id": "5d2184e1520ae60d",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".input\", origpayload.data);\nnode.status(\"Processing:\"  + origpayload.msg + \"::\"+ TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1650,16 +1534,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 600,
+        "x": 2320,
+        "y": 1000,
         "wires": [
             []
         ]
     },
     {
-        "id": "8cf1615655da81ca",
+        "id": "1ef15ad3c7857990",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".grid\", origpayload.data);\nnode.status(\"Processing:\" + origpayload.msg + \"::\" + TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1668,16 +1552,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 660,
+        "x": 2320,
+        "y": 1060,
         "wires": [
             []
         ]
     },
     {
-        "id": "1b85351ed66ca779",
+        "id": "598f5675e87ee423",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".load\", origpayload.data);\nnode.status(\"Processing:\" + origpayload.msg + \"::\" + TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1686,16 +1570,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 720,
+        "x": 2320,
+        "y": 1120,
         "wires": [
             []
         ]
     },
     {
-        "id": "5fbc9605d31411df",
+        "id": "17ce4af29efbbaa3",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Inv Output",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".settings\", origpayload.data);\nnode.status(\"Processing:\" + origpayload.msg + \"::\" + TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -1704,16 +1588,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 780,
+        "x": 2320,
+        "y": 1180,
         "wires": [
             []
         ]
     },
     {
-        "id": "a37faadb2b410f56",
+        "id": "cd89913c0ad409c1",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.events.1\");\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
@@ -1721,18 +1605,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 40,
+        "x": 630,
+        "y": 440,
         "wires": [
             [
-                "c0b6065627dd958a"
+                "d3f1b15460c95db2"
             ]
         ]
     },
     {
-        "id": "c0b6065627dd958a",
+        "id": "d3f1b15460c95db2",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Events (1)",
         "method": "GET",
         "ret": "obj",
@@ -1745,18 +1629,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 40,
+        "x": 930,
+        "y": 440,
         "wires": [
             [
-                "83cab37522b558af"
+                "ca853feafb8b91a7"
             ]
         ]
     },
     {
-        "id": "683f4fd102255e25",
+        "id": "a3a54a683f15572c",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.events.2\");\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
@@ -1764,18 +1648,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 100,
+        "x": 630,
+        "y": 500,
         "wires": [
             [
-                "710a6440b9d81c14"
+                "90cb03e325683890"
             ]
         ]
     },
     {
-        "id": "710a6440b9d81c14",
+        "id": "90cb03e325683890",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Events (2)",
         "method": "GET",
         "ret": "obj",
@@ -1788,18 +1672,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 100,
+        "x": 930,
+        "y": 500,
         "wires": [
             [
-                "d97019aa6159e1b9"
+                "3acdecf38bfaff56"
             ]
         ]
     },
     {
-        "id": "9b7ed41f3c1adae9",
+        "id": "01cb8514858f13f8",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Events",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.events.3\");\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;\n",
         "outputs": 1,
@@ -1807,18 +1691,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 160,
+        "x": 630,
+        "y": 560,
         "wires": [
             [
-                "30bc98eb035a9abc"
+                "7eec408a6849e43c"
             ]
         ]
     },
     {
-        "id": "30bc98eb035a9abc",
+        "id": "7eec408a6849e43c",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Events (3)",
         "method": "GET",
         "ret": "obj",
@@ -1831,18 +1715,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 840,
-        "y": 160,
+        "x": 930,
+        "y": 560,
         "wires": [
             [
-                "b1c7bd385357bd77"
+                "a96cfb632804e7e9"
             ]
         ]
     },
     {
-        "id": "4f89165e4a428622",
+        "id": "bc15378d370ed938",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Export Data Export To Entity",
         "func": "function scroll_all_items(s_payload, t_tkey) {\n    //    node.error(\"main function:\" +t_tkey + \" --- \" + s_payload);\n    //    node.error(s_payload);\n    if (typeof s_payload === 'number') {\n        //        node.error(\"main function number:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else if (typeof s_payload === 'string') {\n        //        node.error(\"main function string:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else {\n        Object.entries(s_payload).forEach((entry) => {\n            const [key, value] = entry;\n            //         node.error(\"function:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n            if (value === null || value === \"\") {\n                //             node.error(\"null:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n            } else if (s_payload[key].length === 0) {\n                //             node.error(\"0len:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'number') {\n                //            node.error(\"number:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'string') {\n                //            node.error(\"string:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'object') {\n                //             node.error(\"object:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (Array.isArray(s_payload[key])) {\n                    //                 node.error(\"array:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n                } else {\n                //             node.error(\"notarray:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n                }\n            } else {\n                //             node.error(\"unknown:\" + key + \":\" + value + \"   \" + t_tkey+\" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            }\n        })\n    };\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            //            node.error(\"Array item:\" + i + \":\" + s_payload[i] + \"   \" + t_tkey + \" --- \" + s_payload);\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\nfunction checktrue(t_check) {\n    if (t_check === \"true\") { return true; } \n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else {return false ;}\n}\n\nfunction do_value__consolid(s_payload, t_tkey) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            tvalue = tvalue + parseFloat(global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            if ( parseFloat(t_sn) === parseFloat(key1)) { tvalue = (global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey)); }\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single_plant(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload); }\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn); }\n        if (parseFloat(t_sn) === parseFloat(key)) \n         { \n            tvalue = (global.get(\"SS_Consolid.Plant.\" + key + \".\" + t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn + \":\" + tvalue); } \n         }\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \" + key); }\n    });\n    return tvalue;\n}\n\n\nfunction updatesensor(t_sensor,t_value,t_attributes) {\n    msg.payload = {};\n    msg.payload.attributes = t_attributes;\n    msg.entityid = t_sensor;\n    msg.payload.state = t_value;\n    node.send(msg);\n}\n\nvar sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_data');\nvar flow_sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_flow');\n// PV Entries -- Done\nglobal.set(\"SS_Export_Data.pv.1_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ppv\")));\nglobal.set(\"SS_Export_Data.pv.1_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ipv\")));\nglobal.set(\"SS_Export_Data.pv.1_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.0.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.2_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ppv\")));\nglobal.set(\"SS_Export_Data.pv.2_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ipv\")));\nglobal.set(\"SS_Export_Data.pv.2_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.1.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.power\",parseFloat(global.get(\"SS_Export_Data.pv.1_power\")+global.get(\"SS_Export_Data.pv.2_power\")));\nglobal.set(\"SS_Export_Data.pv.current\",parseFloat(global.get(\"SS_Export_Data.pv.1_current\")+global.get(\"SS_Export_Data.pv.2_current\")));\nglobal.set(\"SS_Export_Data.pv.etotal\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.etotal\")));\nglobal.set(\"SS_Export_Data.pv.etoday\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"input.etoday\")));\n// Load Entries -- Done\nglobal.set(\"SS_Export_Data.load.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalPower\")));\nglobal.set(\"SS_Export_Data.load.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalUsed\")));\nglobal.set(\"SS_Export_Data.load.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.dailyUsed\")));\nglobal.set(\"SS_Export_Data.load.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.vip.0.current\")));\nglobal.set(\"SS_Export_Data.load.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"load.vip.0.volt\", sn)));\n// Battery Entries  -- Done\nglobal.set(\"SS_Export_Data.battery.soc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.soc\",sn)));\nglobal.set(\"SS_Export_Data.temp.battery\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.temp\",sn)));\nglobal.set(\"SS_Export_Data.battery.voltage\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.voltage\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargevolt\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeVolt\",sn)));\nglobal.set(\"SS_Export_Data.battery.status\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.status\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.dischargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.dischargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.capacity\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.correctCap\",sn)));\nglobal.set(\"SS_Export_Data.battery.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.current\")));\nglobal.set(\"SS_Export_Data.battery.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.power\")));\nglobal.set(\"SS_Export_Data.battery.etotalchg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalChg\")));\nglobal.set(\"SS_Export_Data.battery.etotaldischg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalDischg\")));\nglobal.set(\"SS_Export_Data.battery.etodaychg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayChg\")));\nglobal.set(\"SS_Export_Data.battery.etodaydischg\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayDischg\")));\nglobal.set(\"SS_Export_Data.battery.efficiency\",parseInt(100-(global.get(\"SS_Export_Data.battery.etotalchg\")-global.get(\"SS_Export_Data.battery.etotaldischg\"))/global.get(\"SS_Export_Data.battery.etotaldischg\")*100));\n// ACDC -- Done\nglobal.set(\"SS_Export_Data.temp.ac\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.actemp\",sn)));\nglobal.set(\"SS_Export_Data.temp.dc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.dctemp\",sn)));\n//Output -- Done\nglobal.set(\"SS_Export_Data.output.poweraux\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.poweraux\")));\nglobal.set(\"SS_Export_Data.output.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etotal\")));\nglobal.set(\"SS_Export_Data.output.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etoday\")));\nglobal.set(\"SS_Export_Data.output.totalpower\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.pac\")));\nglobal.set(\"SS_Export_Data.output.loadfac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.fac\", sn)));\nglobal.set(\"SS_Export_Data.output.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.output.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.current\", sn)));\n//Gen -- Done\nglobal.set(\"SS_Export_Data.gen.totalused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.genTotal\")));\nglobal.set(\"SS_Export_Data.gen.dailyused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.Daily\")));\nglobal.set(\"SS_Export_Data.gen.totalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.totalPower\")));\nglobal.set(\"SS_Export_Data.gen.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.Fac\", sn)));\nglobal.set(\"SS_Export_Data.gen.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.gen.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.current\", sn)));\n//Grid -- Done\nglobal.set(\"SS_Export_Data.grid.totalusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalFrom\")));\nglobal.set(\"SS_Export_Data.grid.totalusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalTo\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayFrom\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayTo\")));\nglobal.set(\"SS_Export_Data.grid.power\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.pac\")));\nglobal.set(\"SS_Export_Data.grid.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.fac\", sn)));\nglobal.set(\"SS_Export_Data.grid.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.status\", sn)));\nglobal.set(\"SS_Export_Data.grid.pf\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.pf\", sn)));\nglobal.set(\"SS_Export_Data.grid.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.grid.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.current\", sn)));\nif (parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)) < 200)\n  { \n    global.set(\"SS_Export_Data.grid.gridonline\", false);\n  } else {  \n    global.set(\"SS_Export_Data.grid.gridonline\", true);\n  }\nglobal.set(\"SS_Export_Data.grid.limitertotalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.limiterTotalPower\")));\n//Inverter \nglobal.set(\"SS_Export_Data.inverter.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.gatewaystatus\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gatewayVO.status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.lastupdated\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"updateAt\", sn));\nglobal.set(\"SS_Export_Data.inverter.usetimer\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.peakAndVallery\", sn)));\nglobal.set(\"SS_Export_Data.inverter.selltime1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime1\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime2\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime3\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime4\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime5\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime6\", sn));\nglobal.set(\"SS_Export_Data.inverter.energymode\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.energyMode\", sn));\nglobal.set(\"SS_Export_Data.inverter.time1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap1\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap2\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap3\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap4\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap5\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap6\", sn));\nglobal.set(\"SS_Export_Data.inverter.sellTime1Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime1pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime2Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime2pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime3Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime3pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime4Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime4pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime5Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime5pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime6Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime6pac\", sn)));\n\n///\n/// Flow Calculations\n///\nglobal.set(\"SS_Export_Data.flow.battery.soc\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.soc\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.load.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.loadOrEpsPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.pv.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.pvPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.battery.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.battPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.grid.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.gridOrMeterPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.gen.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.genPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.min.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.minPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.heatpumppower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.heatPumpPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.smartloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.smartLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\n\nvar returnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.inverter\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_inverter\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.pv\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_pv\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.load\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_load\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.battery\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_battery\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.output\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_output\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.gen\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_gen\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.grid\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_grid\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.flow\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_flow\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.temp\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_temp\", \"\", returnvalue);\n\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn null;",
         "outputs": 1,
@@ -1851,19 +1735,19 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
-        "y": 540,
+        "x": 870,
+        "y": 940,
         "wires": [
             [
-                "8a354d545317f148",
-                "177692cd35cdecb2"
+                "1ebaa50c469164df",
+                "797d5f642f14a758"
             ]
         ]
     },
     {
-        "id": "8a354d545317f148",
+        "id": "1ebaa50c469164df",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Consolidated Export Data",
         "active": false,
         "tosidebar": true,
@@ -1873,14 +1757,14 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1110,
-        "y": 600,
+        "x": 1200,
+        "y": 1000,
         "wires": []
     },
     {
-        "id": "83cab37522b558af",
+        "id": "ca853feafb8b91a7",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Events",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        recordtemp.push(msg.payload.data.record[i].time + \" - \" + msg.payload.data.record[i].sn + \" - \" + msg.payload.data.record[i].eventCode + \" - \" + msg.payload.data.record[i].eventDescription);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {} ;\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg ;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg ;\n    node.error( origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
         "outputs": 1,
@@ -1888,29 +1772,29 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 40,
+        "x": 1170,
+        "y": 440,
         "wires": [
             [
-                "d1e7b93fb5089c8b"
+                "3730ce5185255d8b"
             ]
         ]
     },
     {
-        "id": "d1e7b93fb5089c8b",
+        "id": "3730ce5185255d8b",
         "type": "hass-post",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_1",
         "name": "Update Sunsynk Events Type 1",
-        "x": 1370,
-        "y": 40,
+        "x": 1460,
+        "y": 440,
         "wires": []
     },
     {
-        "id": "d97019aa6159e1b9",
+        "id": "3acdecf38bfaff56",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Events",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        recordtemp.push(msg.payload.data.record[i].time + \" - \" + msg.payload.data.record[i].sn + \" - \" + msg.payload.data.record[i].eventCode + \" - \" + msg.payload.data.record[i].eventDescription);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {} ;\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg ;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg ;\n    node.error( origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
         "outputs": 1,
@@ -1918,29 +1802,29 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 100,
+        "x": 1170,
+        "y": 500,
         "wires": [
             [
-                "46a592c9fc339e5e"
+                "f03b7d598c8040e1"
             ]
         ]
     },
     {
-        "id": "46a592c9fc339e5e",
+        "id": "f03b7d598c8040e1",
         "type": "hass-post",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_2",
         "name": "Update Sunsynk Events Type 2",
-        "x": 1370,
-        "y": 100,
+        "x": 1460,
+        "y": 500,
         "wires": []
     },
     {
-        "id": "b1c7bd385357bd77",
+        "id": "a96cfb632804e7e9",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Events",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\nvar temptime = \"\";\nvar temperror = \"\";\nvar tempdesc = \"\";\n\nif (msg.payload.data.record.length > 0) {\n    for (let i = 0; i < msg.payload.data.record.length; i++) {\n        recordtemp.push(msg.payload.data.record[i].time + \" - \" + msg.payload.data.record[i].sn + \" - \" + msg.payload.data.record[i].eventCode + \" - \" + msg.payload.data.record[i].eventDescription);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else \n{ \n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) {node.error(recordtemp)}\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {} ;\n    msg.payload.attributes = {};\n    msg.payload.attributes.events = recordtemp;\n    msg.payload.state = origpayload.msg ;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg ;\n    node.error( origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
         "outputs": 1,
@@ -1948,29 +1832,29 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 160,
+        "x": 1170,
+        "y": 560,
         "wires": [
             [
-                "3d9d1b3bb8af4f1b"
+                "b2ac7dcb53216ac4"
             ]
         ]
     },
     {
-        "id": "3d9d1b3bb8af4f1b",
+        "id": "b2ac7dcb53216ac4",
         "type": "hass-post",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_3",
         "name": "Update Sunsynk Events Type 3",
-        "x": 1370,
-        "y": 160,
+        "x": 1460,
+        "y": 560,
         "wires": []
     },
     {
-        "id": "c9d0d17b8107000e",
+        "id": "817cffa30bbb79fa",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get last 5 notifications",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.notifications\");\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -1979,18 +1863,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 720,
-        "y": 220,
+        "x": 810,
+        "y": 620,
         "wires": [
             [
-                "9855e1bce5e22bb7"
+                "a8bb152f98fe8415"
             ]
         ]
     },
     {
-        "id": "9855e1bce5e22bb7",
+        "id": "a8bb152f98fe8415",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Request",
         "method": "GET",
         "ret": "obj",
@@ -2003,18 +1887,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 930,
-        "y": 220,
+        "x": 1020,
+        "y": 620,
         "wires": [
             [
-                "8e291008052b144b"
+                "d3fac1b613eb4f51"
             ]
         ]
     },
     {
-        "id": "8e291008052b144b",
+        "id": "d3fac1b613eb4f51",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Parse All Notifications",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar recordtemp = [];\n\nif (msg.payload.data.infos.length > 0) {\n    for (let i = 0; i < msg.payload.data.infos.length; i++) {\n        var temptime = new Date(msg.payload.data.infos[i].createAt);\n //     var tempstation = msg.payload.data.infos[i].stationName;\n // Cut string down \n        var td = msg.payload.data.infos[i].description.replace(\"(#{stationName})\", msg.payload.data.infos[i].stationName + \" \");\n        td = td.replace(\"The system detects that your plant\", \"Plant \");\n        var tempdesc = temptime.toLocaleDateString() + \" \" + temptime.toLocaleTimeString() + \"  -  \"+ td;\n        recordtemp.push(tempdesc);\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n    }\n} else {\n    node.status(\"No Events Found\")\n    recordtemp.push(\"No Events Found\");\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(recordtemp) }\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {};\n    msg.payload.attributes = {};\n//    msg.payload.attributes.test = \"written\";\n    msg.payload.attributes.ev = recordtemp;\n    msg.payload.state = origpayload.msg;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = \"\";\n    msg.payload.attributes = \"\";\n    msg.payload.state = origpayload.msg;\n    node.error(origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; ",
         "outputs": 1,
@@ -2022,29 +1906,29 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1140,
-        "y": 220,
+        "x": 1230,
+        "y": 620,
         "wires": [
             [
-                "673dc15113167cf8"
+                "296eb8d6ac7ea3d2"
             ]
         ]
     },
     {
-        "id": "673dc15113167cf8",
+        "id": "296eb8d6ac7ea3d2",
         "type": "hass-post",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_notifications",
         "name": "Update Sunsynk Notifications",
-        "x": 1380,
-        "y": 220,
+        "x": 1470,
+        "y": 620,
         "wires": []
     },
     {
-        "id": "a38b70fa759f13a1",
+        "id": "b14537970115dc42",
         "type": "delay",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "",
         "pauseType": "rate",
         "timeout": "5",
@@ -2058,18 +1942,18 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 480,
-        "y": 220,
+        "x": 570,
+        "y": 620,
         "wires": [
             [
-                "c9d0d17b8107000e"
+                "817cffa30bbb79fa"
             ]
         ]
     },
     {
-        "id": "43471a88b5bcdd4b",
+        "id": "5dbac2e429d54b80",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request for Getting Gen Info",
         "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/gen/\" + msg.payload + \"/realtime?sn=\" + msg.payload;\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -2078,18 +1962,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1610,
-        "y": 840,
+        "x": 1700,
+        "y": 1240,
         "wires": [
             [
-                "3c581a8c074e7630"
+                "1252c86c8e0935f1"
             ]
         ]
     },
     {
-        "id": "3c581a8c074e7630",
+        "id": "1252c86c8e0935f1",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Invertor Load Info",
         "method": "GET",
         "ret": "obj",
@@ -2102,18 +1986,18 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1960,
-        "y": 840,
+        "x": 2050,
+        "y": 1240,
         "wires": [
             [
-                "5e83c60ce39bfaf2"
+                "e2f2a20a38dd927a"
             ]
         ]
     },
     {
-        "id": "5e83c60ce39bfaf2",
+        "id": "e2f2a20a38dd927a",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Process Gen Info",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Data Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar TPlant = global.get(\"SS_Consolid.PlantProcessing\");\nvar TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\nglobal.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".gen\", origpayload.data);\nnode.status(\"Processing:\" + origpayload.msg + \"::\" + TPlant + \"-\" + TInv );\nreturn null;\n",
         "outputs": 1,
@@ -2122,16 +2006,16 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2230,
-        "y": 840,
+        "x": 2320,
+        "y": 1240,
         "wires": [
             []
         ]
     },
     {
-        "id": "bcf1c33f3aee0975",
+        "id": "390a6d803a3f2044",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Create Request to get realtime output",
         "func": "var graphdate = new Date();\nfunction dateToYMD(date) {\n    var d = date.getDate();\n    var m = date.getMonth() + 1; //Month from 0 to 11\n    var y = date.getFullYear();\n    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n}\n\nmsg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + msg.payload + \"/output/day?lan=en&date=\" + dateToYMD(graphdate) + \"&column=dc_temp,igbt_temp\";\nmsg.payload = \"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
         "outputs": 1,
@@ -2140,18 +2024,18 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1610,
-        "y": 900,
+        "x": 1700,
+        "y": 1300,
         "wires": [
             [
-                "a6585f2647026e37"
+                "65642975f487f34d"
             ]
         ]
     },
     {
-        "id": "a6585f2647026e37",
+        "id": "65642975f487f34d",
         "type": "http request",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Get Request",
         "method": "GET",
         "ret": "obj",
@@ -2164,18 +2048,19 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1930,
-        "y": 900,
+        "x": 2020,
+        "y": 1300,
         "wires": [
             [
-                "a6074d4535cd37fd"
+                "7713017acf4f3de5",
+                "21075917134416af"
             ]
         ]
     },
     {
-        "id": "a6074d4535cd37fd",
+        "id": "7713017acf4f3de5",
         "type": "function",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "Parse Temp",
         "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\nvar dctemp = msg.payload.data.infos[0].records[(msg.payload.data.infos[0].records.length) - 1].value;\nvar actemp = msg.payload.data.infos[1].records[(msg.payload.data.infos[1].records.length) - 1].value;\nif (global.get(\"SunSynkDebug\") === 1) \n{ \n    node.error(dctemp + \" - \" + msg.payload.data.infos[0].label);\n    node.error(actemp + \" - \" + msg.payload.data.infos[1].label);\n    node.error(msg); \n}\n\nvar dctime = [];\nvar dcvalue = [];\nif (msg.payload.data.infos[0].records.length > 0) {\n    for (let i = 0; i < msg.payload.data.infos[0].records.length; i++) {\n        var actimetemp = new Date(msg.payload.data.infos[0].records[i].time);\n        dctime.push(actimetemp);\n        dcvalue.push(msg.payload.data.infos[0].records[i].value)\n    }\n} else {\n    node.status(\"No Events Found\")\n}\n\nvar actime = [];\nvar acvalue = [];\nif (msg.payload.data.infos[1].records.length > 0) {\n    for (let i = 0; i < msg.payload.data.infos[1].records.length; i++) {\n        var actimetemp = new Date(msg.payload.data.infos[1].records[i].time); \n        actime.push(actimetemp);\n        acvalue.push(msg.payload.data.infos[1].records[i].value)\n    }\n} else\n{\n    node.status(\"No Events Found\")\n}\nif (global.get(\"SunSynkDebug\") === 1) {\n    node.error(actime);\n    node.error(acvalue);\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    var TPlant = global.get(\"SS_Consolid.PlantProcessing\");\n    var TInv = global.get(\"SS_Consolid.Plant.\"+TPlant+\".ProcessingInverter\");\n    global.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".acdc.dctemp\", dctemp);\n    global.set(\"SS_Consolid.Plant.\" + TPlant + \".Inverter.\" + TInv + \".acdc.actemp\", actemp);\n    node.status(\"Processing:\" + origpayload.msg + \":\" + TPlant + \"-\" + TInv + \":\" + actemp + \"-\" + dctemp);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    node.error(origpayload.msg);\n    node.status(origpayload.msg);\n    return null;\n}\nreturn msg; \n ",
         "outputs": 1,
@@ -2184,27 +2069,27 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2210,
-        "y": 900,
+        "x": 2300,
+        "y": 1300,
         "wires": [
             []
         ]
     },
     {
-        "id": "177692cd35cdecb2",
+        "id": "797d5f642f14a758",
         "type": "hass-post",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "",
         "name": "Update Sensor",
-        "x": 1080,
-        "y": 540,
+        "x": 1170,
+        "y": 940,
         "wires": []
     },
     {
-        "id": "85ad9cc3adb95cf1",
+        "id": "d8bae3df7a1de13f",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD - Stage 1",
         "active": false,
         "tosidebar": true,
@@ -2214,14 +2099,14 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 730,
-        "y": 440,
+        "x": 820,
+        "y": 840,
         "wires": []
     },
     {
-        "id": "d6ec021b51b01602",
+        "id": "341eed38e396a6df",
         "type": "debug",
-        "z": "80bf706fc22f04f9",
+        "z": "fca77f132c7d5d8f",
         "name": "CD Stage 2",
         "active": false,
         "tosidebar": true,
@@ -2231,8 +2116,25 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 450,
-        "y": 440,
+        "x": 540,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "21075917134416af",
+        "type": "debug",
+        "z": "fca77f132c7d5d8f",
+        "name": "Consolidated Temp Data",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2340,
+        "y": 1360,
         "wires": []
     },
     {

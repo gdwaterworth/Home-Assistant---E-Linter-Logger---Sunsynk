@@ -91,47 +91,47 @@
         state: ""
         unique_id: "sensor.sunsynk_notifications"
 ##### Plant Information
-  - sensor: 
-      - name: "Sunsynk Invertor List"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_invertor_list"
-  - sensor: 
-      - name: "Sunsynk Plant List"
-        state: "DONOTEDIT"
-        unique_id: "sensor.sunsynk_plant_list"
+#  - sensor: 
+#      - name: "Sunsynk Invertor List"
+#        state: "DONOTEDIT"
+#        unique_id: "sensor.sunsynk_invertor_list"
+#  - sensor: 
+#      - name: "Sunsynk Plant List"
+#        state: "DONOTEDIT"
+#        unique_id: "sensor.sunsynk_plant_list"
 ##### Core Sensors Invertor 1
-  - sensor: 
-      - name: "Sunsynk Flow"
-        state: ""
-        unique_id: "sensor.sunsynk_flow"
-  - sensor: 
-      - name: "Sunsynk Output"
-        state: ""
-        unique_id: "sensor.sunsynk_output"
-  - sensor: 
-      - name: "Sunsynk Battery"
-        state: ""
-        unique_id: "sensor.sunsynk_battery"
-  - sensor: 
-      - name: "Sunsynk Input"
-        state: ""
-        unique_id: "sensor.sunsynk_input"
-  - sensor: 
-      - name: "Sunsynk Grid"
-        state: ""
-        unique_id: "sensor.sunsynk_grid"
-  - sensor: 
-      - name: "Sunsynk Gen"
-        state: ""
-        unique_id: "sensor.sunsynk_gen"
-  - sensor: 
-      - name: "Sunsynk Load"
-        state: ""
-        unique_id: "sensor.sunsynk_load"
-  - sensor: 
-      - name: "Sunsynk Settings"
-        state: ""
-        unique_id: "sensor.sunsynk_settings"
+#  - sensor: 
+#      - name: "Sunsynk Flow"
+#        state: ""
+#        unique_id: "sensor.sunsynk_flow"
+#  - sensor: 
+#      - name: "Sunsynk Output"
+#        state: ""
+#        unique_id: "sensor.sunsynk_output"
+#  - sensor: 
+#      - name: "Sunsynk Battery"
+#        state: ""
+#        unique_id: "sensor.sunsynk_battery"
+# - sensor: 
+#      - name: "Sunsynk Input"
+#        state: ""
+#        unique_id: "sensor.sunsynk_input"
+#  - sensor: 
+#      - name: "Sunsynk Grid"
+#        state: ""
+#        unique_id: "sensor.sunsynk_grid"
+#  - sensor: 
+#      - name: "Sunsynk Gen"
+#        state: ""
+#        unique_id: "sensor.sunsynk_gen"
+#  - sensor: 
+#      - name: "Sunsynk Load"
+#        state: ""
+#        unique_id: "sensor.sunsynk_load"
+#  - sensor: 
+#      - name: "Sunsynk Settings"
+#        state: ""
+#        unique_id: "sensor.sunsynk_settings"
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg"
@@ -277,25 +277,25 @@
         device_class: timestamp
         state: 0
         unique_id: "sensor.sunsynk_stats_last_update"
-  - sensor: 
-      - name: "Sunsynk Battery Depletion"
-        state: 0
-        unique_id: "sensor.sunsynk_battery_depletion"
-  - sensor: 
-      - name: "Sunsynk Battery Depletion Load"
-        state: 0
-        unique_id: "sensor.sunsynk_battery_depletion_load"
+#  - sensor: 
+#      - name: "Sunsynk Battery Depletion"
+#        state: 0
+#        unique_id: "sensor.sunsynk_battery_depletion"
+#  - sensor: 
+#      - name: "Sunsynk Battery Depletion Load"
+#        state: 0
+#        unique_id: "sensor.sunsynk_battery_depletion_load"
 
 #####
 ##### Sensors For Debugging Can be removed if not using the debug flows
 #####
 #####
-  - sensor: 
-      - name: "Sunsynk DEBUG permissions"
-        device_class: timestamp
-        state: ""
-        unique_id: "sensor.sunsynk_debug_permissions"
-
+#  - sensor: 
+#      - name: "Sunsynk DEBUG permissions"
+#        device_class: timestamp
+#        state: ""
+#        unique_id: "sensor.sunsynk_debug_permissions"
+#
 #####
 ##### Statistics Sensors
 #####
@@ -319,4 +319,3 @@
         state: >
             {{float((600*2.37)/30)}}
 
-#####
