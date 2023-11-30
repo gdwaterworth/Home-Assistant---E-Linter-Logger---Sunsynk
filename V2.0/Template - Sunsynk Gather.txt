@@ -9,10 +9,10 @@
           login: "xxx@xxx.com"
           password: "xxx"
           region: 1
-          plant_index: 0
+#          plant_index: 0
           invertor_list_opt: 0
-          invertor_1_index: 0
-          invertor_2_index: "DONOTEDIT"
+#          invertor_1_index: 0
+#          invertor_2_index: "DONOTEDIT"
           return_items: 10
           sn_data: 2106054422
           sn_flow: 15983
