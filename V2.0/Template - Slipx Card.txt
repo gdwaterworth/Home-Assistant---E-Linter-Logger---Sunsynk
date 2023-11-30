@@ -166,7 +166,7 @@
   - sensor:
       - name: "SunSynk Inverter Status 59"
         state: >
-          {{ state_attr("sensor.sunsynk_usable_invertor", "gatewaystatus") }}
+          {{ state_attr("sensor.sunsynk_usable_inverter", "gatewaystatus") }}
   - sensor:
       - name: "Sunsynk Grid Online 194"
         state: >
