@@ -14,21 +14,24 @@
 #          invertor_1_index: 0
 #          invertor_2_index: "DONOTEDIT"
           return_items: 10
-          sn_data: 2106054422
-          sn_flow: 15983
+          sn_data: xxx
+          sn_flow: xxx
           unit_cost: 2.37
-##### plant_index : Put in your Plant Index for your Plant. 0 should work 
 #####
 ##### invertor_list_opt:
 ##### Select which method must be used to get the invertor list
 ##### 0 - Get invertor list based on plant id ---- Should work for most people
 ##### 1 - Get invertor list from account ---- Not all people will have permission to do this
 #####
-##### invertor_1_index: Put in your Invertor Index for your 1st Invertor. 0 should work 
-##### invertor_2_index: Put in your Invertor Index for your 2nd Invertor. Only Change if you have 2 Invertors
 ##### return_items:     Number of Items to return in queries. Default 10
 ##### sn_data:          Inverter SN to use for single data values
+#####                   Do a run through then in node red look at global context data under 
+#####                   SS_Consolidat -> Config Data -> Inverter Plant
+#####                   [Inverter SN]:[Plantid]
 ##### sn_flow:          Plant ID to use for flow data
+#####                   Do a run through then in node red look at global context data under 
+#####                   SS_Consolidat -> Config Data -> Inverter Plant
+#####                   [Inverter SN]:[Plantid]
 #####
 ##### DO NOT EDIT ANYTHING UNDER HERE
 #####
