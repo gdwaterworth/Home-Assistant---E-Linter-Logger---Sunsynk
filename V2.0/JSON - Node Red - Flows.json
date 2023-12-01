@@ -28,318 +28,6 @@
         ]
     },
     {
-        "id": "e53175753e61992a",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Invertor Serial Number ( 1st Invertor )",
-        "func": "var graphdate = new Date();\nfunction dateToYMD(date) {\n    var d = date.getDate();\n    var m = date.getMonth() + 1; //Month from 0 to 11\n    var y = date.getFullYear();\n    return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);\n}\n\nif (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nvar invindex = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.invertor_1_index');\nif (ErrorCk.includes(invindex)) { node.status(\"Invertor 1 Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[invindex] === \"undefined\") \n{ \n    node.error(msg.payload); \n    node.status(\"Invertor 1 Index \" + invindex + \" Does not exist in return data\"); \n    return null; \n}\n\n\nif (origpayload.msg == \"Success\") {\n    global.set(\"SS.Invertor1sn\",origpayload.data.infos[invindex].sn);\n    if (ErrorCk.includes(global.get(\"SS.Invertor1sn\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) {\n        node.error(\"Inv 1 SN\"); node.status(\"Inv 1 SN\");\n        global.set(\"SS.url.i1.output\", \"\");\n        global.set(\"SS.url.i1.battery\", \"\");\n        global.set(\"SS.url.i1.input\", \"\");\n        global.set(\"SS.url.i1.grid\", \"\");\n        global.set(\"SS.url.i1.load\", \"\");\n        global.set(\"SS.url.i1.settings\", \"\");\n        global.set(\"SS.url.i1.acdc\", \"\");\n        global.set(\"SS.url.i1.set\", \"\");\n        return null;\n    } else {\n        global.set(\"SS.url.i1.output\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/realtime/output\");\n        global.set(\"SS.url.i1.battery\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/battery/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\") + \"&lan\");\n        global.set(\"SS.url.i1.input\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/realtime/input\");\n        global.set(\"SS.url.i1.grid\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/grid/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\"));\n        global.set(\"SS.url.i1.load\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/load/\" + global.get(\"SS.Invertor1sn\") + \"/realtime?sn=\" + global.get(\"SS.Invertor1sn\"));\n        global.set(\"SS.url.i1.settings\", global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + global.get(\"SS.Invertor1sn\") + \"/read\");\n        global.set(\"SS.url.i1.acdc\", global.get(\"SS.url.hostname\") + \"/api/v1/inverter/\" + global.get(\"SS.Invertor1sn\") + \"/output/day?lan=en&date=\" + dateToYMD(graphdate) + \"&column=dc_temp,igbt_temp\");\n        global.set(\"SS.url.i1.set\", global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + global.get(\"SS.Invertor1sn\") + \"/set\");\n    }\n    msg.payload = {};\n    msg.payload.sn = origpayload.data.infos[invindex].sn;\n    let currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString() + \" Index:\" + invindex);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    var msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = origpayload.data.infos[invindex].sn;\n    return [msgstatus,msg];\n} else {\n    msg.payload = {};\n    global.set(\"SS.url.i1.output\", \"\");\n    global.set(\"SS.url.i1.battery\", \"\");\n    global.set(\"SS.url.i1.input\", \"\");\n    global.set(\"SS.url.i1.grid\", \"\");\n    global.set(\"SS.url.i1.load\", \"\");\n    global.set(\"SS.url.i1.settings\", \"\");\n    global.set(\"SS.url.i1.acdc\", \"\");\n    global.set(\"SS.url.i1.set\", \"\");\n    node.status(origpayload.msg + \" Index:\" + invindex)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 670,
-        "y": 1400,
-        "wires": [
-            [],
-            [
-                "418a96f5f1b651c9"
-            ]
-        ]
-    },
-    {
-        "id": "f51f0fbe061d9cd7",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting battery Info",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.battery\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 490,
-        "y": 1660,
-        "wires": [
-            [
-                "e522b35a8a127bb6"
-            ]
-        ]
-    },
-    {
-        "id": "e522b35a8a127bb6",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Battery Info",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 810,
-        "y": 1660,
-        "wires": [
-            [
-                "84cc88872dfbd9bb"
-            ]
-        ]
-    },
-    {
-        "id": "8840cdead8881df7",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting Invertor Settings",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.settings\");\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 510,
-        "y": 1900,
-        "wires": [
-            [
-                "1c1aed6a936a4fc2"
-            ]
-        ]
-    },
-    {
-        "id": "1c1aed6a936a4fc2",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Settings",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 800,
-        "y": 1900,
-        "wires": [
-            [
-                "a07a57f4173a145d"
-            ]
-        ]
-    },
-    {
-        "id": "5cbff0fad88c676e",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting Grid Info",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.grid\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 490,
-        "y": 1780,
-        "wires": [
-            [
-                "0dbcf760fe6ec990"
-            ]
-        ]
-    },
-    {
-        "id": "0dbcf760fe6ec990",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Grid Info",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 800,
-        "y": 1780,
-        "wires": [
-            [
-                "82600efe878fe587"
-            ]
-        ]
-    },
-    {
-        "id": "d985fcb00600c3b9",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting Load Info",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.load\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 490,
-        "y": 1840,
-        "wires": [
-            [
-                "cd1e22edbc0da295"
-            ]
-        ]
-    },
-    {
-        "id": "cd1e22edbc0da295",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Load Info",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 800,
-        "y": 1840,
-        "wires": [
-            [
-                "70ec719d14f92732"
-            ]
-        ]
-    },
-    {
-        "id": "db5cc86a829e8bca",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting Input",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.input\");\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 470,
-        "y": 1720,
-        "wires": [
-            [
-                "caf5b68ee44cdaca"
-            ]
-        ]
-    },
-    {
-        "id": "caf5b68ee44cdaca",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Input",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 790,
-        "y": 1720,
-        "wires": [
-            [
-                "095649a2b02e4ec2"
-            ]
-        ]
-    },
-    {
-        "id": "ad31dd1db4441737",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request for Getting Output",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.i1.output\");\nmsg.payload=\"\";\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 480,
-        "y": 1600,
-        "wires": [
-            [
-                "45d5eef4e801a974"
-            ]
-        ]
-    },
-    {
-        "id": "45d5eef4e801a974",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Invertor Output",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 790,
-        "y": 1600,
-        "wires": [
-            [
-                "70e66830d0ab0b90"
-            ]
-        ]
-    },
-    {
-        "id": "a07a57f4173a145d",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Invert Settings",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1900,
-        "wires": [
-            [
-                "127a0b93cf41d353"
-            ]
-        ]
-    },
-    {
         "id": "21dae3e15cef46c9",
         "type": "function",
         "z": "fca77f132c7d5d8f",
@@ -350,8 +38,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 590,
-        "y": 280,
+        "x": 1190,
+        "y": 160,
         "wires": [
             [
                 "a5e32263433166d3"
@@ -374,8 +62,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 180,
-        "y": 500,
+        "x": 170,
+        "y": 360,
         "wires": [
             [
                 "cd89913c0ad409c1",
@@ -384,149 +72,6 @@
                 "b14537970115dc42",
                 "2d8860a1221cca90",
                 "bd7124fd85316bc5"
-            ]
-        ]
-    },
-    {
-        "id": "6df5b52d7b770df4",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Plant ID No",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n//sensor.sunsynk_plant_index\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nvar plantindex = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.plant_index');\nif (ErrorCk.includes(plantindex)) { node.status(\"Plant Index Unconfigured\"); return null; }\nif (typeof msg.payload.data.infos[plantindex] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"Plant Index \" + plantindex + \" Does not exist in return data\");\n    return null;\n}\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    global.set(\"SS.Plantid\", msg.payload.data.infos[plantindex].id);\n    // Setup variables\n    var items = global.get(\"SS.ReturnItems\");\n    if (ErrorCk.includes(items)) { let e = \"No Items Set\"; node.error(e); node.status(e); return null };\n    if (ErrorCk.includes(global.get(\"SS.Plantid\")) || ErrorCk.includes(global.get(\"SS.url.hostname\"))) {\n        node.error(\"Plant ID\"); node.status(\"Pant ID\");\n        global.set(\"SS.url.flow\", \"\");\n        global.set(\"SS.url.plantinvlist\", \"\");\n        return null;\n    } else {\n        global.set(\"SS.url.flow\", global.get(\"SS.url.hostname\") + \"/api/v1/plant/energy/\" + global.get(\"SS.Plantid\") + \"/flow\");\n        global.set(\"SS.url.plantinvlist\", global.get(\"SS.url.hostname\") + \"/api/v1/plant/\" + global.get(\"SS.Plantid\") + \"/inverters?page=1&limit=\" + items +\"&status=-1&type=-2\");\n    }\n    msg.payload = msg.payload.data.infos[plantindex].id;\n    node.status(\"Success\" + \" Index:\" + plantindex)\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    var msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = msg.payload;\n    return [msg, msgstatus];\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg + \" Index:\" + plantindex)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 70,
-        "y": 1360,
-        "wires": [
-            [],
-            [
-                "2acb6d253c978c52"
-            ]
-        ]
-    },
-    {
-        "id": "84cc88872dfbd9bb",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Battery Data",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = parseFloat(msg.payload.data.soc);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.soc = parseFloat(msg.payload.data.soc);\n    msg.payload.attributes.capacity = parseFloat(msg.payload.data.capacity);\n    msg.payload.attributes.correctcapacity = parseFloat(msg.payload.data.correctCap);\n    msg.payload.attributes.power = parseFloat(msg.payload.data.power);\n    msg.payload.attributes.etotalchg = parseFloat(msg.payload.data.etotalChg);\n    msg.payload.attributes.etotaldischg = parseFloat(msg.payload.data.etotalDischg);\n    msg.payload.attributes.temp = parseFloat(msg.payload.data.temp);\n    msg.payload.attributes.current = parseFloat(msg.payload.data.current);\n    msg.payload.attributes.voltage = parseFloat(msg.payload.data.voltage);\n    msg.payload.attributes.status = parseFloat(msg.payload.data.status);    \n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 1660,
-        "wires": [
-            [
-                "3e9feb5ff04bc328"
-            ]
-        ]
-    },
-    {
-        "id": "095649a2b02e4ec2",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Input Data",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = parseFloat(msg.payload.data.pvIV[0].ppv) + parseFloat(msg.payload.data.pvIV[1].ppv);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.pv = parseFloat(msg.payload.data.pvIV[0].ppv) + parseFloat(msg.payload.data.pvIV[1].ppv);\n    msg.payload.attributes.pv1 = parseFloat(msg.payload.data.pvIV[0].ppv) ;\n    msg.payload.attributes.pv1_volt = parseFloat(msg.payload.data.pvIV[0].vpv);\n    msg.payload.attributes.pv1_current = parseFloat(msg.payload.data.pvIV[0].ipv);\n    msg.payload.attributes.pv2 = parseFloat(msg.payload.data.pvIV[1].ppv);\n    msg.payload.attributes.pv2_volt = parseFloat(msg.payload.data.pvIV[1].vpv);\n    msg.payload.attributes.pv2_current = parseFloat(msg.payload.data.pvIV[1].ipv);\n    msg.payload.attributes.pvtotal = parseFloat(msg.payload.data.etotal);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1050,
-        "y": 1720,
-        "wires": [
-            [
-                "9cb3e2a71092678d"
-            ]
-        ]
-    },
-    {
-        "id": "82600efe878fe587",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Grid",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = msg.payload.data.vip[0].current;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.total = parseFloat(msg.payload.data.etotalFrom);\n    msg.payload.attributes.volt = msg.payload.data.vip[0].volt;\n    msg.payload.attributes.current = msg.payload.data.vip[0].current;\n    var gridonline = false;\n    if (parseFloat(msg.payload.data.vip[0].volt) < 200) { var gridonline = false } else { var gridonline = true }\n    msg.payload.attributes.gridonline = gridonline ;\n    msg.payload.attributes.power = parseFloat(msg.payload.data.pac);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1780,
-        "wires": [
-            [
-                "2eb2b3cada070416"
-            ]
-        ]
-    },
-    {
-        "id": "70ec719d14f92732",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Load",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = msg.payload.data.totalPower;\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    msg.payload.attributes.total = parseFloat(msg.payload.data.totalUsed);\n    msg.payload.attributes.volt = msg.payload.data.vip[0].volt;\n    msg.payload.attributes.power = msg.payload.data.totalPower;\n    msg.payload.attributes.totalpower = msg.payload.data.totalPower;\n    var tempcurrent = parseFloat(msg.payload.attributes.power) / parseFloat(msg.payload.attributes.volt);\n    msg.payload.attributes.calc_current = tempcurrent.toFixed(2);\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg ;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1040,
-        "y": 1840,
-        "wires": [
-            [
-                "31dd21860cbc8c4c"
-            ]
-        ]
-    },
-    {
-        "id": "70e66830d0ab0b90",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Invertor Output",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    msg.payload.attributes.poweressentials = parseFloat(msg.payload.data.pac);\n    msg.payload.attributes.totalpower = parseFloat(msg.payload.data.pInv) + parseFloat(msg.payload.data.pac);\n    msg.payload.attributes.poweraux = parseFloat(msg.payload.data.pInv);\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg ;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1070,
-        "y": 1600,
-        "wires": [
-            [
-                "c4c01331b7a03f18"
-            ]
-        ]
-    },
-    {
-        "id": "90673d2b7f54dc55",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Invertor List",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload = {};\n    msg.payload.attributes = {};\n    scroll_all_items(origpayload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = origpayload.msg;\n    node.status(origpayload.msg)\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 980,
-        "y": 1340,
-        "wires": [
-            [
-                "c9592b52b355aebe"
             ]
         ]
     },
@@ -593,90 +138,6 @@
         ]
     },
     {
-        "id": "c9592b52b355aebe",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_invertor_list",
-        "name": "Update sensor.sunsynk_invertor_list",
-        "x": 1330,
-        "y": 1340,
-        "wires": []
-    },
-    {
-        "id": "3e9feb5ff04bc328",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_battery",
-        "name": "Update SunSynk Battery",
-        "x": 1310,
-        "y": 1660,
-        "wires": []
-    },
-    {
-        "id": "c4c01331b7a03f18",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_output",
-        "name": "Update SunSynk Output",
-        "x": 1310,
-        "y": 1600,
-        "wires": []
-    },
-    {
-        "id": "9cb3e2a71092678d",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_input",
-        "name": "Update SunSynk Input",
-        "x": 1300,
-        "y": 1720,
-        "wires": []
-    },
-    {
-        "id": "2eb2b3cada070416",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_grid",
-        "name": "Update SunSynk Grid",
-        "x": 1300,
-        "y": 1780,
-        "wires": []
-    },
-    {
-        "id": "31dd21860cbc8c4c",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_load",
-        "name": "Update SunSynk Load",
-        "x": 1300,
-        "y": 1840,
-        "wires": []
-    },
-    {
-        "id": "127a0b93cf41d353",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_settings",
-        "name": "Update SunSynk Settings",
-        "x": 1310,
-        "y": 1900,
-        "wires": []
-    },
-    {
         "id": "a5e5f685a25108df",
         "type": "function",
         "z": "fca77f132c7d5d8f",
@@ -708,48 +169,6 @@
         "wires": []
     },
     {
-        "id": "418a96f5f1b651c9",
-        "type": "delay",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "20",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 200,
-        "y": 1560,
-        "wires": [
-            [
-                "ad31dd1db4441737",
-                "f51f0fbe061d9cd7",
-                "db5cc86a829e8bca",
-                "5cbff0fad88c676e",
-                "d985fcb00600c3b9",
-                "8840cdead8881df7"
-            ]
-        ]
-    },
-    {
-        "id": "9fe4f826ab944385",
-        "type": "comment",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Inverter 1 Flows",
-        "info": "# Inverter 1 Flows",
-        "x": 480,
-        "y": 1560,
-        "wires": []
-    },
-    {
         "id": "69f04f357e01dbf0",
         "type": "comment",
         "z": "fca77f132c7d5d8f",
@@ -760,60 +179,13 @@
         "wires": []
     },
     {
-        "id": "2acb6d253c978c52",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Create Request PLant Invertor List",
-        "func": "var ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nmsg.headers = global.get(\"SS.Header.Bearer\");\nvar invlistopt = parseFloat(global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.invertor_list_opt'));\nif (ErrorCk.includes(invlistopt)) { node.status(\"Invertor List Option Unconfigured\"); return null; }\nif (invlistopt === 0) \n{\n   msg.url = global.get(\"SS.url.plantinvlist\");\n   node.status(\"Plant Invertor List Used\");\n} else if (invlistopt === 1) \n{\n    msg.url = global.get(\"SS.url.invertor_list\");\n    node.status(\"Account Invertor List Used\");\n} else\n{\n    node.status(\"Invalid List Invertor Option\");\n    return null;\n}\nmsg.payload = \"\"\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 300,
-        "y": 1340,
-        "wires": [
-            [
-                "ec32acadb65f257a"
-            ]
-        ]
-    },
-    {
-        "id": "ec32acadb65f257a",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Plant Invertor List",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 600,
-        "y": 1340,
-        "wires": [
-            [
-                "e53175753e61992a",
-                "90673d2b7f54dc55"
-            ]
-        ]
-    },
-    {
         "id": "4450275588ced110",
         "type": "comment",
         "z": "fca77f132c7d5d8f",
         "name": "Created by Gary Waterworth on powerforum.co.za",
         "info": "Topic Link : https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/\n\nFeel free to use",
-        "x": 1230,
-        "y": 240,
+        "x": 340,
+        "y": 780,
         "wires": []
     },
     {
@@ -822,8 +194,8 @@
         "z": "fca77f132c7d5d8f",
         "name": "https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/",
         "info": "Topic Link : https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/\n\nFeel free to use",
-        "x": 1230,
-        "y": 280,
+        "x": 340,
+        "y": 820,
         "wires": []
     },
     {
@@ -848,115 +220,6 @@
         ]
     },
     {
-        "id": "90cdfc715504431c",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Plant Flow Data",
-        "func": "msg.headers = global.get(\"SS.Header.Bearer\");\nmsg.url = global.get(\"SS.url.flow\");\nmsg.payload=\"\"\nlet currdate = new Date(); node.status(\"Action Sent - \" + currdate.toLocaleString());\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1400,
-        "y": 80,
-        "wires": [
-            [
-                "d39e0694ad913862"
-            ]
-        ]
-    },
-    {
-        "id": "d39e0694ad913862",
-        "type": "http request",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Get Flow Data",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 1620,
-        "y": 80,
-        "wires": [
-            [
-                "6360d898e9fec6b9"
-            ]
-        ]
-    },
-    {
-        "id": "6360d898e9fec6b9",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Plant Flow Data",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    msg.payload.attributes = returnvalue;\n    msg.payload.state = \"Success\";\n    let currdate = new Date(); node.status(origpayload.msg + \" - \" + currdate.toLocaleString());\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg;\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1840,
-        "y": 80,
-        "wires": [
-            [
-                "54907525a327c8f1"
-            ]
-        ]
-    },
-    {
-        "id": "54907525a327c8f1",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_flow",
-        "name": "Update SunSynk Flow",
-        "x": 2060,
-        "y": 80,
-        "wires": []
-    },
-    {
-        "id": "cf949f3158a35e48",
-        "type": "function",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "name": "Sunsynk Plant List",
-        "func": "if (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    return null;\n}\n\nvar returnvalue = {};\n\nfunction scroll_all_items(s_payload, t_tkey) {\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (value === null || value === \"\") {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n        } else if (s_payload[key].length === 0) {\n            if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        } else if (typeof s_payload[key] === 'object') {\n            if (Array.isArray(s_payload[key])) {\n                if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n            } else {\n                if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n            }\n        } else {\n            if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n        }\n    });\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = s_payload }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\n\nvar origpayload = msg.payload;\nif (origpayload.msg == \"Success\") {\n    msg.payload.attributes = {};\n    scroll_all_items(msg.payload.data, \"\");\n    node.status(origpayload.msg);\n    msg.payload.state = \"Success\";\n    msg.payload.attributes = returnvalue;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\n    return msg\n} else {\n    msg.payload = {};\n    node.status(origpayload.msg)\n    node.error({ state: origpayload.msg, data: origpayload });\n    return null;\n}\n",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1390,
-        "y": 40,
-        "wires": [
-            [
-                "539daee32f23a903"
-            ]
-        ]
-    },
-    {
-        "id": "539daee32f23a903",
-        "type": "hass-post",
-        "z": "fca77f132c7d5d8f",
-        "d": true,
-        "endpoint": "bc1c0f273da7bbae",
-        "entityid": "sensor.sunsynk_plant_list",
-        "name": "Update Sunsynk Plant List",
-        "x": 1640,
-        "y": 40,
-        "wires": []
-    },
-    {
         "id": "2d8860a1221cca90",
         "type": "debug",
         "z": "fca77f132c7d5d8f",
@@ -969,8 +232,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 570,
-        "y": 700,
+        "x": 560,
+        "y": 560,
         "wires": []
     },
     {
@@ -978,15 +241,15 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Run Through Plant List",
-        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Plant Information Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar msg2={};\nglobal.set(\"SS_Consolid.PlantTotal\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].id, origpayload.data.infos[i]);\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.PlantProcessing\", origpayload.data.infos[i].id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].id;\n    node.send([msg,null]);\n    await delay(10000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].id);\n}\nmsg2.payload=\"done\";\nnode.send([null,msg2]);\nreturn ;\n",
+        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Plant Information Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nvar msg2={};\nglobal.set(\"SS_Consolid.PlantTotal\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].id, origpayload.data.infos[i]);\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.ProcessState\", false);\n    global.set(\"SS_Consolid.PlantProcessing\", origpayload.data.infos[i].id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].id;\n    node.send([msg,null]);\n    do {\n        await delay(2000); \n       } while (global.get(\"SS_Consolid.ProcessState\") === false );\n    node.status(\"Processed :\" + origpayload.data.infos[i].id);\n}\nawait delay(2000);\nnode.status(\"Finished Processing, data trigger\");\nmsg2.payload=\"done\";\nnode.send([null,msg2]);\nreturn ;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 490,
-        "y": 760,
+        "x": 480,
+        "y": 620,
         "wires": [
             [
                 "f27b0a86d44e7ad7",
@@ -1013,8 +276,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 850,
-        "y": 700,
+        "x": 840,
+        "y": 560,
         "wires": []
     },
     {
@@ -1029,8 +292,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 850,
-        "y": 760,
+        "x": 840,
+        "y": 620,
         "wires": [
             [
                 "3f1e10a41c547cbe",
@@ -1054,8 +317,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1090,
-        "y": 760,
+        "x": 1080,
+        "y": 620,
         "wires": [
             [
                 "1b15bb487595d619",
@@ -1076,8 +339,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1090,
-        "y": 700,
+        "x": 1080,
+        "y": 560,
         "wires": []
     },
     {
@@ -1093,8 +356,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1340,
-        "y": 700,
+        "x": 1330,
+        "y": 560,
         "wires": []
     },
     {
@@ -1109,8 +372,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1360,
-        "y": 760,
+        "x": 1350,
+        "y": 620,
         "wires": [
             []
         ]
@@ -1127,8 +390,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 850,
-        "y": 880,
+        "x": 840,
+        "y": 740,
         "wires": [
             [
                 "5b5632a90b6a5fe2"
@@ -1148,8 +411,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1320,
-        "y": 820,
+        "x": 1310,
+        "y": 680,
         "wires": []
     },
     {
@@ -1168,8 +431,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1110,
-        "y": 880,
+        "x": 1100,
+        "y": 740,
         "wires": [
             [
                 "ccb305032b38748d",
@@ -1182,15 +445,15 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Run Through Plant Inv List",
-        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nnode.status(\"Plant ID:\" + global.get(\"SS_Consolid.PlantProcessing\") + \" -- \" + origpayload.data.total);\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".TotalInverters\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".Inverter.\" + origpayload.data.infos[i].sn , origpayload.data.infos[i]);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".ProcessingInverter\", origpayload.data.infos[i].sn);\n    global.set(\"SS_Consolid.Config_Data.InverterPlant.\"+ origpayload.data.infos[i].sn , origpayload.data.infos[i].plant.id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].sn;\n    node.send(msg);\n    await delay(5000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].sn);\n}\nreturn null;\n",
+        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg)\n    return null;\n}\nnode.status(\"Plant ID:\" + global.get(\"SS_Consolid.PlantProcessing\") + \" -- \" + origpayload.data.total);\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".TotalInverters\", origpayload.data.total);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    node.status(\"Processing :\" + origpayload.data.infos[i].id);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".Inverter.\" + origpayload.data.infos[i].sn , origpayload.data.infos[i]);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".ProcessingInverter\", origpayload.data.infos[i].sn);\n    global.set(\"SS_Consolid.Config_Data.InverterPlant.\"+ origpayload.data.infos[i].sn , origpayload.data.infos[i].plant.id);\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].sn;\n    node.send(msg);\n    await delay(2000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].sn);\n}\nglobal.set(\"SS_Consolid.ProcessState\", true);\nnode.status(\"Finished Processing\");\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1370,
-        "y": 880,
+        "x": 1360,
+        "y": 740,
         "wires": [
             [
                 "39de3c431e2ef292",
@@ -1218,8 +481,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1640,
-        "y": 820,
+        "x": 1630,
+        "y": 680,
         "wires": []
     },
     {
@@ -1235,7 +498,7 @@
         "finalize": "",
         "libs": [],
         "x": 1700,
-        "y": 940,
+        "y": 800,
         "wires": [
             [
                 "6ad20c7a74f5b09d"
@@ -1255,7 +518,7 @@
         "finalize": "",
         "libs": [],
         "x": 1720,
-        "y": 1180,
+        "y": 1040,
         "wires": [
             [
                 "ad062873d09020b8"
@@ -1275,7 +538,7 @@
         "finalize": "",
         "libs": [],
         "x": 1700,
-        "y": 1060,
+        "y": 920,
         "wires": [
             [
                 "c6b56dcc61ee0ac0"
@@ -1295,7 +558,7 @@
         "finalize": "",
         "libs": [],
         "x": 1700,
-        "y": 1120,
+        "y": 980,
         "wires": [
             [
                 "b254d03c2acc8a2f"
@@ -1315,7 +578,7 @@
         "finalize": "",
         "libs": [],
         "x": 1680,
-        "y": 1000,
+        "y": 860,
         "wires": [
             [
                 "4539b1323b8d910d"
@@ -1335,7 +598,7 @@
         "finalize": "",
         "libs": [],
         "x": 1690,
-        "y": 880,
+        "y": 740,
         "wires": [
             [
                 "7a314cd6efbcf01b"
@@ -1358,8 +621,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2060,
-        "y": 940,
+        "x": 2050,
+        "y": 800,
         "wires": [
             [
                 "0c830c55b9bd7aa3"
@@ -1382,8 +645,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2050,
-        "y": 1180,
+        "x": 2040,
+        "y": 1040,
         "wires": [
             [
                 "17ce4af29efbbaa3"
@@ -1406,8 +669,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2050,
-        "y": 1060,
+        "x": 2040,
+        "y": 920,
         "wires": [
             [
                 "1ef15ad3c7857990"
@@ -1430,8 +693,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2050,
-        "y": 1120,
+        "x": 2040,
+        "y": 980,
         "wires": [
             [
                 "598f5675e87ee423"
@@ -1454,8 +717,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2040,
-        "y": 1000,
+        "x": 2030,
+        "y": 860,
         "wires": [
             [
                 "5d2184e1520ae60d"
@@ -1478,8 +741,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2040,
-        "y": 880,
+        "x": 2030,
+        "y": 740,
         "wires": [
             [
                 "0e69ef61c8a28067"
@@ -1498,8 +761,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 880,
+        "x": 2310,
+        "y": 740,
         "wires": [
             []
         ]
@@ -1516,8 +779,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 940,
+        "x": 2310,
+        "y": 800,
         "wires": [
             []
         ]
@@ -1534,8 +797,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 1000,
+        "x": 2310,
+        "y": 860,
         "wires": [
             []
         ]
@@ -1552,8 +815,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 1060,
+        "x": 2310,
+        "y": 920,
         "wires": [
             []
         ]
@@ -1570,8 +833,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 1120,
+        "x": 2310,
+        "y": 980,
         "wires": [
             []
         ]
@@ -1588,8 +851,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 1180,
+        "x": 2310,
+        "y": 1040,
         "wires": [
             []
         ]
@@ -1605,8 +868,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
-        "y": 440,
+        "x": 620,
+        "y": 300,
         "wires": [
             [
                 "d3f1b15460c95db2"
@@ -1629,8 +892,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 930,
-        "y": 440,
+        "x": 920,
+        "y": 300,
         "wires": [
             [
                 "ca853feafb8b91a7"
@@ -1648,8 +911,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
-        "y": 500,
+        "x": 620,
+        "y": 360,
         "wires": [
             [
                 "90cb03e325683890"
@@ -1672,8 +935,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 930,
-        "y": 500,
+        "x": 920,
+        "y": 360,
         "wires": [
             [
                 "3acdecf38bfaff56"
@@ -1691,8 +954,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 630,
-        "y": 560,
+        "x": 620,
+        "y": 420,
         "wires": [
             [
                 "7eec408a6849e43c"
@@ -1715,8 +978,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 930,
-        "y": 560,
+        "x": 920,
+        "y": 420,
         "wires": [
             [
                 "a96cfb632804e7e9"
@@ -1728,15 +991,15 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Export Data Export To Entity",
-        "func": "function scroll_all_items(s_payload, t_tkey) {\n    //    node.error(\"main function:\" +t_tkey + \" --- \" + s_payload);\n    //    node.error(s_payload);\n    if (typeof s_payload === 'number') {\n        //        node.error(\"main function number:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else if (typeof s_payload === 'string') {\n        //        node.error(\"main function string:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else {\n        Object.entries(s_payload).forEach((entry) => {\n            const [key, value] = entry;\n            //         node.error(\"function:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n            if (value === null || value === \"\") {\n                //             node.error(\"null:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n            } else if (s_payload[key].length === 0) {\n                //             node.error(\"0len:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'number') {\n                //            node.error(\"number:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'string') {\n                //            node.error(\"string:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'object') {\n                //             node.error(\"object:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (Array.isArray(s_payload[key])) {\n                    //                 node.error(\"array:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n                } else {\n                //             node.error(\"notarray:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n                }\n            } else {\n                //             node.error(\"unknown:\" + key + \":\" + value + \"   \" + t_tkey+\" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            }\n        })\n    };\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            //            node.error(\"Array item:\" + i + \":\" + s_payload[i] + \"   \" + t_tkey + \" --- \" + s_payload);\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\nfunction checktrue(t_check) {\n    if (t_check === \"true\") { return true; } \n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else {return false ;}\n}\n\nfunction do_value__consolid(s_payload, t_tkey) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            tvalue = tvalue + parseFloat(global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            if ( parseFloat(t_sn) === parseFloat(key1)) { tvalue = (global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey)); }\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single_plant(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload); }\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn); }\n        if (parseFloat(t_sn) === parseFloat(key)) \n         { \n            tvalue = (global.get(\"SS_Consolid.Plant.\" + key + \".\" + t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn + \":\" + tvalue); } \n         }\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \" + key); }\n    });\n    return tvalue;\n}\n\n\nfunction updatesensor(t_sensor,t_value,t_attributes) {\n    msg.payload = {};\n    msg.payload.attributes = t_attributes;\n    msg.entityid = t_sensor;\n    msg.payload.state = t_value;\n    node.send(msg);\n}\n\nvar sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_data');\nvar flow_sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_flow');\n// PV Entries -- Done\nglobal.set(\"SS_Export_Data.pv.1_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ppv\")));\nglobal.set(\"SS_Export_Data.pv.1_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ipv\")));\nglobal.set(\"SS_Export_Data.pv.1_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.0.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.2_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ppv\")));\nglobal.set(\"SS_Export_Data.pv.2_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ipv\")));\nglobal.set(\"SS_Export_Data.pv.2_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.1.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.power\",parseFloat(global.get(\"SS_Export_Data.pv.1_power\")+global.get(\"SS_Export_Data.pv.2_power\")));\nglobal.set(\"SS_Export_Data.pv.current\",parseFloat(global.get(\"SS_Export_Data.pv.1_current\")+global.get(\"SS_Export_Data.pv.2_current\")));\nglobal.set(\"SS_Export_Data.pv.etotal\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.etotal\")));\nglobal.set(\"SS_Export_Data.pv.etoday\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"input.etoday\")));\n// Load Entries -- Done\nglobal.set(\"SS_Export_Data.load.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalPower\")));\nglobal.set(\"SS_Export_Data.load.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalUsed\")));\nglobal.set(\"SS_Export_Data.load.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.dailyUsed\")));\nglobal.set(\"SS_Export_Data.load.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.vip.0.current\")));\nglobal.set(\"SS_Export_Data.load.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"load.vip.0.volt\", sn)));\n// Battery Entries  -- Done\nglobal.set(\"SS_Export_Data.battery.soc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.soc\",sn)));\nglobal.set(\"SS_Export_Data.temp.battery\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.temp\",sn)));\nglobal.set(\"SS_Export_Data.battery.voltage\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.voltage\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargevolt\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeVolt\",sn)));\nglobal.set(\"SS_Export_Data.battery.status\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.status\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.dischargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.dischargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.capacity\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.correctCap\",sn)));\nglobal.set(\"SS_Export_Data.battery.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.current\")));\nglobal.set(\"SS_Export_Data.battery.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.power\")));\nglobal.set(\"SS_Export_Data.battery.etotalchg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalChg\")));\nglobal.set(\"SS_Export_Data.battery.etotaldischg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalDischg\")));\nglobal.set(\"SS_Export_Data.battery.etodaychg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayChg\")));\nglobal.set(\"SS_Export_Data.battery.etodaydischg\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayDischg\")));\nglobal.set(\"SS_Export_Data.battery.efficiency\",parseInt(100-(global.get(\"SS_Export_Data.battery.etotalchg\")-global.get(\"SS_Export_Data.battery.etotaldischg\"))/global.get(\"SS_Export_Data.battery.etotaldischg\")*100));\n// ACDC -- Done\nglobal.set(\"SS_Export_Data.temp.ac\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.actemp\",sn)));\nglobal.set(\"SS_Export_Data.temp.dc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.dctemp\",sn)));\n//Output -- Done\nglobal.set(\"SS_Export_Data.output.poweraux\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.poweraux\")));\nglobal.set(\"SS_Export_Data.output.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etotal\")));\nglobal.set(\"SS_Export_Data.output.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etoday\")));\nglobal.set(\"SS_Export_Data.output.totalpower\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.pac\")));\nglobal.set(\"SS_Export_Data.output.loadfac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.fac\", sn)));\nglobal.set(\"SS_Export_Data.output.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.output.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.current\", sn)));\n//Gen -- Done\nglobal.set(\"SS_Export_Data.gen.totalused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.genTotal\")));\nglobal.set(\"SS_Export_Data.gen.dailyused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.Daily\")));\nglobal.set(\"SS_Export_Data.gen.totalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.totalPower\")));\nglobal.set(\"SS_Export_Data.gen.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.Fac\", sn)));\nglobal.set(\"SS_Export_Data.gen.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.gen.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.current\", sn)));\n//Grid -- Done\nglobal.set(\"SS_Export_Data.grid.totalusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalFrom\")));\nglobal.set(\"SS_Export_Data.grid.totalusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalTo\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayFrom\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayTo\")));\nglobal.set(\"SS_Export_Data.grid.power\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.pac\")));\nglobal.set(\"SS_Export_Data.grid.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.fac\", sn)));\nglobal.set(\"SS_Export_Data.grid.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.status\", sn)));\nglobal.set(\"SS_Export_Data.grid.pf\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.pf\", sn)));\nglobal.set(\"SS_Export_Data.grid.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.grid.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.current\", sn)));\nif (parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)) < 200)\n  { \n    global.set(\"SS_Export_Data.grid.gridonline\", false);\n  } else {  \n    global.set(\"SS_Export_Data.grid.gridonline\", true);\n  }\nglobal.set(\"SS_Export_Data.grid.limitertotalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.limiterTotalPower\")));\n//Inverter \nglobal.set(\"SS_Export_Data.inverter.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.gatewaystatus\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gatewayVO.status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.lastupdated\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"updateAt\", sn));\nglobal.set(\"SS_Export_Data.inverter.usetimer\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.peakAndVallery\", sn)));\nglobal.set(\"SS_Export_Data.inverter.selltime1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime1\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime2\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime3\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime4\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime5\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime6\", sn));\nglobal.set(\"SS_Export_Data.inverter.energymode\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.energyMode\", sn));\nglobal.set(\"SS_Export_Data.inverter.time1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap1\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap2\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap3\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap4\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap5\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap6\", sn));\nglobal.set(\"SS_Export_Data.inverter.sellTime1Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime1pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime2Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime2pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime3Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime3pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime4Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime4pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime5Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime5pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime6Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime6pac\", sn)));\n\n///\n/// Flow Calculations\n///\nglobal.set(\"SS_Export_Data.flow.battery.soc\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.soc\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.load.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.loadOrEpsPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.pv.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.pvPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.battery.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.battPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.grid.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.gridOrMeterPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.gen.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.genPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.min.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.minPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.heatpumppower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.heatPumpPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.smartloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.smartLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\n\nvar returnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.inverter\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_inverter\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.pv\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_pv\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.load\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_load\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.battery\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_battery\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.output\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_output\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.gen\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_gen\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.grid\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_grid\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.flow\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_flow\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.temp\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_temp\", \"\", returnvalue);\n\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn null;",
+        "func": "function scroll_all_items(s_payload, t_tkey) {\n    //    node.error(\"main function:\" +t_tkey + \" --- \" + s_payload);\n    //    node.error(s_payload);\n    if (typeof s_payload === 'number') {\n        //        node.error(\"main function number:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else if (typeof s_payload === 'string') {\n        //        node.error(\"main function string:\" + t_tkey + \" --- \" + s_payload);\n        returnvalue[t_tkey] = s_payload;\n    } else {\n        Object.entries(s_payload).forEach((entry) => {\n            const [key, value] = entry;\n            //         node.error(\"function:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n            if (value === null || value === \"\") {\n                //             node.error(\"null:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = \"Missing\"; }\n            } else if (s_payload[key].length === 0) {\n                //             node.error(\"0len:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = \"Missing\"; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'number') {\n                //            node.error(\"number:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'string') {\n                //            node.error(\"string:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            } else if (typeof s_payload[key] === 'object') {\n                //             node.error(\"object:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                if (Array.isArray(s_payload[key])) {\n                    //                 node.error(\"array:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + \"_\" + key); }\n                } else {\n                //             node.error(\"notarray:\" + key + \":\" + value + \"   \" + t_tkey + \" --- \" + s_payload);\n                    if (t_tkey === \"\") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + \"_\" + key); }\n                }\n            } else {\n                //             node.error(\"unknown:\" + key + \":\" + value + \"   \" + t_tkey+\" --- \" + s_payload);\n                if (t_tkey === \"\") { returnvalue[key] = value; } else { returnvalue[t_tkey + \"_\" + key] = value; }\n            }\n        })\n    };\n    return;\n}\n\nfunction process_array(s_payload, t_tkey) {\n    if (t_tkey === \"infos_0_plantPermission\") { returnvalue[t_tkey] = \"Not Processed\" }\n    else {\n        for (let i = 0; i < s_payload.length; i++) {\n            //            node.error(\"Array item:\" + i + \":\" + s_payload[i] + \"   \" + t_tkey + \" --- \" + s_payload);\n            scroll_all_items(s_payload[i], t_tkey + \"_\" + i);\n        }\n    }\n    return;\n}\n\nfunction checktrue(t_check) {\n    if (t_check === \"true\") { return true; } \n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else {return false ;}\n}\n\nfunction do_value__consolid(s_payload, t_tkey) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            tvalue = tvalue + parseFloat(global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload);}\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \"+key);}\n        var s_payload1=global.get(\"SS_Consolid.Plant.\"+key+\".Inverter\");\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload1)}\n        Object.entries(s_payload1).forEach((entry1) => {\n            const [key1, value1] = entry1;\n            if ( parseFloat(t_sn) === parseFloat(key1)) { tvalue = (global.get(\"SS_Consolid.Plant.\"+key+\".Inverter.\"+key1+\".\"+t_tkey)); }\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"2. \"+key+\" \"+key1+\" \"+tvalue);}\n        });\n    });\n    return tvalue;\n}\n\nfunction do_value__single_plant(s_payload, t_tkey, t_sn) {\n    var tvalue = 0;\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload); }\n    Object.entries(s_payload).forEach((entry) => {\n        const [key, value] = entry;\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn); }\n        if (parseFloat(t_sn) === parseFloat(key)) \n         { \n            tvalue = (global.get(\"SS_Consolid.Plant.\" + key + \".\" + t_tkey));\n            if (global.get(\"SunSynkDebug\") === 1) { node.error(\"D:\" + key + \":\" + t_tkey + \":\" + t_sn + \":\" + tvalue); } \n         }\n        if (global.get(\"SunSynkDebug\") === 1) { node.error(\"1. \" + key); }\n    });\n    return tvalue;\n}\n\n\nfunction updatesensor(t_sensor,t_value,t_attributes) {\n    msg.payload = {};\n    msg.payload.attributes = t_attributes;\n    msg.entityid = t_sensor;\n    msg.payload.state = t_value;\n    node.send(msg);\n}\n\nvar sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_data');\nvar flow_sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_flow');\n// PV Entries\nglobal.set(\"SS_Export_Data.pv.1_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ppv\")));\nglobal.set(\"SS_Export_Data.pv.1_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.0.ipv\")));\nglobal.set(\"SS_Export_Data.pv.1_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.0.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.2_power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ppv\")));\nglobal.set(\"SS_Export_Data.pv.2_current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.pvIV.1.ipv\")));\nglobal.set(\"SS_Export_Data.pv.2_volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"input.pvIV.1.vpv\", sn)));\nglobal.set(\"SS_Export_Data.pv.power\",parseFloat(global.get(\"SS_Export_Data.pv.1_power\")+global.get(\"SS_Export_Data.pv.2_power\")));\nglobal.set(\"SS_Export_Data.pv.current\",parseFloat(global.get(\"SS_Export_Data.pv.1_current\")+global.get(\"SS_Export_Data.pv.2_current\")));\nglobal.set(\"SS_Export_Data.pv.etotal\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"input.etotal\")));\nglobal.set(\"SS_Export_Data.pv.etoday\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"input.etoday\")));\n// Load Entries\nglobal.set(\"SS_Export_Data.load.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalPower\")));\nglobal.set(\"SS_Export_Data.load.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.totalUsed\")));\nglobal.set(\"SS_Export_Data.load.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.dailyUsed\")));\nglobal.set(\"SS_Export_Data.load.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"load.vip.0.current\")));\nglobal.set(\"SS_Export_Data.load.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"load.vip.0.volt\", sn)));\n// Battery Entries\nglobal.set(\"SS_Export_Data.battery.soc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.soc\",sn)));\nglobal.set(\"SS_Export_Data.temp.battery\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.temp\",sn)));\nglobal.set(\"SS_Export_Data.battery.voltage\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.voltage\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargevolt\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeVolt\",sn)));\nglobal.set(\"SS_Export_Data.battery.status\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.status\",sn)));\nglobal.set(\"SS_Export_Data.battery.chargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.chargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.dischargecurrentlimit\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.dischargeCurrentLimit\",sn)));\nglobal.set(\"SS_Export_Data.battery.capacity\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"battery.correctCap\",sn)));\nglobal.set(\"SS_Export_Data.battery.current\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.current\")));\nglobal.set(\"SS_Export_Data.battery.power\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.power\")));\nglobal.set(\"SS_Export_Data.battery.etotalchg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalChg\")));\nglobal.set(\"SS_Export_Data.battery.etotaldischg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etotalDischg\")));\nglobal.set(\"SS_Export_Data.battery.etodaychg\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayChg\")));\nglobal.set(\"SS_Export_Data.battery.etodaydischg\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"battery.etodayDischg\")));\nglobal.set(\"SS_Export_Data.battery.efficiency\",parseInt(100-(global.get(\"SS_Export_Data.battery.etotalchg\")-global.get(\"SS_Export_Data.battery.etotaldischg\"))/global.get(\"SS_Export_Data.battery.etotaldischg\")*100));\n// ACDC\nglobal.set(\"SS_Export_Data.temp.ac\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.actemp\",sn)));\nglobal.set(\"SS_Export_Data.temp.dc\",parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"),\"acdc.dctemp\",sn)));\n//Output\nglobal.set(\"SS_Export_Data.output.poweraux\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.poweraux\")));\nglobal.set(\"SS_Export_Data.output.totalused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etotal\")));\nglobal.set(\"SS_Export_Data.output.dailyused\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.etoday\")));\nglobal.set(\"SS_Export_Data.output.totalpower\",parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"),\"output.pac\")));\nglobal.set(\"SS_Export_Data.output.loadfac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.fac\", sn)));\nglobal.set(\"SS_Export_Data.output.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.output.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"output.vip.0.current\", sn)));\n//Gen\nglobal.set(\"SS_Export_Data.gen.totalused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.genTotal\")));\nglobal.set(\"SS_Export_Data.gen.dailyused\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.Daily\")));\nglobal.set(\"SS_Export_Data.gen.totalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"gen.totalPower\")));\nglobal.set(\"SS_Export_Data.gen.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.Fac\", sn)));\nglobal.set(\"SS_Export_Data.gen.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.gen.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gen.vip.0.current\", sn)));\n//Grid\nglobal.set(\"SS_Export_Data.grid.totalusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalFrom\")));\nglobal.set(\"SS_Export_Data.grid.totalusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etotalTo\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedin\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayFrom\")));\nglobal.set(\"SS_Export_Data.grid.dailyusedout\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.etodayTo\")));\nglobal.set(\"SS_Export_Data.grid.power\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.pac\")));\nglobal.set(\"SS_Export_Data.grid.fac\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.fac\", sn)));\nglobal.set(\"SS_Export_Data.grid.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.status\", sn)));\nglobal.set(\"SS_Export_Data.grid.pf\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.pf\", sn)));\nglobal.set(\"SS_Export_Data.grid.volt\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)));\nglobal.set(\"SS_Export_Data.grid.current\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.current\", sn)));\nif (parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"grid.vip.0.volt\", sn)) < 200)\n  { \n    global.set(\"SS_Export_Data.grid.gridonline\", false);\n  } else {  \n    global.set(\"SS_Export_Data.grid.gridonline\", true);\n  }\nglobal.set(\"SS_Export_Data.grid.limitertotalpower\", parseFloat(do_value__consolid(global.get(\"SS_Consolid.Plant\"), \"grid.limiterTotalPower\")));\n//Inverter \nglobal.set(\"SS_Export_Data.inverter.status\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.gatewaystatus\", parseFloat(do_value__single(global.get(\"SS_Consolid.Plant\"), \"gatewayVO.status\", sn)));\nglobal.set(\"SS_Export_Data.inverter.lastupdated\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"updateAt\", sn));\nglobal.set(\"SS_Export_Data.inverter.usetimer\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.peakAndVallery\", sn)));\nglobal.set(\"SS_Export_Data.inverter.selltime1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime1\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime2\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime3\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime4\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime5\", sn));\nglobal.set(\"SS_Export_Data.inverter.selltime6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.sellTime6\", sn));\nglobal.set(\"SS_Export_Data.inverter.energymode\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.energyMode\", sn));\nglobal.set(\"SS_Export_Data.inverter.time1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.time6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.time6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime1on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime1on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime2on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime2on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime3on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime3on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime4on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime4on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime5on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime5on\", sn));\nglobal.set(\"SS_Export_Data.inverter.genTime6on\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.gentime6on\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap1\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap1\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap2\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap2\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap3\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap3\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap4\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap4\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap5\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap5\", sn));\nglobal.set(\"SS_Export_Data.inverter.cap6\", do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.cap6\", sn));\nglobal.set(\"SS_Export_Data.inverter.sellTime1Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime1pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime2Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime2pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime3Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime3pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime4Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime4pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime5Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime5pac\", sn)));\nglobal.set(\"SS_Export_Data.inverter.sellTime6Pac\", checktrue(do_value__single(global.get(\"SS_Consolid.Plant\"), \"settings.selltime6pac\", sn)));\n///\n/// Flow Calculations\n///\nglobal.set(\"SS_Export_Data.flow.battery.soc\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.soc\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.load.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.loadOrEpsPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.pv.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.pvPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.battery.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.battPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.grid.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.gridOrMeterPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.gen.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.genPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.min.power\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.minPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.heatpumppower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.heatPumpPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.smartloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.smartLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\nglobal.set(\"SS_Export_Data.flow.misc.homeloadpower\", parseFloat(do_value__single_plant(global.get(\"SS_Consolid.Plant\"), \"flow.homeLoadPower\", flow_sn)));\n///\n/// Personal Calculations\n///\nglobal.set(\"SS_Export_Data.inverter.internalpowerusage\", global.get(\"SS_Export_Data.pv.power\") + global.get(\"SS_Export_Data.grid.power\") + global.get(\"SS_Export_Data.battery.power\") - global.get(\"SS_Export_Data.load.power\"));\n///\n///\n///\nnode.status(\"Starting Sensor Export\");\nvar returnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.inverter\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_inverter\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.pv\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_pv\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.load\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_load\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.battery\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_battery\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.output\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_output\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.gen\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_gen\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.grid\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_grid\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.flow\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_flow\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Export_Data.temp\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_usable_temp\", \"\", returnvalue);\n\nreturnvalue = {};\nvar origpayload = global.get(\"SS_Consolid\");\nscroll_all_items(origpayload, \"\");\nupdatesensor(\"sensor.sunsynk_consolidated_data\", \"\", returnvalue);\n\nnode.status(\"Finished Sensor Export\");\nif (global.get(\"SunSynkDebug\") === 1) { node.error(msg); }\nreturn null;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
-        "y": 940,
+        "x": 860,
+        "y": 800,
         "wires": [
             [
                 "1ebaa50c469164df",
@@ -1757,8 +1020,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1200,
-        "y": 1000,
+        "x": 1190,
+        "y": 860,
         "wires": []
     },
     {
@@ -1772,8 +1035,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1170,
-        "y": 440,
+        "x": 1160,
+        "y": 300,
         "wires": [
             [
                 "3730ce5185255d8b"
@@ -1787,8 +1050,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_1",
         "name": "Update Sunsynk Events Type 1",
-        "x": 1460,
-        "y": 440,
+        "x": 1450,
+        "y": 300,
         "wires": []
     },
     {
@@ -1802,8 +1065,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1170,
-        "y": 500,
+        "x": 1160,
+        "y": 360,
         "wires": [
             [
                 "f03b7d598c8040e1"
@@ -1817,8 +1080,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_2",
         "name": "Update Sunsynk Events Type 2",
-        "x": 1460,
-        "y": 500,
+        "x": 1450,
+        "y": 360,
         "wires": []
     },
     {
@@ -1832,8 +1095,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1170,
-        "y": 560,
+        "x": 1160,
+        "y": 420,
         "wires": [
             [
                 "b2ac7dcb53216ac4"
@@ -1847,8 +1110,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_events_3",
         "name": "Update Sunsynk Events Type 3",
-        "x": 1460,
-        "y": 560,
+        "x": 1450,
+        "y": 420,
         "wires": []
     },
     {
@@ -1863,8 +1126,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 810,
-        "y": 620,
+        "x": 800,
+        "y": 480,
         "wires": [
             [
                 "a8bb152f98fe8415"
@@ -1887,8 +1150,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1020,
-        "y": 620,
+        "x": 1010,
+        "y": 480,
         "wires": [
             [
                 "d3fac1b613eb4f51"
@@ -1906,8 +1169,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1230,
-        "y": 620,
+        "x": 1220,
+        "y": 480,
         "wires": [
             [
                 "296eb8d6ac7ea3d2"
@@ -1921,8 +1184,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_notifications",
         "name": "Update Sunsynk Notifications",
-        "x": 1470,
-        "y": 620,
+        "x": 1460,
+        "y": 480,
         "wires": []
     },
     {
@@ -1942,8 +1205,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 570,
-        "y": 620,
+        "x": 560,
+        "y": 480,
         "wires": [
             [
                 "817cffa30bbb79fa"
@@ -1963,7 +1226,7 @@
         "finalize": "",
         "libs": [],
         "x": 1700,
-        "y": 1240,
+        "y": 1100,
         "wires": [
             [
                 "1252c86c8e0935f1"
@@ -1986,8 +1249,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2050,
-        "y": 1240,
+        "x": 2040,
+        "y": 1100,
         "wires": [
             [
                 "e2f2a20a38dd927a"
@@ -2006,8 +1269,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2320,
-        "y": 1240,
+        "x": 2310,
+        "y": 1100,
         "wires": [
             []
         ]
@@ -2025,7 +1288,7 @@
         "finalize": "",
         "libs": [],
         "x": 1700,
-        "y": 1300,
+        "y": 1160,
         "wires": [
             [
                 "65642975f487f34d"
@@ -2048,8 +1311,8 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 2020,
-        "y": 1300,
+        "x": 2010,
+        "y": 1160,
         "wires": [
             [
                 "7713017acf4f3de5",
@@ -2069,8 +1332,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2300,
-        "y": 1300,
+        "x": 2290,
+        "y": 1160,
         "wires": [
             []
         ]
@@ -2082,8 +1345,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "",
         "name": "Update Sensor",
-        "x": 1170,
-        "y": 940,
+        "x": 1160,
+        "y": 800,
         "wires": []
     },
     {
@@ -2099,8 +1362,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 820,
-        "y": 840,
+        "x": 810,
+        "y": 700,
         "wires": []
     },
     {
@@ -2116,8 +1379,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 540,
-        "y": 840,
+        "x": 530,
+        "y": 700,
         "wires": []
     },
     {
@@ -2133,8 +1396,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 2340,
-        "y": 1360,
+        "x": 2330,
+        "y": 1220,
         "wires": []
     },
     {
