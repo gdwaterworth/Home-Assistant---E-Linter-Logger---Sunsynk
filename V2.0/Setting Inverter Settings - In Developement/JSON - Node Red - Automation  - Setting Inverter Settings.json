@@ -1,1 +1,219 @@
-
+[
+    {
+        "id": "683b7a0d3a577134",
+        "type": "tab",
+        "label": "Sunsynk Settings",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a094266bc68e70ef",
+        "type": "server-events",
+        "z": "683b7a0d3a577134",
+        "name": "Get All Events",
+        "server": "53bc65975025ce60",
+        "version": 3,
+        "exposeAsEntityConfig": "",
+        "eventType": "state_changed",
+        "eventData": "",
+        "waitForRunning": true,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "$outputData(\"eventData\").event_type",
+                "valueType": "jsonata"
+            }
+        ],
+        "x": 210,
+        "y": 80,
+        "wires": [
+            [
+                "17f7e6539db6b269",
+                "bfae9326143af5cc"
+            ]
+        ]
+    },
+    {
+        "id": "17f7e6539db6b269",
+        "type": "debug",
+        "z": "683b7a0d3a577134",
+        "name": "Raw Events",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 390,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "bfae9326143af5cc",
+        "type": "function",
+        "z": "683b7a0d3a577134",
+        "name": "Filter Events",
+        "func": "//Entities to looks for changes\nvar EntityCheck = \n[\n    \"input_select.sunsynk_time1\",\n    \"input_select.sunsynk_time2\",\n    \"input_select.sunsynk_time3\",\n    \"input_select.sunsynk_time4\",\n    \"input_select.sunsynk_time5\",\n    \"input_select.sunsynk_time6\"\n]; \n\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    return msg;\n };\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "15712de1289755a4"
+            ]
+        ]
+    },
+    {
+        "id": "15712de1289755a4",
+        "type": "debug",
+        "z": "683b7a0d3a577134",
+        "name": "Filtered Events",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "69b994fd680b9d65",
+        "type": "api-call-service",
+        "z": "683b7a0d3a577134",
+        "name": "Do Entity Updates Input Select",
+        "server": "53bc65975025ce60",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "input_select",
+        "service": "select_option",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 610,
+        "y": 460,
+        "wires": [
+            [
+                "030d8e5a389a48a8"
+            ]
+        ]
+    },
+    {
+        "id": "de4960c4bc22ceeb",
+        "type": "link in",
+        "z": "683b7a0d3a577134",
+        "name": "link in 1",
+        "links": [
+            "9c13453e02e7bae2"
+        ],
+        "x": 175,
+        "y": 460,
+        "wires": [
+            [
+                "19a5107b5e9bd2c2"
+            ]
+        ]
+    },
+    {
+        "id": "19a5107b5e9bd2c2",
+        "type": "function",
+        "z": "683b7a0d3a577134",
+        "name": "Set Sunsynk Time Entities",
+        "func": "function settimeentity(t_ent , t_value )\n{\n   msg = {}; msg.payload = {}; msg.payload.target = {}; msg.payload.data = {};\n   msg.payload.target.entity_id=t_ent;\n   msg.payload.data={ \"option\" : global.get(\"SS_Export_Data.inverter.\" + t_value )};\n   node.send(msg);\n}\n\nsettimeentity(\"input_select.sunsynk_time1\",\"selltime1\");\nsettimeentity(\"input_select.sunsynk_time2\",\"selltime2\");\nsettimeentity(\"input_select.sunsynk_time3\",\"selltime3\");\nsettimeentity(\"input_select.sunsynk_time4\",\"selltime4\");\nsettimeentity(\"input_select.sunsynk_time5\",\"selltime5\");\nsettimeentity(\"input_select.sunsynk_time6\",\"selltime6\");\n\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 460,
+        "wires": [
+            [
+                "69b994fd680b9d65",
+                "22e3702955856ae3"
+            ]
+        ]
+    },
+    {
+        "id": "22e3702955856ae3",
+        "type": "debug",
+        "z": "683b7a0d3a577134",
+        "name": "Update Entities",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "030d8e5a389a48a8",
+        "type": "debug",
+        "z": "683b7a0d3a577134",
+        "name": "Update Entities Errors",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "53bc65975025ce60",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": true,
+        "heartbeatInterval": "30",
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "id",
+        "statusSeparator": ": ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "default",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    }
+]
