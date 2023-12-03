@@ -33,7 +33,7 @@
             }
         ],
         "x": 210,
-        "y": 80,
+        "y": 300,
         "wires": [
             [
                 "17f7e6539db6b269",
@@ -54,8 +54,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 390,
-        "y": 20,
+        "x": 450,
+        "y": 240,
         "wires": []
     },
     {
@@ -63,15 +63,15 @@
         "type": "function",
         "z": "683b7a0d3a577134",
         "name": "Filter Events",
-        "func": "//Entities to looks for changes\nvar EntityCheck = \n[\n    \"input_select.sunsynk_time1\",\n    \"input_select.sunsynk_time2\",\n    \"input_select.sunsynk_time3\",\n    \"input_select.sunsynk_time4\",\n    \"input_select.sunsynk_time5\",\n    \"input_select.sunsynk_time6\"\n]; \n\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    return msg;\n };\nreturn null;",
+        "func": "//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\n\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    return msg;\n };\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 430,
-        "y": 80,
+        "x": 450,
+        "y": 300,
         "wires": [
             [
                 "15712de1289755a4"
@@ -91,8 +91,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 620,
-        "y": 20,
+        "x": 680,
+        "y": 240,
         "wires": []
     },
     {
@@ -114,8 +114,8 @@
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 610,
-        "y": 460,
+        "x": 870,
+        "y": 100,
         "wires": [
             [
                 "030d8e5a389a48a8"
@@ -130,11 +130,11 @@
         "links": [
             "9c13453e02e7bae2"
         ],
-        "x": 175,
-        "y": 460,
+        "x": 135,
+        "y": 100,
         "wires": [
             [
-                "19a5107b5e9bd2c2"
+                "d551a6b691b61dab"
             ]
         ]
     },
@@ -150,8 +150,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 460,
+        "x": 550,
+        "y": 100,
         "wires": [
             [
                 "69b994fd680b9d65",
@@ -172,8 +172,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 560,
-        "y": 400,
+        "x": 820,
+        "y": 40,
         "wires": []
     },
     {
@@ -181,7 +181,7 @@
         "type": "debug",
         "z": "683b7a0d3a577134",
         "name": "Update Entities Errors",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -189,9 +189,29 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 880,
-        "y": 400,
+        "x": 1080,
+        "y": 40,
         "wires": []
+    },
+    {
+        "id": "d551a6b691b61dab",
+        "type": "function",
+        "z": "683b7a0d3a577134",
+        "name": "Setup Global Vars",
+        "func": "function setmapping( t_entityid,t_exportid,t_inverterid)\n{\n    global.set(\"SS.mapping.\" + t_entityid + \".exportid\", t_exportid);\n    global.set(\"SS.mapping.\" + t_entityid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_exportid + \".entityid\", t_entityid);\n    global.set(\"SS.mapping.\" + t_exportid + \".inverterid\", t_inverterid);\n    var t_entityarray = global.get(\"SS.mapping.arraylist\");\n    t_entityarray.push(t_entityid);\n    global.set(\"SS.mapping.arraylist\",t_entityarray);\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(entityarray)) \n{ \n    entityarray = new Array();\n    global.set(\"SS.mapping.arraylist\",entityarray)\n};\n\n//\n//\n// //msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\n//\nsetmapping(\"input_select.sunsynk_time1\", \"inverter.selltime1\", \"sellTime1\");\nsetmapping(\"input_select.sunsynk_time2\", \"inverter.selltime2\", \"sellTime2\");\nsetmapping(\"input_select.sunsynk_time3\", \"inverter.selltime3\", \"sellTime3\");\nsetmapping(\"input_select.sunsynk_time4\", \"inverter.selltime4\", \"sellTime4\");\nsetmapping(\"input_select.sunsynk_time5\", \"inverter.selltime5\", \"sellTime5\");\nsetmapping(\"input_select.sunsynk_time6\", \"inverter.selltime6\", \"sellTime6\");\nsetmapping(\"input_select.sunsynk_cap1\", \"inverter.cap1\", \"cap1\");\nsetmapping(\"input_select.sunsynk_time1on\", \"inverter.time1on\", \"time1on\");\nsetmapping(\"input_select.sunsynk_usetimer\", \"inverter.usetimer\", \"peakAndVallery\");\n\nmsg={};\nmsg.state=\"Completed Setup\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 100,
+        "wires": [
+            [
+                "19a5107b5e9bd2c2"
+            ]
+        ]
     },
     {
         "id": "53bc65975025ce60",
