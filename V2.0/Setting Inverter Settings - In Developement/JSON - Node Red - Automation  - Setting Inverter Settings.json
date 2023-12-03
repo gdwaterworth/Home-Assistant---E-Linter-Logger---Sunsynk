@@ -63,7 +63,7 @@
         "type": "function",
         "z": "683b7a0d3a577134",
         "name": "Filter Events",
-        "func": "//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\n\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    return msg;\n };\nreturn null;",
+        "func": "//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\nvar origmsg = msg.payload;\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    msg.payload = {};\n    msg.payload.state =\"Checking\";\n    msg.payload.entityid = origmsg.event.entity_id;\n    msg.payload.value = origmsg.event.new_state.state;\n    msg.payload.exportid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".exportid\");\n    msg.payload.inverterid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".inverterid\");\n    if (ErrorCk.includes(msg.payload.exportid)) {\n        node.status(\"Array Missing(export):\" + msg.payload.entityid);\n        return null;\n    }\n    if (ErrorCk.includes(msg.payload.inverterid)) {\n        node.status(\"Array Missing(inverter):\" + msg.payload.entityid);\n        return null;\n    }\n    if (msg.payload.value === global.get(\"SS_Export_Data.\"+msg.payload.exportid))\n    { \n        msg.payload.state =\"Unchanged\"; \n        node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n    } else \n    { \n        msg.payload.state =\"Changed\";\n        node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n    }\n    return msg;\n };\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -143,8 +143,8 @@
         "type": "function",
         "z": "683b7a0d3a577134",
         "name": "Set Sunsynk Time Entities",
-        "func": "function settimeentity(t_ent , t_value )\n{\n   msg = {}; msg.payload = {}; msg.payload.target = {}; msg.payload.data = {};\n   msg.payload.target.entity_id=t_ent;\n   msg.payload.data={ \"option\" : global.get(\"SS_Export_Data.inverter.\" + t_value )};\n   node.send(msg);\n}\n\nsettimeentity(\"input_select.sunsynk_time1\",\"selltime1\");\nsettimeentity(\"input_select.sunsynk_time2\",\"selltime2\");\nsettimeentity(\"input_select.sunsynk_time3\",\"selltime3\");\nsettimeentity(\"input_select.sunsynk_time4\",\"selltime4\");\nsettimeentity(\"input_select.sunsynk_time5\",\"selltime5\");\nsettimeentity(\"input_select.sunsynk_time6\",\"selltime6\");\n\n\nreturn null;",
-        "outputs": 1,
+        "func": "function settimeentity(t_ent , t_value )\n{\n   msg = {}; msg.payload = {}; msg.payload.target = {}; msg.payload.data = {};\n   msg.payload.target.entity_id=t_ent;\n   msg.payload.data={ \"option\" : global.get(\"SS_Export_Data.\" + t_value )};\n   if (global.get(\"SS.mapping.\"+t_ent+\".type\") === \"input_select\") \n   { node.send([null , msg ]); } else \n   { node.send([msg , null ]); }\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (entityarray.length === 0) \n{ node.status(\"Empty Array\"); } else\n{\n  for (let i = 0; i < entityarray.length; i++) \n  {\n      if (global.get(\"SS.mapping.\"+entityarray[i]+\".activeset\") === true )\n      {\n         settimeentity(entityarray[i],global.get(\"SS.mapping.\"+entityarray[i]+\".exportid\"));\n         node.status(\"Processing:\"+ entityarray[i])\n      } else \n      {\n         node.status(\"Skipping:\"+ entityarray[i])\n      }\n  }\n}\n\nreturn null;",
+        "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
@@ -153,6 +153,9 @@
         "x": 550,
         "y": 100,
         "wires": [
+            [
+                "4ada5970d9c793e6"
+            ],
             [
                 "69b994fd680b9d65",
                 "22e3702955856ae3"
@@ -173,7 +176,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 820,
-        "y": 40,
+        "y": 160,
         "wires": []
     },
     {
@@ -189,8 +192,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1080,
-        "y": 40,
+        "x": 1140,
+        "y": 60,
         "wires": []
     },
     {
@@ -198,7 +201,7 @@
         "type": "function",
         "z": "683b7a0d3a577134",
         "name": "Setup Global Vars",
-        "func": "function setmapping( t_entityid,t_exportid,t_inverterid)\n{\n    global.set(\"SS.mapping.\" + t_entityid + \".exportid\", t_exportid);\n    global.set(\"SS.mapping.\" + t_entityid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_exportid + \".entityid\", t_entityid);\n    global.set(\"SS.mapping.\" + t_exportid + \".inverterid\", t_inverterid);\n    var t_entityarray = global.get(\"SS.mapping.arraylist\");\n    t_entityarray.push(t_entityid);\n    global.set(\"SS.mapping.arraylist\",t_entityarray);\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(entityarray)) \n{ \n    entityarray = new Array();\n    global.set(\"SS.mapping.arraylist\",entityarray)\n};\n\n//\n//\n// //msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\n//\nsetmapping(\"input_select.sunsynk_time1\", \"inverter.selltime1\", \"sellTime1\");\nsetmapping(\"input_select.sunsynk_time2\", \"inverter.selltime2\", \"sellTime2\");\nsetmapping(\"input_select.sunsynk_time3\", \"inverter.selltime3\", \"sellTime3\");\nsetmapping(\"input_select.sunsynk_time4\", \"inverter.selltime4\", \"sellTime4\");\nsetmapping(\"input_select.sunsynk_time5\", \"inverter.selltime5\", \"sellTime5\");\nsetmapping(\"input_select.sunsynk_time6\", \"inverter.selltime6\", \"sellTime6\");\nsetmapping(\"input_select.sunsynk_cap1\", \"inverter.cap1\", \"cap1\");\nsetmapping(\"input_select.sunsynk_time1on\", \"inverter.time1on\", \"time1on\");\nsetmapping(\"input_select.sunsynk_usetimer\", \"inverter.usetimer\", \"peakAndVallery\");\n\nmsg={};\nmsg.state=\"Completed Setup\";\nreturn msg;",
+        "func": "function setmapping( t_entityid,t_exportid,t_inverterid,t_activeset,t_type)\n{\n    global.set(\"SS.mapping.\" + t_entityid + \".exportid\", t_exportid);\n    global.set(\"SS.mapping.\" + t_entityid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_entityid + \".activeset\", t_activeset);\n    global.set(\"SS.mapping.\" + t_entityid + \".type\", t_type);\n    global.set(\"SS.mapping.\" + t_exportid + \".entityid\", t_entityid);\n    global.set(\"SS.mapping.\" + t_exportid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_exportid + \".activeset\", t_activeset);\n    global.set(\"SS.mapping.\" + t_exportid + \".type\", t_type);\n    var t_entityarray = global.get(\"SS.mapping.arraylist\");\n    if (t_entityarray.includes(t_entityid)) { } else\n    {\n         t_entityarray.push(t_entityid);\n    }\n    global.set(\"SS.mapping.arraylist\",t_entityarray);\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (entityarray.length === 0) \n{ \n    entityarray = [];\n    global.set(\"SS.mapping.arraylist\",entityarray)\n}\nnode.status(\"Number Array Entries:\"+ entityarray.length);\n\n//\n//\n// msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\n////\n//          Entity ID                        SS_Export_Data ID      Sunsynk Update ID    Checking    Entity Type\nsetmapping(\"input_select.sunsynk_time1\",    \"inverter.selltime1\",   \"sellTime1\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time2\",    \"inverter.selltime2\",   \"sellTime2\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time3\",    \"inverter.selltime3\",   \"sellTime3\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time4\",    \"inverter.selltime4\",   \"sellTime4\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time5\",    \"inverter.selltime5\",   \"sellTime5\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time6\",    \"inverter.selltime6\",   \"sellTime6\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_cap1\",     \"inverter.cap1\",        \"cap1\"              ,false      ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time1on\",  \"inverter.time1on\",     \"time1on\"           ,false      ,\"input_select\");\nsetmapping(\"input_select.sunsynk_usetimer\", \"inverter.usetimer\",    \"peakAndVallery\"    ,false      ,\"input_select\");\n\nmsg={};\nmsg.state=\"Completed Setup\";\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -212,6 +215,23 @@
                 "19a5107b5e9bd2c2"
             ]
         ]
+    },
+    {
+        "id": "4ada5970d9c793e6",
+        "type": "debug",
+        "z": "683b7a0d3a577134",
+        "name": "Update Entities Error",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 60,
+        "wires": []
     },
     {
         "id": "53bc65975025ce60",
