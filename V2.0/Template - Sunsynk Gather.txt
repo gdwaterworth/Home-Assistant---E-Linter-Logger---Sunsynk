@@ -8,7 +8,7 @@
         attributes:
           login: "xxx@xxx.com"
           password: "xxx"
-          region: 1
+          region: 2
           invertor_list_opt: 0
           return_items: 10
           sn_data: xxx
