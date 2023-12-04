@@ -44,7 +44,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1880,
+        "x": 1920,
         "y": 840,
         "wires": [
             [
@@ -88,8 +88,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2090,
-        "y": 840,
+        "x": 1670,
+        "y": 920,
         "wires": [
             [
                 "9034a98cee7ec8c8"
@@ -121,7 +121,7 @@
         "type": "api-call-service",
         "z": "8058a44447c9337f",
         "name": "Send to Gary",
-        "server": "49784c25.476704",
+        "server": "53bc65975025ce60",
         "version": 5,
         "debugenabled": false,
         "domain": "notify",
@@ -146,7 +146,7 @@
         "type": "server-state-changed",
         "z": "8058a44447c9337f",
         "name": "Grid State Change",
-        "server": "49784c25.476704",
+        "server": "53bc65975025ce60",
         "version": 5,
         "outputs": 1,
         "exposeAsEntityConfig": "",
@@ -251,7 +251,7 @@
         "type": "api-current-state",
         "z": "8058a44447c9337f",
         "name": "SE Push Calendar",
-        "server": "49784c25.476704",
+        "server": "53bc65975025ce60",
         "version": 3,
         "outputs": 1,
         "halt_if": "",
@@ -283,7 +283,7 @@
         "entity_location": "data",
         "override_data": "msg",
         "x": 430,
-        "y": 340,
+        "y": 480,
         "wires": [
             [
                 "b901da7832a87289",
@@ -303,7 +303,7 @@
         "finalize": "",
         "libs": [],
         "x": 650,
-        "y": 340,
+        "y": 480,
         "wires": [
             [
                 "27ad4453b30a2d6e"
@@ -322,7 +322,7 @@
         "finalize": "",
         "libs": [],
         "x": 680,
-        "y": 400,
+        "y": 540,
         "wires": [
             [
                 "1cca7e715956c6e3"
@@ -341,8 +341,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
-        "y": 1000,
+        "x": 890,
+        "y": 840,
         "wires": [
             [
                 "44d1d28658d0dc2e"
@@ -361,8 +361,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1270,
-        "y": 1000,
+        "x": 1290,
+        "y": 840,
         "wires": [
             [
                 "d2122f7768b26272"
@@ -380,8 +380,8 @@
         "once": true,
         "onceDelay": "60",
         "topic": "",
-        "x": 530,
-        "y": 1000,
+        "x": 550,
+        "y": 840,
         "wires": [
             [
                 "9c6bfeda14cd94bd",
@@ -395,7 +395,7 @@
         "type": "api-current-state",
         "z": "8058a44447c9337f",
         "name": "Enable SunSynk Auto Mode",
-        "server": "49784c25.476704",
+        "server": "53bc65975025ce60",
         "version": 3,
         "outputs": 2,
         "halt_if": "on",
@@ -413,7 +413,7 @@
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 1640,
+        "x": 1680,
         "y": 840,
         "wires": [
             [
@@ -441,8 +441,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.new_sunsynk_update_status",
         "name": "Sunsynk Update Status",
-        "x": 2330,
-        "y": 840,
+        "x": 1910,
+        "y": 920,
         "wires": []
     },
     {
@@ -453,7 +453,7 @@
         "entityid": "sensor.new_minutes_to_load_shedding",
         "name": "Minutes To Load Shedding",
         "x": 940,
-        "y": 340,
+        "y": 480,
         "wires": []
     },
     {
@@ -464,7 +464,7 @@
         "entityid": "sensor.new_length_load_shedding",
         "name": "Length Load Shedding",
         "x": 920,
-        "y": 400,
+        "y": 540,
         "wires": []
     },
     {
@@ -479,8 +479,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
-        "y": 1080,
+        "x": 890,
+        "y": 920,
         "wires": [
             [
                 "f4ebfff1733f4299"
@@ -499,8 +499,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1270,
-        "y": 1080,
+        "x": 1290,
+        "y": 920,
         "wires": [
             [
                 "d2122f7768b26272"
@@ -511,6 +511,7 @@
         "id": "ea90cbc4d7319b78",
         "type": "function",
         "z": "8058a44447c9337f",
+        "d": true,
         "name": "Check Sunrise for Timeslot 3",
         "func": "let options = { hour12: false , hour: \"2-digit\", minute: \"2-digit\" };\nvar debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar sunrise = new Date(global.get(global.get(\"HA\") + '.states[\\'sun.sun\\'].attributes.next_dawn'));\nvar time3 = global.get(\"SS_Export_Data.inverter.selltime3\");\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"time3:\" + time3 + \" sunrise:\" + sunrise.toLocaleString() ) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") { } else { node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \" + loggerstat); return null; } \n\n// Error Checking\nif (ErrorCk.includes(sunrise)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(time3)) { node.status(\"Undefined\"); return null }\n\nvar timetemp = sunrise.toLocaleTimeString(\"en-us\", options);\nif (debugme === 1) {node.error(\"timetemp:\" + timetemp)}\n\nif (timetemp === time3 )  {\n    node.status(\"No Action - \" +  time3 + \"  ---  \" + timetemp );\n    return null;\n} else {\n    msg.payload = timetemp;\n    node.status(\"Action - \" + time3 + \"  ---  \" + timetemp);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
         "outputs": 1,
@@ -519,8 +520,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 860,
-        "y": 1160,
+        "x": 880,
+        "y": 1000,
         "wires": [
             [
                 "b64d6f4f8315ef87"
@@ -539,8 +540,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1280,
-        "y": 1160,
+        "x": 1300,
+        "y": 1000,
         "wires": [
             [
                 "d2122f7768b26272"
@@ -565,7 +566,294 @@
         "wires": []
     },
     {
-        "id": "49784c25.476704",
+        "id": "fa8fdffcbdc3c5fd",
+        "type": "server-events",
+        "z": "8058a44447c9337f",
+        "name": "Get All Events",
+        "server": "53bc65975025ce60",
+        "version": 3,
+        "exposeAsEntityConfig": "",
+        "eventType": "state_changed",
+        "eventData": "",
+        "waitForRunning": true,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "$outputData(\"eventData\").event_type",
+                "valueType": "jsonata"
+            }
+        ],
+        "x": 210,
+        "y": 1460,
+        "wires": [
+            [
+                "d4e48428a8c6d8d6",
+                "6bb4a89f9be5b962"
+            ]
+        ]
+    },
+    {
+        "id": "d4e48428a8c6d8d6",
+        "type": "debug",
+        "z": "8058a44447c9337f",
+        "name": "Raw Events",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 1400,
+        "wires": []
+    },
+    {
+        "id": "6bb4a89f9be5b962",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Filter Events",
+        "func": "//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\nvar origmsg = msg.payload;\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    msg.payload = {};\n    msg.payload.state =\"Checking\";\n    msg.payload.entityid = origmsg.event.entity_id;\n    msg.payload.value = origmsg.event.new_state.state;\n    msg.payload.exportid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".exportid\");\n    msg.payload.inverterid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".inverterid\");\n    if (ErrorCk.includes(msg.payload.exportid)) {\n        node.status(\"Array Missing(export):\" + msg.payload.entityid);\n        return null;\n    }\n    if (ErrorCk.includes(msg.payload.inverterid)) {\n        node.status(\"Array Missing(inverter):\" + msg.payload.entityid);\n        return null;\n    }\n    if (msg.payload.value === global.get(\"SS_Export_Data.\"+msg.payload.exportid))\n    { \n        msg.payload.state =\"Unchanged\"; \n        node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n    } else \n    { \n        msg.payload.state =\"Changed\";\n        node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n    }\n    return msg;\n };\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 1460,
+        "wires": [
+            [
+                "fb36e0ddf35281c3"
+            ]
+        ]
+    },
+    {
+        "id": "fb36e0ddf35281c3",
+        "type": "debug",
+        "z": "8058a44447c9337f",
+        "name": "Filtered Events",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 1400,
+        "wires": []
+    },
+    {
+        "id": "bf8cb464d5d94b8e",
+        "type": "api-call-service",
+        "z": "8058a44447c9337f",
+        "name": "Do Entity Updates Input Select",
+        "server": "53bc65975025ce60",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "input_select",
+        "service": "select_option",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 970,
+        "y": 1200,
+        "wires": [
+            [
+                "c24d4a058ce6582e"
+            ]
+        ]
+    },
+    {
+        "id": "015a19da5ecdb229",
+        "type": "link in",
+        "z": "8058a44447c9337f",
+        "name": "link in 2",
+        "links": [
+            "9c13453e02e7bae2"
+        ],
+        "x": 155,
+        "y": 1160,
+        "wires": [
+            [
+                "c4146d7ceaff7f35"
+            ]
+        ]
+    },
+    {
+        "id": "f059b6ab3f8e3cba",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Set Sunsynk Time Entities",
+        "func": "function setentity(t_ent , t_value )\n{\n   msg = {}; msg.payload = {}; msg.payload.target = {}; msg.payload.data = {};\n   msg.payload.target.entity_id=t_ent;\n   if (global.get(\"SS.mapping.\"+t_ent+\".type\") === \"input_select\") \n   { \n       msg.payload.data={ \"option\" : global.get(\"SS_Export_Data.\" + t_value )};\n       node.send([null , msg , null ]); \n   } else if (global.get(\"SS.mapping.\"+t_ent+\".type\") === \"input_text\")\n   {\n       msg.payload.data={ \"value\" : global.get(\"SS_Export_Data.\" + t_value )};\n       node.send([null, null , msg ]); \n   } else\n   { node.send([msg , null , null ]); }\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (entityarray.length === 0) \n{ node.status(\"Empty Array\"); } else\n{\n  for (let i = 0; i < entityarray.length; i++) \n  {\n      if (global.get(\"SS.mapping.\"+entityarray[i]+\".activeset\") === true )\n      {\n         setentity(entityarray[i],global.get(\"SS.mapping.\"+entityarray[i]+\".exportid\"));\n         node.status(\"Processing:\"+ entityarray[i])\n      } else \n      {\n         node.status(\"Skipping:\"+ entityarray[i])\n      }\n  }\n}\n\nreturn null;",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 1160,
+        "wires": [
+            [
+                "fd0f8c3760b08570"
+            ],
+            [
+                "bf8cb464d5d94b8e",
+                "ab4416ed7939c32e"
+            ],
+            [
+                "45b9b87518330b48",
+                "ab4416ed7939c32e"
+            ]
+        ]
+    },
+    {
+        "id": "ab4416ed7939c32e",
+        "type": "debug",
+        "z": "8058a44447c9337f",
+        "name": "Update Entities",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "c24d4a058ce6582e",
+        "type": "debug",
+        "z": "8058a44447c9337f",
+        "name": "Update Entities Errors",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "c4146d7ceaff7f35",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Setup Global Vars",
+        "func": "function setmapping( t_entityid,t_exportid,t_inverterid,t_activeset,t_type)\n{\n    global.set(\"SS.mapping.\" + t_entityid + \".exportid\", t_exportid);\n    global.set(\"SS.mapping.\" + t_entityid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_entityid + \".activeset\", t_activeset);\n    global.set(\"SS.mapping.\" + t_entityid + \".type\", t_type);\n    global.set(\"SS.mapping.\" + t_exportid + \".entityid\", t_entityid);\n    global.set(\"SS.mapping.\" + t_exportid + \".inverterid\", t_inverterid);\n    global.set(\"SS.mapping.\" + t_exportid + \".activeset\", t_activeset);\n    global.set(\"SS.mapping.\" + t_exportid + \".type\", t_type);\n    var t_entityarray = global.get(\"SS.mapping.arraylist\");\n    if (t_entityarray.includes(t_entityid)) { } else\n    {\n         t_entityarray.push(t_entityid);\n    }\n    global.set(\"SS.mapping.arraylist\",t_entityarray);\n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar entityarray = global.get(\"SS.mapping.arraylist\");\nif (entityarray.length === 0) \n{ \n    entityarray = [];\n    global.set(\"SS.mapping.arraylist\",entityarray)\n}\nnode.status(\"Number Array Entries:\"+ entityarray.length);\n\n//\n//\n// msg.payload = \"{sn:2106054422,\"safetyType\":\"2\",\"battMode\":\"-1\",\"solarSell\":\"0\",\"pvMaxLimit\":\"8000\",\"energyMode\":\"1\",\"peakAndVallery\":\"0\",\"sysWorkMode\":\"1\",\"sellTime1\":\"00:00\",\"sellTime2\":\"04:00\",\"sellTime3\":\"09:00\",\"sellTime4\":\"15:00\",\"sellTime5\":\"22:00\",\"sellTime6\":\"23:00\",\"sellTime1Pac\":\"8000\",\"sellTime2Pac\":\"8000\",\"sellTime3Pac\":\"8000\",\"sellTime4Pac\":\"8000\",\"sellTime5Pac\":\"8000\",\"sellTime6Pac\":\"8000\",\"cap1\":\"50\",\"cap2\":\"40\",\"cap3\":\"30\",\"cap4\":\"90\",\"cap5\":\"70\",\"cap6\":\"60\",\"sellTime1Volt\":\"49\",\"sellTime2Volt\":\"49\",\"sellTime3Volt\":\"49\",\"sellTime4Volt\":\"49\",\"sellTime5Volt\":\"49\",\"sellTime6Volt\":\"49\",\"zeroExportPower\":\"20\",\"solarMaxSellPower\":\"9000\",\"mondayOn\":true,\"tuesdayOn\":true,\"wednesdayOn\":true,\"thursdayOn\":true,\"fridayOn\":true,\"saturdayOn\":true,\"sundayOn\":true,\"time1on\":true,\"time2on\":true,\"time3on\":true,\"time4on\":true,\"time5on\":true,\"time6on\":true,\"genTime1on\":true,\"genTime2on\":true,\"genTime3on\":true,\"genTime4on\":true,\"genTime5on\":true,\"genTime6on\":true}\"\n////\n//          Entity ID                        SS_Export_Data ID      Sunsynk Update ID    Checking    Entity Type\nsetmapping(\"input_select.sunsynk_time1\",    \"inverter.selltime1\",   \"sellTime1\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time2\",    \"inverter.selltime2\",   \"sellTime2\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time3\",    \"inverter.selltime3\",   \"sellTime3\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time4\",    \"inverter.selltime4\",   \"sellTime4\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time5\",    \"inverter.selltime5\",   \"sellTime5\"         ,true       ,\"input_select\");\nsetmapping(\"input_select.sunsynk_time6\",    \"inverter.selltime6\",   \"sellTime6\"         ,true       ,\"input_select\");\nsetmapping(\"input_text.sunsynk_cap1\",       \"inverter.cap1\",        \"cap1\"              ,true       ,\"input_text\");\nsetmapping(\"input_text.sunsynk_cap2\",       \"inverter.cap2\",        \"cap2\"              ,true       ,\"input_text\");\nsetmapping(\"input_text.sunsynk_cap3\",       \"inverter.cap3\",        \"cap3\"              ,true       ,\"input_text\");\nsetmapping(\"input_text.sunsynk_cap4\",       \"inverter.cap4\",        \"cap4\"              ,true       ,\"input_text\");\nsetmapping(\"input_text.sunsynk_cap5\",       \"inverter.cap5\",        \"cap5\"              ,true       ,\"input_text\");\nsetmapping(\"input_text.sunsynk_cap6\",       \"inverter.cap6\",        \"cap6\"              ,true       ,\"input_text\");\n\n\nsetmapping(\"input_select.sunsynk_time1on\", \"inverter.time1on\", \"time1on\", false, \"input_select\");\nsetmapping(\"input_select.sunsynk_usetimer\", \"inverter.usetimer\", \"peakAndVallery\", false, \"input_select\");\n\nmsg={};\nmsg.state=\"Completed Setup\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 1160,
+        "wires": [
+            [
+                "f059b6ab3f8e3cba"
+            ]
+        ]
+    },
+    {
+        "id": "fd0f8c3760b08570",
+        "type": "debug",
+        "z": "8058a44447c9337f",
+        "name": "Update Entities Error",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "45b9b87518330b48",
+        "type": "api-call-service",
+        "z": "8058a44447c9337f",
+        "name": "Do Entity Updates Input Text",
+        "server": "53bc65975025ce60",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "input_text",
+        "service": "set_value",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 960,
+        "y": 1260,
+        "wires": [
+            [
+                "c24d4a058ce6582e"
+            ]
+        ]
+    },
+    {
+        "id": "93ed839f827e0126",
+        "type": "comment",
+        "z": "8058a44447c9337f",
+        "name": "General Automation. Can Be Removed",
+        "info": "",
+        "x": 250,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "486ae2c32b678403",
+        "type": "comment",
+        "z": "8058a44447c9337f",
+        "name": "Events Management - Setup and Update Entities",
+        "info": "",
+        "x": 320,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "92ddebf79af496f7",
+        "type": "comment",
+        "z": "8058a44447c9337f",
+        "name": "Entity Event Catcher and Sunsynk Updater",
+        "info": "",
+        "x": 300,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "53bc65975025ce60",
         "type": "server",
         "name": "Home Assistant",
         "version": 5,
@@ -574,16 +862,16 @@
         "ha_boolean": "y|yes|true|on|home|open",
         "connectionDelay": true,
         "cacheJson": true,
-        "heartbeat": false,
-        "heartbeatInterval": 30,
+        "heartbeat": true,
+        "heartbeatInterval": "30",
         "areaSelector": "friendlyName",
         "deviceSelector": "friendlyName",
-        "entitySelector": "friendlyName",
-        "statusSeparator": "at: ",
+        "entitySelector": "id",
+        "statusSeparator": ": ",
         "statusYear": "hidden",
         "statusMonth": "short",
         "statusDay": "numeric",
-        "statusHourCycle": "h23",
+        "statusHourCycle": "default",
         "statusTimeFormat": "h:m",
         "enableGlobalContextStore": true
     },

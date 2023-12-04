@@ -1,5 +1,27 @@
 #####
 #####
+##### Put These After the Sensor Templtes
+##### Used By Automation and Event Flows
+##### TESTINGING Events for Setting Inverter Settings
+#####
+#####
+input_boolean:
+  enable_ups_manual_override:
+    initial: false
+  enable_sunsynk_auto_mode:
+    initial: true
+  enable_auto_outside_lights:
+    initial: true
+  enable_auto_gary_office:
+    initial: true
+  enable_electric_weather_override:
+    initial: true
+  enable_camera_alert:
+    initial: true
+  enable_camera_high:
+    initial: false
+#####
+#####
 ##### TESTINGING Events for Setting Inverter Settings
 #####
 #####
@@ -310,4 +332,22 @@ input_select:
       - "22:30"
       - "23:00"
       - "23:30"
-
+input_text:
+  sunsynk_cap1:
+    name: SunSynk SOC 1
+    initial: "50"
+  sunsynk_cap2:
+    name: SunSynk SOC 2
+    initial: "35"
+  sunsynk_cap3:
+    name: SunSynk SOC 3
+    initial: "35"
+  sunsynk_cap4:
+    name: SunSynk SOC 4
+    initial: "85"
+  sunsynk_cap5:
+    name: SunSynk SOC 5
+    initial: "80"
+  sunsynk_cap6:
+    name: SunSynk SOC 6
+    initial: "70"
