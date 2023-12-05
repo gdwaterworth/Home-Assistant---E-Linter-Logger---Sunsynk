@@ -553,7 +553,7 @@
         "type": "debug",
         "z": "8058a44447c9337f",
         "name": "Automation Debug Output",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -632,7 +632,8 @@
         "y": 1460,
         "wires": [
             [
-                "fb36e0ddf35281c3"
+                "fb36e0ddf35281c3",
+                "b6ebd8ddd7011f7c"
             ]
         ]
     },
@@ -641,7 +642,7 @@
         "type": "debug",
         "z": "8058a44447c9337f",
         "name": "Filtered Events",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -852,6 +853,24 @@
         "x": 300,
         "y": 1340,
         "wires": []
+    },
+    {
+        "id": "b6ebd8ddd7011f7c",
+        "type": "function",
+        "z": "8058a44447c9337f",
+        "name": "Create Inverter Update Request",
+        "func": "//msg.payload.state = \"Checking\";\n//msg.payload.entityid\n//msg.payload.value\n//msg.payload.exportid\n//msg.payload.inverterid\nvar outputmsg = {};\n\n//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nif (ErrorCk.includes(msg.payload)) { node.status(\"Payload Error\"); return null }\nif (ErrorCk.includes(msg.payload.state)) { node.status(\"Payload State Error\"); return null }\nif (ErrorCk.includes(msg.payload.entityid)) { node.status(\"Payload Entity Error\"); return null }\nif (ErrorCk.includes(msg.payload.value)) { node.status(\"Payload value Error\"); return null }\nif (ErrorCk.includes(msg.payload.exportid)) { node.status(\"Payload ExportId Error\"); return null }\nif (ErrorCk.includes(msg.payload.inverterid)) { node.status(\"Payload InverterId Error\"); return null }\nvar ValidTimeValues = global.get(\"SS.ValidTimeValues\");\nif (ErrorCk.includes(ValidTimeValues)) { node.status(\"Global Var Problem\"); return null }\nvar SellTimeEntities = global.get(\"SS.ValidSellTimeEntities\");\nif (ErrorCk.includes(SellTimeEntities)) { node.status(\"Global Var Problem\"); return null }\nvar CapEntities = global.get(\"SS.ValidCapEntities\");\nif (ErrorCk.includes(CapEntities)) { node.status(\"Global Var Problem\"); return null }\nvar sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_data');\nif (ErrorCk.includes(sn)) { node.status(\"Undefined Inverter SN Number\"); return null }\noutputmsg.headers = global.get(\"SS.Header.Bearer\");\nif (ErrorCk.includes(outputmsg.headers)) { node.status(\"Undefined Headers\"); return null }\noutputmsg.url = global.get(\"SS.url.hostname\") + \"/api/v1/common/setting/\" + sn + \"/set\";\nif (ErrorCk.includes(outputmsg.url)) { node.status(\"Undefined url\"); return null }\n\n\nif (msg.payload.state === \"Changed\")\n{\n    if (SellTimeEntities.includes(msg.payload.inverterid))\n    {\n       if (ValidTimeValues.includes(msg.payload.value))\n       { var t_e = msg.payload.inverterid; var t_v = msg.payload.value; outputmsg.payload = { \"sn\": sn , t_e : + t_v }; } else \n       {node.status(\"Exited:\" + msg.payload.inverterid + \": Invalid Value\"); return null;}\n    } else \n    {\n\n    }\n\n    node.status(\"Exited:\" + msg.payload.inverterid + \": Request Created\");\n} else { node.status(\"Exited:\"+msg.payload.inverterid+\": Not Updated\") ; return null;}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 1460,
+        "wires": [
+            []
+        ]
     },
     {
         "id": "53bc65975025ce60",
