@@ -7,19 +7,20 @@
 #####
 input_boolean:
   enable_ups_manual_override:
-    initial: false
   enable_sunsynk_auto_mode:
-    initial: true
   enable_auto_outside_lights:
-    initial: true
   enable_auto_gary_office:
-    initial: true
   enable_electric_weather_override:
-    initial: true
   enable_camera_alert:
-    initial: true
   enable_camera_high:
-    initial: false
+  sunsynk_time1on:
+  sunsynk_time2on:
+  sunsynk_time3on:
+  sunsynk_time4on:
+  sunsynk_time5on:
+  sunsynk_time6on:
+  sunsynk_usetimer:
+  
 #####
 #####
 ##### TESTINGING Events for Setting Inverter Settings
@@ -351,3 +352,6 @@ input_text:
   sunsynk_cap6:
     name: SunSynk SOC 6
     initial: "70"
+
+
+    
