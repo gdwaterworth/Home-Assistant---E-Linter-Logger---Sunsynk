@@ -379,8 +379,8 @@ template:
           region: 2
           invertor_list_opt: 0
           return_items: 10
-          sn_data: 2106054422
-          sn_flow: 366999
+          sn_data: !secret sunsynk_sn_data
+          sn_flow: !secret sunsynk_sn_flow
           unit_cost: 2.37
 #####
 ##### invertor_list_opt:
