@@ -20,7 +20,7 @@
         "finalize": "",
         "libs": [],
         "x": 1170,
-        "y": 220,
+        "y": 160,
         "wires": [
             [],
             [
@@ -40,7 +40,7 @@
         "finalize": "",
         "libs": [],
         "x": 1630,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "a5e32263433166d3"
@@ -86,7 +86,7 @@
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "7c8b53ad04cf5062"
@@ -129,7 +129,7 @@
         "senderr": false,
         "headers": [],
         "x": 970,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "8ca6ebb9883a33b8",
@@ -142,15 +142,15 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Calc Last Update Time & General Status Check",
-        "func": "var origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.state = currdate; \nmsg.payload.attributes.device_class = \"timestamp\"; \n\nfunction errorstatus(errorvar)\n{\n    node.status(\" Error Found : \" + errorvar);\n    node.error(errorvar + \" - Error With Data \"); \n    node.status(currdate.toLocaleString() + \" - \" + errorvar + \" - Error_ With Data \"); \n    msg.payload.state = \"Error With Incoming Data\";\n    msg.payload.attributes = {} ; \n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\") ; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { errorstatus(\"Logger Update\") }\nif (ErrorCk.includes(loggerstat)) { errorstatus(\"Logger Status\") }\nif (ErrorCk.includes(estatus)) { errorstatus(\"Stats Last Update\") }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { errorstatus(\"Bad Gather Data\") } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\") }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { errorstatus(\" Bad Last Logger Update \") } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 180000) { errorstatus(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { errorstatus(\"Logger Not Online\") }\n\nreturn msg; ",
+        "func": "var origmsg = msg.payload;\nvar currdate = new Date();\nnode.status(currdate.toLocaleString());\nmsg.payload = {};\nmsg.payload.attributes = {};\nmsg.payload.state = currdate; \nmsg.payload.attributes.device_class = \"timestamp\"; \n\nfunction errorstatus(errorvar)\n{\n    node.status(\" Error Found : \" + errorvar);\n    node.error(errorvar + \" - Error With Data \"); \n    node.status(currdate.toLocaleString() + \" - \" + errorvar + \" - Error_ With Data \"); \n    msg.payload.state = \"Error With Incoming Data\";\n    msg.payload.attributes = {} ; \n}\n\nvar ErrorCk = global.get(\"SS.ErrorCk\") ; //Error types to check against \n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { errorstatus(\"Logger Update\") }\nif (ErrorCk.includes(loggerstat)) { errorstatus(\"Logger Status\") }\nif (ErrorCk.includes(estatus)) { errorstatus(\"Stats Last Update\") }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { errorstatus(\"Bad Gather Data\") } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 240000) { errorstatus(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\") }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { errorstatus(\" Bad Last Logger Update \") } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (diff > 240000) { errorstatus(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); }\n}\n//Logger Online ? \nif (loggerstat === \"Online\") { } else { errorstatus(\"Logger Not Online\") }\n\nreturn msg; ",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 800,
-        "y": 120,
+        "x": 1240,
+        "y": 1020,
         "wires": [
             [
                 "3e57fb7499cefb5a"
@@ -164,8 +164,8 @@
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.sunsynk_stats_last_update",
         "name": "Update Last Updated Date",
-        "x": 1160,
-        "y": 120,
+        "x": 1600,
+        "y": 1020,
         "wires": []
     },
     {
@@ -214,8 +214,7 @@
         "y": 160,
         "wires": [
             [
-                "0c13157122cbbc47",
-                "a5e5f685a25108df"
+                "0c13157122cbbc47"
             ]
         ]
     },
@@ -1393,7 +1392,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1160,
-        "y": 180,
+        "y": 120,
         "wires": []
     },
     {
@@ -1554,7 +1553,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Filter Events",
-        "func": "function checktrue(t_check) {\n    if (t_check === \"true\") { return true; }\n    else if (t_check === 1) { return true; }\n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else if (t_check === true) { return true; }\n    else { return false; }\n}\n\n//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\n\nvar TimeEntities = global.get(\"SS.ValidTimeEntities\");\nif (ErrorCk.includes(TimeEntities)) { node.status(\"Global Var Problem\"); return null }\nvar CapEntities = global.get(\"SS.ValidCapEntities\");\nif (ErrorCk.includes(CapEntities)) { node.status(\"Global Var Problem\"); return null }\nvar BooleanEntities = global.get(\"SS.ValidBooleanEntities\");\nif (ErrorCk.includes(BooleanEntities)) { node.status(\"Global Var Problem\"); return null }\nvar BooleanEntitiesTxt = global.get(\"SS.ValidBooleanEntitiesTXT\");\nif (ErrorCk.includes(BooleanEntitiesTxt)) { node.status(\"Global Var Problem\"); return null }\n\nvar origmsg = msg.payload;\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    msg.payload = {};\n    msg.payload.state =\"Checking\";\n    msg.payload.entityid = origmsg.event.entity_id;\n    msg.payload.value = origmsg.event.new_state.state;\n    msg.payload.exportid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".exportid\");\n    msg.payload.inverterid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".inverterid\");\n    if (global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".activeset\") === true) \n    {\n        if (ErrorCk.includes(msg.payload.exportid)) {\n         node.status(\"Array Missing(export):\" + msg.payload.entityid);\n         return null;\n        }\n        if (ErrorCk.includes(msg.payload.inverterid)) {\n         node.status(\"Array Missing(inverter):\" + msg.payload.entityid);\n         return null;\n        }\n        if ((TimeEntities.includes(msg.payload.inverterid) || CapEntities.includes(msg.payload.inverterid)) && (msg.payload.value === global.get(\"SS_Export_Data.\"+msg.payload.exportid)))\n        { \n         msg.payload.state =\"Unchanged\"; \n         node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n        } else if ((BooleanEntities.includes(msg.payload.inverterid) || BooleanEntitiesTxt.includes(msg.payload.inverterid)) && (checktrue(msg.payload.value) === checktrue(global.get(\"SS_Export_Data.\" + msg.payload.exportid)) ) )\n        {\n            msg.payload.state = \"Unchanged\";\n            node.status(msg.payload.entityid + \":\" + msg.payload.state);\n        } else \n        { \n         msg.payload.state =\"Changed\";\n         node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n        }\n        return msg;\n    } else { node.error(msg.payload.entityid + \": is not active \"); }\n };\nreturn null;",
+        "func": "function checktrue(t_check) {\n    if (t_check === \"true\") { return true; }\n    else if (t_check === 1) { return true; }\n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else if (t_check === true) { return true; }\n    else { return false; }\n}\n\n//Entities to looks for changes\nvar ErrorCk = global.get(\"SS.ErrorCk\");\nvar EntityCheck = global.get(\"SS.mapping.arraylist\");\nif (ErrorCk.includes(EntityCheck)) {\n    node.status(\"Check Array Does Not Exist\");\n    return null;\n} else \n{\n    node.status(\"Check Array Exists - Processing Event\");\n};\n\nvar TimeEntities = global.get(\"SS.ValidTimeEntities\");\nif (ErrorCk.includes(TimeEntities)) { node.status(\"Global Var Problem\"); return null }\nvar CapEntities = global.get(\"SS.ValidCapEntities\");\nif (ErrorCk.includes(CapEntities)) { node.status(\"Global Var Problem\"); return null }\nvar BooleanEntities = global.get(\"SS.ValidBooleanEntities\");\nif (ErrorCk.includes(BooleanEntities)) { node.status(\"Global Var Problem\"); return null }\nvar BooleanEntitiesTxt = global.get(\"SS.ValidBooleanEntitiesTXT\");\nif (ErrorCk.includes(BooleanEntitiesTxt)) { node.status(\"Global Var Problem\"); return null }\n\nvar origmsg = msg.payload;\nif (EntityCheck.includes(msg.payload.entity_id)) \n { \n    msg.payload = {};\n    msg.payload.state =\"Checking\";\n    msg.payload.entityid = origmsg.event.entity_id;\n    msg.payload.value = origmsg.event.new_state.state;\n    msg.payload.exportid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".exportid\");\n    msg.payload.inverterid = global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".inverterid\");\n    if (global.get(\"SS.mapping.\" + origmsg.event.entity_id + \".activeset\") === true) \n    {\n        if (ErrorCk.includes(msg.payload.exportid)) {\n         node.status(\"Array Missing(export):\" + msg.payload.entityid);\n         return null;\n        }\n        if (ErrorCk.includes(msg.payload.inverterid)) {\n         node.status(\"Array Missing(inverter):\" + msg.payload.entityid);\n         return null;\n        }\n        if ((TimeEntities.includes(msg.payload.inverterid) || CapEntities.includes(msg.payload.inverterid)) && (msg.payload.value === global.get(\"SS_Export_Data.\"+msg.payload.exportid)))\n        { \n         msg.payload.state =\"Unchanged\"; \n         node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n        } else if ((BooleanEntities.includes(msg.payload.inverterid) || BooleanEntitiesTxt.includes(msg.payload.inverterid)) && (checktrue(msg.payload.value) === checktrue(global.get(\"SS_Export_Data.\" + msg.payload.exportid)) ) )\n        {\n            msg.payload.state = \"Unchanged\";\n            node.status(msg.payload.entityid + \":\" + msg.payload.state);\n        } else \n        { \n         msg.payload.state =\"Changed\";\n         node.status(msg.payload.entityid + \":\"+ msg.payload.state);\n        }\n        return msg;\n    } else { node.error(msg.payload.entityid + \": is not active \"); }\n } else {node.status(\"No Valid Event Found\"); };\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1743,7 +1742,7 @@
         "type": "function",
         "z": "fca77f132c7d5d8f",
         "name": "Set Status",
-        "func": "var origmsg = msg.payload;\nnode.status(origmsg.msg);\nmsg.payload = {};\nmsg.payload.state = origmsg.msg;\nreturn msg\n",
+        "func": "var origmsg = msg.payload;\nnode.status(origmsg.msg);\nmsg.payload = {};\nmsg.payload.state = origmsg.msg;\nglobal.set(\"SS.LastWebsiteUpdateStatus\", origmsg);\nreturn msg\n",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -1803,7 +1802,7 @@
         "timeout": "5",
         "timeoutUnits": "seconds",
         "rate": "1",
-        "nbRateUnits": "60",
+        "nbRateUnits": "30",
         "rateUnits": "second",
         "randomFirst": "1",
         "randomLast": "5",
@@ -1861,7 +1860,8 @@
         "y": 880,
         "wires": [
             [
-                "86339913b4a2a435"
+                "86339913b4a2a435",
+                "a5e5f685a25108df"
             ]
         ]
     },
@@ -1870,7 +1870,7 @@
         "type": "comment",
         "z": "fca77f132c7d5d8f",
         "name": "Seperate User Entity",
-        "info": "Topic Link : https://powerforum.co.za/topic/16806-sunsynk-logger-integration-into-home-assistant/\n\nFeel free to use",
+        "info": "",
         "x": 870,
         "y": 840,
         "wires": []
