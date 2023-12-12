@@ -7,7 +7,7 @@
 #####
 input_boolean:
   enable_sunsynk_auto_mode:
-   initial: true
+   initial: false
   enable_ups_manual_override:
    initial: false
   sunsynk_time1on:
