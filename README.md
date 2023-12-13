@@ -1,5 +1,5 @@
 # Home-Assistant---SunSynk-Logger
-Video by Sc00bs to Assist with Configuration 
+Video by Sc00bs to Assist with Configuration (Version 1, Version 2 Documentation in Progress. Short version in Wiki ) 
 
 https://youtu.be/VxhmD2GAJv4
 
