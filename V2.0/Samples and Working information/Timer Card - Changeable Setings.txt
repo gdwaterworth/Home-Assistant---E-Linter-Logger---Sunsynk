@@ -52,6 +52,22 @@ cards:
           action: none
         icon: mdi:home
         fill_container: true
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: sensor.new_sunsynk_update_status
+        name: Last Website Update Status
+        icon_color: green
+        primary_info: name
+        secondary_info: state
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon: mdi:av-timer
+        fill_container: true
+        layout: vertical
+        icon_type: none
   - type: entities
     entities:
       - entity: input_boolean.sunsynk_time1on
