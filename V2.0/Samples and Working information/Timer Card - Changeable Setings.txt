@@ -1,5 +1,57 @@
 type: vertical-stack
 cards:
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: input_boolean.enable_sunsynk_auto_mode
+        name: Automation
+        icon_color: green
+        primary_info: name
+        secondary_info: last-changed
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon: mdi:robot-industrial-outline
+        fill_container: true
+      - type: custom:mushroom-entity-card
+        entity: input_boolean.enable_ups_manual_override
+        name: Override
+        icon_color: deep-orange
+        primary_info: name
+        secondary_info: last-changed
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon: mdi:tangram
+        fill_container: true
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: input_boolean.sunsynk_usetimer
+        name: Use Timer
+        icon_color: green
+        primary_info: name
+        secondary_info: last-changed
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon: mdi:av-timer
+        fill_container: true
+      - type: custom:mushroom-entity-card
+        entity: input_boolean.sunsynk_energymode
+        name: Priority Load
+        icon_color: green
+        primary_info: name
+        secondary_info: last-changed
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon: mdi:home
+        fill_container: true
   - type: entities
     entities:
       - entity: input_boolean.sunsynk_time1on
