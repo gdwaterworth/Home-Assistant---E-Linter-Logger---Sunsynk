@@ -1,5 +1,13 @@
 [
     {
+        "id": "9512e2fe31389491",
+        "type": "tab",
+        "label": "Sunsynk Gather - Usable - 2 Inverter 1 Plant",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "6787251a9356da8e",
         "type": "function",
         "z": "9512e2fe31389491",
@@ -21,5 +29,47 @@
                 "9ea2967223ae0740"
             ]
         ]
+    },
+    {
+        "id": "d7c3d498747710ae",
+        "type": "link in",
+        "z": "9512e2fe31389491",
+        "name": "Garther In 1",
+        "links": [
+            "cecf77c8e14e7b61"
+        ],
+        "x": 155,
+        "y": 80,
+        "wires": [
+            [
+                "6787251a9356da8e"
+            ]
+        ]
+    },
+    {
+        "id": "a87140435b7c108d",
+        "type": "link out",
+        "z": "9512e2fe31389491",
+        "name": "Gather Out 2",
+        "mode": "link",
+        "links": [
+            "549f0a69133a3354"
+        ],
+        "x": 635,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "9ea2967223ae0740",
+        "type": "link out",
+        "z": "9512e2fe31389491",
+        "name": "Gather Out 3",
+        "mode": "link",
+        "links": [
+            "e8811ab2e151ac5e"
+        ],
+        "x": 635,
+        "y": 120,
+        "wires": []
     }
 ]
