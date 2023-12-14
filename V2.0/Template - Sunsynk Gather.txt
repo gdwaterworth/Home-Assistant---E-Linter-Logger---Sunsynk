@@ -18,6 +18,8 @@ input_boolean:
   sunsynk_time6on:
   sunsynk_usetimer:
    initial: true
+  sunsynk_energymode:
+   initial: true
 ##
 ## Personal , can remove
 ##
