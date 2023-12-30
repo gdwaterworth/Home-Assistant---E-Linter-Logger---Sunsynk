@@ -20,14 +20,6 @@ input_boolean:
    initial: true
   sunsynk_energymode:
    initial: true
-##
-## Personal , can remove
-##
-  enable_auto_outside_lights:
-  enable_auto_gary_office:
-  enable_electric_weather_override:
-  enable_camera_alert:
-  enable_camera_high:
 
 #####
 #####

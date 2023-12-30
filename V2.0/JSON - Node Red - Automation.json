@@ -1,6 +1,6 @@
 [
     {
-        "id": "8058a44447c9337f",
+        "id": "eb7b1eefbfdc806c",
         "type": "tab",
         "label": "SunSynk Automation",
         "disabled": false,
@@ -8,10 +8,9 @@
         "env": []
     },
     {
-        "id": "5b7d29d1d965a3ed",
+        "id": "6bd1ffdd75663138",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Create Request for Setting Invertor Settings",
         "func": "function checktrue(t_check) {\n    if (t_check === \"true\") { return true; }\n    else if (t_check === 1) { return true; }\n    else if (t_check === \"1\") { return true; }\n    else if (t_check === \"True\") { return true; }\n    else if (t_check === \"TRUE\") { return true; }\n    else if (t_check === \"on\") { return true; }\n    else if (t_check === \"ON\") { return true; }\n    else if (t_check === \"On\") { return true; }\n    else if (t_check === true) { return true; }\n    else { return false; }\n}\n\nvar sn = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_config\\'].attributes.sn_data');\nvar timeruse = global.get(\"SS_Export_Data.inverter.usetimer\");\nif (timeruse === true) { timeruse = 1 }\nif (timeruse === false) { timeruse = 0 } \nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \n\n//error checking\n//if (ErrorCk.includes(sn)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(timeruse)) { node.status(\"Undefined\"); return null }\n\nif (checktrue(timeruse) === checktrue(parseInt(msg.payload))) { node.status(\"No Action  Current:\" + timeruse + \"  Payload:\" + msg.payload) ; return null } else {}\n\nvar newmsg = {};\nnewmsg.payload = {};\nnewmsg.payload.target = {};\nnewmsg.payload.data = {};\nnewmsg.payload.target.entity_id = \"input_boolean.sunsynk_usetimer\" ;\nif (checktrue(msg.payload) === true ) { newmsg.payload[\"service\"] = \"turn_on\"; } else { newmsg.payload[\"service\"] = \"turn_off\" ;}\nnewmsg.payload[\"domain\"] = \"input_boolean\";\nlet currdate = new Date(); node.status(newmsg.payload[\"service\"] + \" - \" + currdate.toLocaleString());\nreturn newmsg;\n\n//return msg;",
         "outputs": 1,
@@ -24,18 +23,17 @@
         "y": 420,
         "wires": [
             [
-                "80f8fc1d444774db",
-                "d2122f7768b26272"
+                "16cea67aa32c1468",
+                "d6c8ac89224865db"
             ]
         ]
     },
     {
-        "id": "2ba21a318ddc4a6a",
+        "id": "dc03772ede1ba8e1",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check If Need to Put Into UPS Mode for Upcoming load shedding",
-        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = global.get(\"SunSynkDebug\");\nvar totalw = 3500 * 3; //total wattage of batteries\nvar wmin = 40 * 48 / 60; //watt.min charge Setting in invertor. Based on amps ( Inv Settinhsg )  * volts of battery / 60 minutes  \nvar soclow = 50; // default low end soc value \nvar sochigh = 60; // default high end soc value \nvar pt = 60; // default charge time \nvar pvtest = 2000; //value to test current pv against for some decisions \nvar LSTCheck = [\"clear-sky\", \"sunny\", \"partlycloudy\"]; //Weather types Used to decide if we need charge \nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" pvtest:\" + pvtest + \" totalw:\" + totalw + \" wmin:\" + wmin) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd   = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else \n{\n  var startdate = new Date(estatus);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else\n{\n  var startdate = new Date(loggerupd);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") {} else\n{ node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \"+ loggerstat ); return null; } \n\n// Custom variables\nvar lengthls = global.get(global.get(\"HA\") + '.states[\\'sensor.new_length_load_shedding\\'].state');\nvar timeleft = global.get(global.get(\"HA\") + '.states[\\'sensor.new_minutes_to_load_shedding\\'].state');\nvar timeruse = global.get(\"SS_Export_Data.inverter.usetimer\");\nif (timeruse === true) { timeruse = 1 }\nif (timeruse === false) { timeruse = 0 }\nvar soc      = parseInt(global.get(\"SS_Export_Data.battery.soc\"));\nvar pv       = parseInt(global.get(\"SS_Export_Data.pv.power\"));\nvar gridv    = parseInt(global.get(\"SS_Export_Data.grid.volt\"));\nvar override = global.get(global.get(\"HA\") + '.states[\\'input_boolean.enable_ups_manual_override\\'].state');\nif (debugme === 1) { node.error(\"lengthls:\" + lengthls + \" override:\" + override + \" gridv:\" + gridv + \" pv:\" + pv + \" timeleft:\" + timeleft + \" timeruse:\" + timeruse + \" soc:\" + soc) }\n\n\n// Error Checking\nif (ErrorCk.includes(lengthls))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(timeleft))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(timeruse))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(soc))       { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(pv))        { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(gridv))     { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(override))  { node.status(\"Undefined/Error\"); return null }\n\n// Drop out if No Load Shedding, enable Use Timer\nif (parseInt(lengthls) === 0 || parseInt(lengthls) === 99997) {\n  node.status(\"No Load Shedding Events Scheduled\");\n  msg.payload = \"1\";\n  return [msg, \"No Load Shedding Events Scheduled\"];\n}\n\n// Calculate Load shedding Params Based on time windows of load shedding\nvar lls = parseInt(lengthls);\nsoclow = 50; sochigh = 60; // Less than 3 hours  \nif (lls > 180) { pt = 120; soclow = 80; sochigh = 90 } // Longer than 3 hours load shedding\n\n// Check for Weather and Early Load Shedding\nvar CF = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_condition\\'].state');\nvar LST = global.get(global.get(\"HA\") + '.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time');\nif ((ErrorCk.includes(CF)) || (ErrorCk.includes(CC)) || (ErrorCk.includes(LST))) { node.error(\"CF/CC/LST undefined/error\")} else\n{\n  var LSTdate = new Date(global.get(global.get(\"HA\") + '.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time'));\n  var LSThour = LSTdate.getHours();\n  if (debugme === 1) { node.error(\"CF:\" + CF + \" CC:\" + CC + \" LSTdate:\" + LSTdate.toLocaleString() + \" LSThour:\" + LSThour) }\n  if ((LSThour >= 7) && (LSThour <= 11) && (LSTCheck.includes(CF)) && (LSTCheck.includes(CC)) ) \n  { \n    // Based on good weather, no need for excessive battery charge even for long load shedding\n    pt = 30; soclow = 40; sochigh = 45; \n    current = current + \" EA_LS\";\n  } else \n  {\n    if ((soc <= soclow)) \n    // Calculate Variable charge time based on soc being lower than soc low threshhold \n    {\n      var minneeded = 0;\n      var soctemp = 0;\n      soctemp = sochigh - soc;\n      minneeded = (((soctemp / 100) * totalw) / wmin).toFixed(0);\n      current = current + \" wmin:\" + minneeded;\n      pt = minneeded;\n    } else { current = current + \" NoWmin\" }\n  }\n  // current = current + \" LSTH:\" + LSThour ;\n}\n\nif (debugme === 1) { node.error(\"pt after calc:\" + pt + \" soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" wmin:\" + wmin + \" lls:\" + lls) }\ncurrent = current + \" sl:\" + soclow + \" sh:\" + sochigh;\n\n// Setup Info for Status line \nif (parseInt(timeleft) <= pt) { current = current + \" TL\" }\nif (soc <= soclow) { current = current + \" SOC\" }\nif (pv <= pvtest) { current = current + \" PV\" }\nif (timeruse === 1) { current = current + \" TIMER\" }\n\n// If Override enabled dont calc, just disable use timer\nif (override === \"on\" ) {\n  // Override is enabled, disable USE TIMER\n  msg.payload = \"0\";\n  current = current + \" OVERRIDE - No Further Actions\";\n} else if (gridv <= 200) \n{ \n// There is no grid, enable USE TIMER\n  current = current + \" NOGRID\"; \n  msg.payload = \"1\";\n} else\n// Start soc checks \n{\n  msg.payload = \"1\";\n  //if Timeleft <= calculated time and soc < soclow and pv < test pv value \n  if ((parseInt(timeleft) <= pt) &&\n    (soc <= soclow) &&\n    (pv <= pvtest)) {\n    msg.payload = \"0\"\n  } else {\n    // If timeruse is allready disabled \n    if (timeruse === 0) {\n    // soc in state between soclow and sochigh - 50-60% example, dont renenable till soc high \n      if ((soc >= soclow) && (soc <= sochigh) && (pv <= pvtest)) {\n        current = current + \" Delay Reactivate\";\n        msg.payload = \"0\";\n      } else {\n        current = current + \" Reactivate\";\n        msg.payload = \"1\";\n      }\n    } else { current = current + \" No Action\"; msg.payload = \"1\"; }\n  }\n}\n// Setup status \ncurrent = current + \" soc:\" + soc + \" pt:\" + pt + \" t:\" + timeruse + \" pv:\" + pv + \" t:\" + timeleft + \" p:\" + msg.payload;\nnode.status(current);\nglobal.set(\"SS.currentcalcstatus\",current);\nvar msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = current;\nreturn [msg, msgstatus];",
+        "func": "var origpayload = msg.payload;\nvar current = \"\";\nvar debugme = global.get(\"SunSynkDebug\");\nvar totalw = 3500 * 3; //total wattage of batteries\nvar wmin = 40 * 48 / 60; //watt.min charge Setting in invertor. Based on amps ( Inv Settinhsg )  * volts of battery / 60 minutes  \nvar soclow = 50; // default low end soc value \nvar sochigh = 60; // default high end soc value \nvar pt = 60; // default charge time \nvar pvtest = 2000; //value to test current pv against for some decisions \nvar LSTCheck = [\"clear-sky\", \"sunny\", \"partlycloudy\"]; //Weather types Used to decide if we need charge \nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" pvtest:\" + pvtest + \" totalw:\" + totalw + \" wmin:\" + wmin) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd   = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else \n{\n  var startdate = new Date(estatus);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.status(\"Status check\" + start + \" \" + currentt + \" \" + diff) ; node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") \n{ node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else\n{\n  var startdate = new Date(loggerupd);\n  var start = startdate.getTime();\n  var currentdate = new Date();\n  var currentt = currentdate.getTime();\n  var diff = currentt - start;\n  if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n  if (diff > 180000) { node.status(\"Date check\" + start + \" \" + currentt + \" \" + diff);  node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") {} else\n{ node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \"+ loggerstat ); return null; } \n\n// Custom variables\nvar lengthls = global.get(global.get(\"HA\") + '.states[\\'sensor.new_length_load_shedding\\'].state');\nvar timeleft = global.get(global.get(\"HA\") + '.states[\\'sensor.new_minutes_to_load_shedding\\'].state');\nvar timeruse = global.get(\"SS_Export_Data.inverter.usetimer\");\nif (timeruse === true) { timeruse = 1 }\nif (timeruse === false) { timeruse = 0 }\nvar soc      = parseInt(global.get(\"SS_Export_Data.battery.soc\"));\nvar pv       = parseInt(global.get(\"SS_Export_Data.pv.power\"));\nvar gridv    = parseInt(global.get(\"SS_Export_Data.grid.volt\"));\nvar override = global.get(global.get(\"HA\") + '.states[\\'input_boolean.enable_ups_manual_override\\'].state');\nif (debugme === 1) { node.error(\"lengthls:\" + lengthls + \" override:\" + override + \" gridv:\" + gridv + \" pv:\" + pv + \" timeleft:\" + timeleft + \" timeruse:\" + timeruse + \" soc:\" + soc) }\n\n\n// Error Checking\nif (ErrorCk.includes(lengthls))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(timeleft))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(timeruse))  { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(soc))       { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(pv))        { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(gridv))     { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(override))  { node.status(\"Undefined/Error\"); return null }\n\n// Drop out if No Load Shedding, enable Use Timer\nif (parseInt(lengthls) === 0 || parseInt(lengthls) === 99997) {\n  node.status(\"No Load Shedding Events Scheduled\");\n  msg.payload = \"1\";\n  return [msg, \"No Load Shedding Events Scheduled\"];\n}\n\n// Calculate Load shedding Params Based on time windows of load shedding\nvar lls = parseInt(lengthls);\nsoclow = 50; sochigh = 60; // Less than 3 hours  \nif (lls > 180) { pt = 120; soclow = 80; sochigh = 90 } // Longer than 3 hours load shedding\n\n// Check for Weather and Early Load Shedding\nvar CF = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_condition\\'].state');\nvar LST = global.get(global.get(\"HA\") + '.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time');\nif ((ErrorCk.includes(CF)) || (ErrorCk.includes(CC)) || (ErrorCk.includes(LST))) { node.error(\"CF/CC/LST undefined/error\")} else\n{\n  var LSTdate = new Date(global.get(global.get(\"HA\") + '.states[\\'calendar.loadshedding_local_events\\'].attributes.start_time'));\n  var LSThour = LSTdate.getHours();\n  if (debugme === 1) { node.error(\"CF:\" + CF + \" CC:\" + CC + \" LSTdate:\" + LSTdate.toLocaleString() + \" LSThour:\" + LSThour) }\n  if ((LSThour >= 7) && (LSThour <= 11) && (LSTCheck.includes(CF)) && (LSTCheck.includes(CC)) ) \n  { \n    // Based on good weather, no need for excessive battery charge even for long load shedding\n    pt = 30; soclow = 40; sochigh = 45; \n    current = current + \" EA_LS\";\n  } else \n  {\n    if ((soc <= soclow)) \n    // Calculate Variable charge time based on soc being lower than soc low threshhold \n    {\n      var minneeded = 0;\n      var soctemp = 0;\n      soctemp = sochigh - soc;\n      minneeded = (((soctemp / 100) * totalw) / wmin).toFixed(0);\n      current = current + \" wmin:\" + minneeded;\n      pt = minneeded;\n    } else { current = current + \" NoWmin\" }\n  }\n  // current = current + \" LSTH:\" + LSThour ;\n}\n\nif (debugme === 1) { node.error(\"pt after calc:\" + pt + \" soclow:\" + soclow + \" sochigh:\" + sochigh + \" pt:\" + pt + \" wmin:\" + wmin + \" lls:\" + lls) }\ncurrent = current + \" sl:\" + soclow + \" sh:\" + sochigh;\n\n// Setup Info for Status line \nif (parseInt(timeleft) <= pt) { current = current + \" TL\" }\nif (soc <= soclow) { current = current + \" SOC\" }\nif (pv <= pvtest) { current = current + \" PV\" }\nif (timeruse === 1) { current = current + \" TIMER\" }\n\n// If Override enabled dont calc, just disable use timer\nif (override === \"on\" ) {\n  // Override is enabled, disable USE TIMER\n  msg.payload = \"0\";\n  current = current + \" OVERRIDE - No Further Actions\";\n} else if (gridv <= 200) \n{ \n// There is no grid, enable USE TIMER\n  current = current + \" NOGRID\"; \n  msg.payload = \"1\";\n} else\n// Start soc checks \n{\n  msg.payload = \"1\";\n  //if Timeleft <= calculated time and soc < soclow and pv < test pv value \n  if ((parseInt(timeleft) <= pt) &&\n    (soc <= soclow) &&\n    (pv <= pvtest)) {\n    msg.payload = \"0\"\n  } else {\n    // If timeruse is allready disabled \n    if (timeruse === 0) {\n    // soc in state between soclow and sochigh - 50-60% example, dont renenable till soc high \n      if ((soc >= soclow) && (soc <= sochigh) && (pv <= pvtest)) {\n        current = current + \" Delay Reactivate\";\n        msg.payload = \"0\";\n      } else {\n        current = current + \" Reactivate\";\n        msg.payload = \"1\";\n      }\n    } else { current = current + \" No Action\"; msg.payload = \"1\"; }\n  }\n}\n// Setup status \ncurrent = current + \" soc:\" + soc + \" pt:\" + pt + \" t:\" + timeruse + \" pv:\" + pv + \" t:\" + timeleft + \" p:\" + msg.payload;\nnode.status(current);\nglobal.set(\"SS.currentcalcstatus\",current);\nvar msgstatus = {}; msgstatus.payload = {}; msgstatus.payload.state = current;\nreturn [msg, msgstatus];",
         "outputs": 2,
         "timeout": "",
         "noerr": 0,
@@ -46,19 +44,18 @@
         "y": 420,
         "wires": [
             [
-                "5b7d29d1d965a3ed",
-                "57f33094a9fea81d"
+                "6bd1ffdd75663138",
+                "abba3c8bdcc000ba"
             ],
             [
-                "094e24f7f9f4eb5b"
+                "a8ffeeaf2db1f3ae"
             ]
         ]
     },
     {
-        "id": "57f33094a9fea81d",
+        "id": "abba3c8bdcc000ba",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check for Notification - UPS Change",
         "func": "var timeruse = global.get(\"SS_Export_Data.inverter.usetimer\");\nif ( timeruse === true) { timeruse = 1}\nif (timeruse === false) { timeruse = 0 }\nif (timeruse != undefined) { } else { node.status(\"Undef\");return null }\nif (timeruse === parseInt(msg.payload)) { node.status(msg.payload + ' No Action') ; return null } else {}\nlet currdate = new Date(); node.status(msg.payload + \" - \" + currdate.toLocaleString());\nif (parseInt(msg.payload) === 0 ) \n{\n   msg.payload = \n     { data: \n       {\n         title: \"Solar UPS Mode Enabled\",\n         message:\"UPS Mode Enabled\",\n         data:\n          {\n            tag: \"ups\",\n            sticky: \"true\",\n            color: \"red\",\n            channel: \"29PtaRd\"\n          }       \n       }\n     } ;\n} else\n{\n  msg.payload =\n  {\n    data:\n    {\n      title: \"Solar UPS Mode Disabled\",\n      message: \"UPS Mode Disabled\",\n      data:\n      {\n        tag: \"ups\",\n        sticky: \"true\",\n        color: \"red\",\n        channel: \"29PtaRd\"\n      }       \n    }\n  };\n}\nreturn msg;",
         "outputs": 1,
@@ -71,15 +68,14 @@
         "y": 360,
         "wires": [
             [
-                "eb571a0a10c64e8f"
+                "b525c97a74f1ce28"
             ]
         ]
     },
     {
-        "id": "eb571a0a10c64e8f",
+        "id": "b525c97a74f1ce28",
         "type": "api-call-service",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Send to Gary",
         "server": "53bc65975025ce60",
         "version": 5,
@@ -102,10 +98,9 @@
         ]
     },
     {
-        "id": "431cc9134896f5dd",
+        "id": "efd23c8825aba080",
         "type": "server-state-changed",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Grid State Change",
         "server": "53bc65975025ce60",
         "version": 5,
@@ -139,15 +134,14 @@
         "y": 300,
         "wires": [
             [
-                "3998b016e59d18a2"
+                "dcd4dd47e1c11494"
             ]
         ]
     },
     {
-        "id": "3998b016e59d18a2",
+        "id": "dcd4dd47e1c11494",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check for Notification - Grid Change",
         "func": "node.status(msg.payload);\nif (parseInt(msg.payload) === 0 ) \n{\n   msg.payload = \n     { data: \n       {\n         title: \"Grid Disconnected\",\n         message: \"Grid has been disconneced\",\n         data : \n           {\n            tag: \"grid\",\n            sticky: \"true\",\n            color: \"red\",\n            channel: \"29PtaRd\"\n           }\n       }\n     } ;\n} else\n{\n  msg.payload =\n  {\n    data:\n    {\n      title: \"Grid Connected\",\n      message: \"Grid has been connected\",\n      data:\n      {\n        tag: \"grid\",\n        sticky: \"true\",\n        color: \"red\",\n        channel: \"29PtaRd\"\n      }\n    }\n  };\n}\nreturn msg;",
         "outputs": 1,
@@ -159,15 +153,14 @@
         "y": 300,
         "wires": [
             [
-                "eb571a0a10c64e8f"
+                "b525c97a74f1ce28"
             ]
         ]
     },
     {
-        "id": "c1864f058f9521d7",
+        "id": "3d4d8b1228f99e42",
         "type": "inject",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Inject",
         "props": [],
         "repeat": "5",
@@ -179,22 +172,21 @@
         "y": 300,
         "wires": [
             [
-                "539a99f6c7f7d9c3",
-                "f79c2dc4aeb080f0"
+                "336b08d2ac6b9587",
+                "4c90037d32563a51"
             ]
         ]
     },
     {
-        "id": "539a99f6c7f7d9c3",
+        "id": "336b08d2ac6b9587",
         "type": "delay",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "",
         "pauseType": "rate",
         "timeout": "60",
         "timeoutUnits": "seconds",
         "rate": "1",
-        "nbRateUnits": "60",
+        "nbRateUnits": "30",
         "rateUnits": "second",
         "randomFirst": "1",
         "randomLast": "5",
@@ -206,15 +198,14 @@
         "y": 420,
         "wires": [
             [
-                "97e32a2e75c1f526"
+                "5af0e35f02d38194"
             ]
         ]
     },
     {
-        "id": "f79c2dc4aeb080f0",
+        "id": "4c90037d32563a51",
         "type": "api-current-state",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "SE Push Calendar",
         "server": "53bc65975025ce60",
         "version": 3,
@@ -251,16 +242,15 @@
         "y": 120,
         "wires": [
             [
-                "b901da7832a87289",
-                "13b88f03eea09f15"
+                "62f30ecde9c7d730",
+                "a36845217acc0179"
             ]
         ]
     },
     {
-        "id": "b901da7832a87289",
+        "id": "62f30ecde9c7d730",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Start Time",
         "func": "var origmsg = msg.payload;\nif (origmsg.start_time != undefined) {\n    var startdate = new Date(origmsg.start_time);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var current = currentdate.getTime();\n    var diff = start - current;\n    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n    node.status(startdate.toLocaleString());\n    if ( msg.payload <= 0 ) { msg.payload = 99999 } else { }\n//    if ( msg.state === \"on\" ) { msg.payload = 99998 } else { }\n} else {\n    msg.payload = 99997;\n    node.status(\"No Events\");\n}\n//if (origmsg.next_start_time != undefined) {\n//    msg.payload = (parseInt(msg.payload.starts_in));\n//    if ( msg.payload <= 0 ) { msg.payload = 99999 } else { }\n//    if ( origmsg.state === \"on\" ) { msg.payload = 99998 } else { }\n//    node.status(origmsg.last_update);\n//} else {\n//    msg.payload = 99997;\n//    node.status(\"No Events\");\n//}\nvar temp = msg.payload;\nmsg.payload = {};\nmsg.payload.state = temp;\nreturn msg;\n\n// Error States \n// 99997 - No new event \n// 99998 - Current Event Running \n// 99999 - Start time has passed ",
         "outputs": 1,
@@ -272,15 +262,14 @@
         "y": 120,
         "wires": [
             [
-                "27ad4453b30a2d6e"
+                "3a6b40030fb7ed70"
             ]
         ]
     },
     {
-        "id": "13b88f03eea09f15",
+        "id": "a36845217acc0179",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Load Shedding Length",
         "func": "var origmsg = msg.payload;\nmsg.payload = 0;\nif ((origmsg.start_time != undefined ) && (origmsg.end_time != undefined) ) {\n    var startdate = new Date(origmsg.start_time);\n    var start = startdate.getTime();\n    var enddate = new Date(origmsg.end_time);\n    var end = enddate.getTime();\n    var diff = end - start;\n    if ( diff <= 0 ) { diff = 1 } \n    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n    // add 60 min due to se being 2 hours instead of 3 hours \n    msg.payload = msg.payload + 60;\n    node.status(startdate.toLocaleString());\n} else {\n    msg.payload = 0;\n    node.status(\"No Events\");\n}\n//if ((origmsg.next_start_time != undefined) && (origmsg.next_end_time != undefined)) {\n//    var startdate = new Date(origmsg.next_start_time);\n//    var start = startdate.getTime();\n//    var enddate = new Date(origmsg.next_end_time);\n//    var end = enddate.getTime();\n//    var diff = end - start;\n//    if (diff <= 0) { diff = 1 }\n//    msg.payload = parseInt((diff / 1000 / 60).toFixed(1));\n//    // add 60 min due to se being 2 hours instead of 3 hours \n//    msg.payload = msg.payload + 60;\n//    node.status(startdate.toLocaleString());\n//} else {\n//    msg.payload = 0;\n//    node.status(\"No Events\");\n//}\nvar temp = msg.payload;\nmsg.payload = {};\nmsg.payload.state = temp;\nreturn msg;\n",
         "outputs": 1,
@@ -292,15 +281,14 @@
         "y": 180,
         "wires": [
             [
-                "1cca7e715956c6e3"
+                "bf9a43b7d183b615"
             ]
         ]
     },
     {
-        "id": "9c6bfeda14cd94bd",
+        "id": "af747827719d4fad",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check Weather for Soc - cap2",
         "func": "var debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar CF = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_condition\\'].state');\nvar currcap2 = global.get(\"SS_Export_Data.inverter.cap2\");\nvar tempset = \"30\"\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" Current Cap:\" + currcap2 + \",\" ) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") { } else { node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \" + loggerstat); return null; } \n \n\n// Error Checking\nif (ErrorCk.includes(CF)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(CC)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(currcap2)) { node.status(\"Undefined\"); return null }\n\nvar tempset = \"30\"\nif ((CF === \"rainy\") || (CC === \"rainy\")) { tempset = \"50\" }\nif ((CF === \"hail\") || (CC === \"hail\")) { tempset = \"50\" }\nif ((CF === \"pouring\") || (CC === \"pouring\")) { tempset = \"50\" }\nif (CF === \"cloudy\") { tempset = \"40\" }\nif ((CF === \"partlycloudy\") && (CC === \"partlycloudy\")) { tempset = \"35\" }\n\nif (parseFloat(tempset) === parseFloat(currcap2) ) {\n    node.status(\"No Action - \" +  CC + \",\" + CF + \" --- \" + tempset );\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\"Action - \" + CC + \",\" + CF + \" --- \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
         "outputs": 1,
@@ -313,15 +301,14 @@
         "y": 540,
         "wires": [
             [
-                "44d1d28658d0dc2e"
+                "4d9cdb94a7f694f4"
             ]
         ]
     },
     {
-        "id": "44d1d28658d0dc2e",
+        "id": "4d9cdb94a7f694f4",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Create Request for Setting Invertor Settings - cap2",
         "func": "var newmsg = {}; \nnewmsg.payload = {}; \nnewmsg.payload.target = {}; \nnewmsg.payload.data = {};\nnewmsg.payload.target.entity_id = global.get(\"SS.mapping.inverter.cap2.entityid\");\nnewmsg.payload.data[\"value\"] = msg.payload;\nnewmsg.payload[\"service\"] = \"set_value\";\nnewmsg.payload[\"domain\"] = \"input_text\";\nreturn newmsg;",
         "outputs": 1,
@@ -334,15 +321,14 @@
         "y": 540,
         "wires": [
             [
-                "d2122f7768b26272"
+                "d6c8ac89224865db"
             ]
         ]
     },
     {
-        "id": "b90991eaa943e80f",
+        "id": "462c38c836c0d48e",
         "type": "inject",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Long Check",
         "props": [],
         "repeat": "600",
@@ -354,15 +340,14 @@
         "y": 540,
         "wires": [
             [
-                "7cc8743b430e674b"
+                "2b82835d9e783830"
             ]
         ]
     },
     {
-        "id": "094e24f7f9f4eb5b",
+        "id": "a8ffeeaf2db1f3ae",
         "type": "hass-post",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.new_sunsynk_override_result",
         "name": "Sunsynk Override Result",
@@ -371,10 +356,9 @@
         "wires": []
     },
     {
-        "id": "27ad4453b30a2d6e",
+        "id": "3a6b40030fb7ed70",
         "type": "hass-post",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.new_minutes_to_load_shedding",
         "name": "Minutes To Load Shedding",
@@ -383,10 +367,9 @@
         "wires": []
     },
     {
-        "id": "1cca7e715956c6e3",
+        "id": "bf9a43b7d183b615",
         "type": "hass-post",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "endpoint": "bc1c0f273da7bbae",
         "entityid": "sensor.new_length_load_shedding",
         "name": "Length Load Shedding",
@@ -395,10 +378,9 @@
         "wires": []
     },
     {
-        "id": "2640734fc5630dae",
+        "id": "8b6f10039c70882c",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check Weather for Soc - cap3",
         "func": "var debugme = global.get(\"SunSynkDebug\") ;\nvar origpayload = msg.payload;\nvar CF = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_forecast_condition\\'].state');\nvar CC = global.get(global.get(\"HA\") + '.states[\\'sensor.openweathermap_condition\\'].state');\nvar currcap3 = global.get(\"SS_Export_Data.inverter.cap3\");\nvar tempset = \"30\"\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (debugme === 1) { node.error(\"CC:\" + CC + \" CF:\" + CF + \" PV:\" + currcap3 ) }\n\n// Overriding Critcal Check ---- Logger Status and Update \nvar loggerupd = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_last_update\\'].state');\nvar loggerstat = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_logger_status\\'].state');\nvar estatus = global.get(global.get(\"HA\") + '.states[\\'sensor.sunsynk_stats_last_update\\'].state');\nif (ErrorCk.includes(loggerupd)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(loggerstat)) { node.status(\"Undefined/Error\"); return null }\nif (ErrorCk.includes(estatus)) { node.status(\"Undefined/Error\"); return null }\n// Bad Gather Data\nif (estatus.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Gather Data \"); node.error(\" ERROR : Bad Gather Data \"); return null; } else {\n    var startdate = new Date(estatus);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Status check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Status last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n// Logger last updated more than 3 minutes ago ?\nif (loggerupd.toString() === \"Invalid Date\") { node.status(\" ERROR : Bad Last Logger Update \"); node.error(\" ERROR : Bad Last Logger Update \"); return null; } else {\n    var startdate = new Date(loggerupd);\n    var start = startdate.getTime();\n    var currentdate = new Date();\n    var currentt = currentdate.getTime();\n    var diff = currentt - start;\n    if (debugme === 1) { node.error(\"Date check\" + start + \" \" + currentt + \" \" + diff) }\n    if (diff > 180000) { node.error(\"Data last updated more than 3 minutes ago. Should be minimum less than a minute\"); return null }\n}\n//Logger Online ? \nif (debugme === 1) { node.error(\"Logger Status\" + loggerstat); }\nif (loggerstat === \"Online\") { } else { node.status(\" ERROR : Logger Not Online : \" + loggerstat); node.error(\" ERROR : Logger Not Online : \" + loggerstat); return null; } \n\n// Error Checking\nif (ErrorCk.includes(CF)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(CC)) { node.status(\"Undefined\"); return null }\nif (ErrorCk.includes(currcap3)) { node.status(\"Undefined\"); return null }\n\nvar tempset = \"30\"\nif ((CF === \"rainy\") || (CC === \"rainy\")) { tempset = \"50\" }\nif ((CF === \"hail\") || (CC === \"hail\")) { tempset = \"50\" }\nif ((CF === \"pouring\") || (CC === \"pouring\")) { tempset = \"50\" }\nif (CF === \"cloudy\") { tempset = \"40\" }\nif ((CF === \"partlycloudy\") && (CC === \"partlycloudy\")) { tempset = \"35\" }\nif ((CF === \"sunny\") || ( CF === \"clear-night\")) { tempset = \"25\" }\n\nif (parseFloat(tempset) === parseFloat(currcap3))  {\n    node.status(\"No Action - \" +  CC + \",\" + CF + \" --- \" + tempset );\n    return null;\n} else {\n    msg.payload = tempset;\n    node.status(\"Action - \" + CC + \",\" + CF + \" --- \" + tempset);\n    return msg;\n}\nnode.status(\" Why am I here ? \");\nreturn null;",
         "outputs": 1,
@@ -411,15 +393,14 @@
         "y": 620,
         "wires": [
             [
-                "f4ebfff1733f4299"
+                "0180a01274be70fd"
             ]
         ]
     },
     {
-        "id": "f4ebfff1733f4299",
+        "id": "0180a01274be70fd",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Create Request for Setting Invertor Settings - cap3",
         "func": "var newmsg = {};\nnewmsg.payload = {};\nnewmsg.payload.target = {};\nnewmsg.payload.data = {};\nnewmsg.payload.target.entity_id = global.get(\"SS.mapping.inverter.cap3.entityid\");\nnewmsg.payload.data[\"value\"] = msg.payload;\nnewmsg.payload[\"service\"] = \"set_value\";\nnewmsg.payload[\"domain\"] = \"input_text\";\nreturn newmsg;",
         "outputs": 1,
@@ -432,15 +413,14 @@
         "y": 620,
         "wires": [
             [
-                "d2122f7768b26272"
+                "d6c8ac89224865db"
             ]
         ]
     },
     {
-        "id": "80f8fc1d444774db",
+        "id": "16cea67aa32c1468",
         "type": "debug",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Automation Debug Output",
         "active": false,
         "tosidebar": true,
@@ -455,10 +435,9 @@
         "wires": []
     },
     {
-        "id": "93ed839f827e0126",
+        "id": "e3d39d485ba60eb3",
         "type": "comment",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "General Automation. Can Be Removed",
         "info": "",
         "x": 190,
@@ -466,10 +445,9 @@
         "wires": []
     },
     {
-        "id": "cbc1f1718e72d0aa",
+        "id": "bc002e2c12fd2262",
         "type": "debug",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Update Entities Errors",
         "active": false,
         "tosidebar": true,
@@ -484,10 +462,9 @@
         "wires": []
     },
     {
-        "id": "5062df5331403527",
+        "id": "308e9a3086ccf3b6",
         "type": "api-call-service",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Update Inputs",
         "server": "53bc65975025ce60",
         "version": 5,
@@ -507,15 +484,14 @@
         "y": 540,
         "wires": [
             [
-                "cbc1f1718e72d0aa"
+                "bc002e2c12fd2262"
             ]
         ]
     },
     {
-        "id": "d2122f7768b26272",
+        "id": "d6c8ac89224865db",
         "type": "api-current-state",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Enable SunSynk Auto Mode",
         "server": "53bc65975025ce60",
         "version": 3,
@@ -539,17 +515,16 @@
         "y": 540,
         "wires": [
             [
-                "80f8fc1d444774db",
-                "5062df5331403527"
+                "16cea67aa32c1468",
+                "308e9a3086ccf3b6"
             ],
             []
         ]
     },
     {
-        "id": "7cc8743b430e674b",
+        "id": "2b82835d9e783830",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check If Recent Update",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\nif (global.get(\"SS.UpdateDelay\") === true) \n{ \n    node.status(\"Start Global Update Delay\"); \n    await delay(60000);\n    node.status(\"End Global Update Delay\");\n} else {node.status(\"There was no global delay\");}\nreturn msg ;\n",
         "outputs": 1,
@@ -562,16 +537,15 @@
         "y": 540,
         "wires": [
             [
-                "9c6bfeda14cd94bd",
-                "2640734fc5630dae"
+                "af747827719d4fad",
+                "8b6f10039c70882c"
             ]
         ]
     },
     {
-        "id": "97e32a2e75c1f526",
+        "id": "5af0e35f02d38194",
         "type": "function",
-        "z": "8058a44447c9337f",
-        "d": true,
+        "z": "eb7b1eefbfdc806c",
         "name": "Check If Recent Update",
         "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\nif (global.get(\"SS.UpdateDelay\") === true) \n{ \n    node.status(\"Start Global Update Delay\"); \n    await delay(60000);\n    node.status(\"End Global Update Delay\");\n} else {node.status(\"There was no global delay\");}\nreturn msg ;\n",
         "outputs": 1,
@@ -584,7 +558,7 @@
         "y": 420,
         "wires": [
             [
-                "2ba21a318ddc4a6a"
+                "dc03772ede1ba8e1"
             ]
         ]
     },
