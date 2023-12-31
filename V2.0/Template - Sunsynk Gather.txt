@@ -16,6 +16,12 @@ input_boolean:
   sunsynk_time4on:
   sunsynk_time5on:
   sunsynk_time6on:
+  sunsynk_gentime1on:
+  sunsynk_gentime2on:
+  sunsynk_gentime3on:
+  sunsynk_gentime4on:
+  sunsynk_gentime5on:
+  sunsynk_gentime6on:
   sunsynk_usetimer:
    initial: true
   sunsynk_energymode:
