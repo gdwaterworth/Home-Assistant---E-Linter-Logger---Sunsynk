@@ -16,7 +16,7 @@ cards:
         fill_container: true
       - type: custom:mushroom-entity-card
         entity: input_boolean.enable_ups_manual_override
-        name: Override
+        name: OverRide Automation
         icon_color: deep-orange
         primary_info: name
         secondary_info: last-changed
@@ -85,6 +85,10 @@ cards:
           - entity: input_text.sunsynk_cap1
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime1on
+            name: Gen
+            toggle: true
+            state_color: true
       - entity: input_boolean.sunsynk_time2on
         type: custom:multiple-entity-row
         name: Program 2
@@ -100,6 +104,10 @@ cards:
           - entity: input_text.sunsynk_cap2
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime2on
+            name: Gen
+            toggle: true
+            state_color: true
       - entity: input_boolean.sunsynk_time3on
         type: custom:multiple-entity-row
         name: Program 3
@@ -115,6 +123,10 @@ cards:
           - entity: input_text.sunsynk_cap3
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime3on
+            name: Gen
+            toggle: true
+            state_color: true
       - entity: input_boolean.sunsynk_time4on
         type: custom:multiple-entity-row
         name: Program 4
@@ -130,6 +142,10 @@ cards:
           - entity: input_text.sunsynk_cap4
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime4on
+            name: Gen
+            toggle: true
+            state_color: true
       - entity: input_boolean.sunsynk_time5on
         type: custom:multiple-entity-row
         name: Program 5
@@ -145,6 +161,10 @@ cards:
           - entity: input_text.sunsynk_cap5
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime5on
+            name: Gen
+            toggle: true
+            state_color: true
       - entity: input_boolean.sunsynk_time6on
         type: custom:multiple-entity-row
         name: Program 6
@@ -160,4 +180,8 @@ cards:
           - entity: input_text.sunsynk_cap6
             name: SOC
             format: precision0
+          - entity: input_boolean.sunsynk_gentime6on
+            name: Gen
+            toggle: true
+            state_color: true
     state_color: true
