@@ -1,0 +1,73 @@
+type: custom:sunsynk-power-flow-card
+cardstyle: lite
+panel_mode: true
+show_solar: true
+large_font: false
+inverter:
+  autarky: 'no'
+  modern: false
+battery:
+  energy: 10500
+  shutdown_soc: 20
+  show_daily: false
+solar:
+  show_daily: false
+  mppts: 2
+  pv1_name: Front
+  pv2_name: Rear
+  auto_scale: false
+load:
+  show_daily: false
+  show_aux: false
+  dynamic_colour: true
+  max_power: 8000
+grid:
+  show_daily_buy: true
+  show_daily_sell: false
+  show_nonessential: false
+  max_power: 8000
+entities:
+  use_timer_248: sensor.current_use_timer_248
+  priority_load_243: sensor.energy_mode_243
+  inverter_voltage_154: sensor.sunsynk_output_voltage_154
+  inverter_load_freq_192: sensor.sunsynk_output_frequency_192
+  inverter_out_164: sensor.sunsynk_output_current_164
+  inverter_out_175: sensor.sunsynk_output_total_power_175
+  inverter_power_175: sensor.sunsynk_output_total_power_175
+  grid_status_194: sensor.sunsynk_grid_online_194
+  grid_connected_status_194: sensor.sunsynk_grid_online_194
+  inverter_status_59: sensor.sunsynk_inverter_status_59
+  batchargeday_70: sensor.sunsynk_battery_daily_charge_70
+  batdischargeday_71: sensor.sunsynk_battery_daily_discharge_71
+  battery_voltage_183: sensor.sunsynk_battery_voltage_183
+  battery_soc_184: sensor.sunsynk_battery_soc_184
+  battery_out_190: sensor.sunsynk_battery_power_190
+  battery_current_191: sensor.sunsynk_battery_current_191
+  inverter_load_grid_169: sensor.sunsynk_grid_power_169
+  grid_power_169: sensor.sunsynk_grid_power_169
+  day_grid_import_76: sensor.sunsynk_daily_grid_buy_76
+  grid_buy_day_76: sensor.sunsynk_daily_grid_buy_76
+  day_grid_export_77: sensor.sunsynk_daily_grid_sell_77
+  grid_sell_day_77: sensor.sunsynk_daily_grid_sell_77
+  grid_external_power_172: sensor.sunsynk_grid_power_169
+  grid_ct_power_172: sensor.sunsynk_grid_power_169
+  loadday_84: sensor.sunsynk_daily_load_84
+  essential_power: sensor.sunsynk_load_power_ess
+  nonessential_power: none
+  aux_power_166: sensor.sunsynk_output_aux_power_166
+  solarday_108: sensor.sunsynk_daily_pv_108
+  pv1_power_186: sensor.sunsynk_pv1_186
+  pv2_power_187: sensor.sunsynk_pv2_187
+  pv3_power_188: none
+  pv4_power_189: none
+  pv1_v_109: sensor.sunsynk_pv1_voltage_109
+  pv1_i_110: sensor.sunsynk_pv1_current_110
+  pv2_v_111: sensor.sunsynk_pv2_voltage_111
+  pv2_i_112: sensor.sunsynk_pv2_current_112
+  pv3_v_113: none
+  pv3_i_114: none
+  pv4_v_115: none
+  pv4_i_116: none
+  load_frequency_192: sensor.sunsynk_output_frequency_192
+  inverter_current_164: sensor.sunsynk_output_current_164
+  battery_power_190: sensor.sunsynk_battery_power_190
