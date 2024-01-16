@@ -33,6 +33,12 @@ input_boolean:
 #####
 #####
 input_select:
+  sunsynk_sysworkmode:
+    name: SunSynk Sysworkmode
+    options:
+      - "1"
+      - "2"
+      - "3"
   sunsynk_time1:
     name: SunSynk Time 1
     options:
