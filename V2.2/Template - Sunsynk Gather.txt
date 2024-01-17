@@ -503,6 +503,20 @@ template:
         unit_of_measurement: kWh
         state: >
             {{state_attr('sensor.sunsynk_usable_load', 'totalused')|float}}
+  - sensor:
+    - name: "Sunsynk Grid Export Total"
+      state_class: total_increasing
+      device_class: energy
+      unit_of_measurement: kWh
+      state: >
+          {{state_attr('sensor.sunsynk_usable_grid', 'totalusedout')|float}}
+  - sensor:
+    - name: "Sunsynk Grid Export Today"
+      state_class: total_increasing
+      device_class: energy
+      unit_of_measurement: kWh
+      state: >
+          {{state_attr('sensor.sunsynk_usable_grid', 'dailyusedout')|float}}
 ##### Other Sensors 
   - sensor:
       - name: "Current Use Timer"
