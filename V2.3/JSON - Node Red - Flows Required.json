@@ -246,7 +246,8 @@
         "y": 160,
         "wires": [
             [
-                "9bf52c367e27a06c"
+                "9bf52c367e27a06c",
+                "9c121e0ea2d9789d"
             ]
         ]
     },
@@ -2001,5 +2002,23 @@
         "x": 490,
         "y": 240,
         "wires": []
+    },
+    {
+        "id": "9c121e0ea2d9789d",
+        "type": "function",
+        "z": "ec086ef3e6c65108",
+        "name": "Debug/Warning State",
+        "func": "var debugEnabled = (global.get(\"SunSynkDebug\") === 1 ? true : false);\nvar warningEnabled = (global.get(\"SunSynkWarning\") === 1 ? true : false);\nvar checkStatus = (\"SunSynkDebug Enabled: \" + debugEnabled + \" | SunSynkWarning Enabled: \" + warningEnabled)\nmsg.payload = checkStatus;\nif (debugEnabled || warningEnabled) { node.error(checkStatus); }\nnode.status(checkStatus);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 80,
+        "wires": [
+            []
+        ]
     }
 ]
