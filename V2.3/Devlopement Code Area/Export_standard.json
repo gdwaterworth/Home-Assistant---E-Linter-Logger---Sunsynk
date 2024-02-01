@@ -1,0 +1,337 @@
+function scroll_all_items(s_payload, t_tkey) {
+    if (typeof s_payload === 'number') {
+        returnvalue[t_tkey] = s_payload;
+    } else if (typeof s_payload === 'string') {
+        returnvalue[t_tkey] = s_payload;
+    } else {
+        Object.entries(s_payload).forEach((entry) => {
+            const [key, value] = entry;
+            if (value === null || value === "") {
+                if (t_tkey === "") { returnvalue[key] = "Missing"; } else { returnvalue[t_tkey + "_" + key] = "Missing"; }
+            } else if (s_payload[key].length === 0) {
+                if (t_tkey === "") { returnvalue[key] = "Missing"; } else { returnvalue[t_tkey + "_" + key] = value; }
+            } else if (typeof s_payload[key] === 'number') {
+                if (t_tkey === "") { returnvalue[key] = value; } else { returnvalue[t_tkey + "_" + key] = value; }
+            } else if (typeof s_payload[key] === 'string') {
+                if (t_tkey === "") { returnvalue[key] = value; } else { returnvalue[t_tkey + "_" + key] = value; }
+            } else if (typeof s_payload[key] === 'object') {
+                if (Array.isArray(s_payload[key])) {
+                    if (t_tkey === "") { process_array(s_payload[key], key); } else { process_array(s_payload[key], t_tkey + "_" + key); }
+                } else {
+                    if (t_tkey === "") { scroll_all_items(s_payload[key], key); } else { scroll_all_items(s_payload[key], t_tkey + "_" + key); }
+                }
+            } else {
+                if (t_tkey === "") { returnvalue[key] = value; } else { returnvalue[t_tkey + "_" + key] = value; }
+            }
+        })
+    };
+    return;
+}
+
+function process_array(s_payload, t_tkey) {
+    if (t_tkey === "infos_0_plantPermission") { returnvalue[t_tkey] = "Not Processed" }
+    else {
+        for (let i = 0; i < s_payload.length; i++) {
+            scroll_all_items(s_payload[i], t_tkey + "_" + i);
+        }
+    }
+    return;
+}
+
+function checktrue(t_check) {
+    if (t_check === "true") { return true; }
+    else if (t_check === 1) { return true; }
+    else if (t_check === "1") { return true; }
+    else if (t_check === "True") { return true; }
+    else if (t_check === "TRUE") { return true; }
+    else if (t_check === "on") { return true; }
+    else if (t_check === "ON") { return true; }
+    else if (t_check === "On") { return true; }
+    else if (t_check === true) { return true; }
+    else { return false; }
+}
+
+function do_value__consolid(s_payload, t_tkey) {
+    var tvalue = 0;
+    if (global.get("SunSynkDebug") === 1) { node.error(s_payload);}
+    Object.entries(s_payload).forEach((entry) => {
+        const [key, value] = entry;
+        if (global.get("SunSynkDebug") === 1) { node.error("1. "+key);}
+        var s_payload1=global.get("SS_Consolid.Plant."+key+".Inverter");
+        if (global.get("SunSynkDebug") === 1) { node.error(s_payload1)}
+        Object.entries(s_payload1).forEach((entry1) => {
+            const [key1, value1] = entry1;
+            if (global.get("SS_Consolid.Plant." + key + ".Inverter." + key1 + "." + t_tkey) === undefined) 
+            { 
+              tvalue = 0;
+            } else
+            {
+              tvalue = tvalue + parseFloat(global.get("SS_Consolid.Plant."+key+".Inverter."+key1+"."+t_tkey));
+            }
+            if (global.get("SunSynkDebug") === 1) { node.error("2. "+key+" "+key1+" "+tvalue);}
+        });
+    });
+    return tvalue;
+}
+
+function do_value__single(s_payload, t_tkey, t_sn) {
+    var tvalue = 0;
+    if (global.get("SunSynkDebug") === 1) { node.error(s_payload);}
+    Object.entries(s_payload).forEach((entry) => {
+        const [key, value] = entry;
+        if (global.get("SunSynkDebug") === 1) { node.error("1. "+key);}
+        var s_payload1=global.get("SS_Consolid.Plant."+key+".Inverter");
+        if (global.get("SunSynkDebug") === 1) { node.error(s_payload1)}
+        Object.entries(s_payload1).forEach((entry1) => {
+            const [key1, value1] = entry1;
+            if (parseFloat(t_sn) === parseFloat(key1)) 
+            {  
+                if (global.get("SS_Consolid.Plant." + key + ".Inverter." + key1 + "." + t_tkey) === undefined ) {
+                 tvalue = 0;
+             } else {
+                 tvalue = (global.get("SS_Consolid.Plant." + key + ".Inverter." + key1 + "." + t_tkey));
+             }
+            }
+            if (global.get("SunSynkDebug") === 1) { node.error("2. "+key+" "+key1+" "+tvalue);}
+        });
+    });
+    return tvalue;
+}
+
+function do_value__single_plant(s_payload, t_tkey, t_sn) {
+    var tvalue = 0;
+    if (global.get("SunSynkDebug") === 1) { node.error(s_payload); }
+    Object.entries(s_payload).forEach((entry) => {
+        const [key, value] = entry;
+        if (global.get("SunSynkDebug") === 1) { node.error("D:" + key + ":" + t_tkey + ":" + t_sn); }
+        if (parseFloat(t_sn) === parseFloat(key)) 
+         { 
+            tvalue = (global.get("SS_Consolid.Plant." + key + "." + t_tkey));
+            if (global.get("SunSynkDebug") === 1) { node.error("D:" + key + ":" + t_tkey + ":" + t_sn + ":" + tvalue); } 
+         }
+        if (global.get("SunSynkDebug") === 1) { node.error("1. " + key); }
+    });
+    return tvalue;
+}
+
+
+function updatesensor(t_sensor,t_value,t_attributes) {
+    msg.payload = {};
+    msg.payload.attributes = t_attributes;
+    msg.entityid = t_sensor;
+    msg.payload.state = t_value;
+    node.send([msg,null]);
+}
+
+var ErrorCk = global.get("SS.ErrorCk"); //Error types to check against 
+var sn = global.get(global.get("HA") + '.states[\'sensor.sunsynk_config\'].attributes.sn_data');
+if (ErrorCk.includes(sn)) { node.status("Problem with sn_data in config"); node.error("Problem with sn_data in config"); return null }
+var sn_check = global.get("SS_Consolid.ListInverters." + sn);
+if (ErrorCk.includes(sn_check)) { node.status("sn_data(" + sn + ") is missing in known inverter list"); node.error("sn_data(" + sn + ") is missing in known inverter list"); return null }
+if ((sn_check === "True") || (sn_check === "Gather")) { } else { node.status("sn_data(" + sn + ") is is not enabled for data gathering"); node.error("sn_data(" + sn + ") is not enabled for data gathering"); return null }
+var flow_sn = global.get(global.get("HA") + '.states[\'sensor.sunsynk_config\'].attributes.sn_flow');
+if (ErrorCk.includes(flow_sn)) { node.status("Problem with sn_flow in config"); node.error("Problem with sn_flow in config"); return null }
+var sn_flow_check = global.get("SS_Consolid.ListPlants."+flow_sn);
+if (ErrorCk.includes(sn_flow_check)) { node.status("sn_flow(" + flow_sn + ") is missing in known inverter list"); node.error("sn_flow(" + flow_sn +") is missing in known inverter list"); return null }
+if (sn_flow_check === "True") { } else { node.status("sn_flow(" + flow_sn + ") is is not enabled for data gathering"); node.error("sn_flow(" + flow_sn +") is not enabled for data gathering"); return null }
+
+// PV Entries
+global.set("SS_Export_Data.pv.1_power",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"input.pvIV.0.ppv")));
+global.set("SS_Export_Data.pv.1_current",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"input.pvIV.0.ipv")));
+global.set("SS_Export_Data.pv.1_volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "input.pvIV.0.vpv", sn)));
+global.set("SS_Export_Data.pv.2_power",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"input.pvIV.1.ppv")));
+global.set("SS_Export_Data.pv.2_current",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"input.pvIV.1.ipv")));
+global.set("SS_Export_Data.pv.2_volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "input.pvIV.1.vpv", sn)));
+global.set("SS_Export_Data.pv.3_power", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.pvIV.2.ppv")));
+global.set("SS_Export_Data.pv.3_current", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.pvIV.2.ipv")));
+global.set("SS_Export_Data.pv.3_volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "input.pvIV.2.vpv", sn)));
+global.set("SS_Export_Data.pv.4_power", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.pvIV.3.ppv")));
+global.set("SS_Export_Data.pv.4_current", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.pvIV.3.ipv")));
+global.set("SS_Export_Data.pv.4_volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "input.pvIV.3.vpv", sn)));
+global.set("SS_Export_Data.pv.power", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.pac")));
+global.set("SS_Export_Data.pv.current", parseFloat(global.get("SS_Export_Data.pv.1_current") + global.get("SS_Export_Data.pv.2_current") + global.get("SS_Export_Data.pv.3_current") + global.get("SS_Export_Data.pv.4_current")));
+global.set("SS_Export_Data.pv.etotal",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"input.etotal")));
+global.set("SS_Export_Data.pv.etoday", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "input.etoday")));
+// Load Entries
+global.set("SS_Export_Data.load.power",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"load.totalPower")));
+global.set("SS_Export_Data.load.totalused",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"load.totalUsed")));
+global.set("SS_Export_Data.load.dailyused",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"load.dailyUsed")));
+global.set("SS_Export_Data.load.volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "load.vip.0.volt", sn)));
+global.set("SS_Export_Data.load.upspower",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"load.upsPowerTotal")));
+global.set("SS_Export_Data.load.smartloadstatus", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "load.smartLoadStatus", sn)));
+global.set("SS_Export_Data.load.fac", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "load.loadFac", sn)));
+global.set("SS_Export_Data.load.current", parseFloat(global.get("SS_Export_Data.load.power") / global.get("SS_Export_Data.load.volt")));
+// Errors in Sunsynk data extract
+// global.set("SS_Export_Data.load.current", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "load.vip.0.current")) + parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "load.vip.1.current")) + parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "load.vip.2.current")));
+// Battery Entries
+global.set("SS_Export_Data.battery.soc",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.soc",sn)));
+global.set("SS_Export_Data.temp.battery",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.temp",sn)));
+global.set("SS_Export_Data.battery.voltage",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.voltage",sn)));
+global.set("SS_Export_Data.battery.chargevolt",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.chargeVolt",sn)));
+global.set("SS_Export_Data.battery.status",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.status",sn)));
+global.set("SS_Export_Data.battery.chargecurrentlimit",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.chargeCurrentLimit",sn)));
+global.set("SS_Export_Data.battery.dischargecurrentlimit",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.dischargeCurrentLimit",sn)));
+global.set("SS_Export_Data.battery.capacity",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"battery.correctCap",sn)));
+global.set("SS_Export_Data.battery.current",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.current")));
+global.set("SS_Export_Data.battery.power",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.power")));
+global.set("SS_Export_Data.battery.etotalchg",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.etotalChg")));
+global.set("SS_Export_Data.battery.etotaldischg",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.etotalDischg")));
+global.set("SS_Export_Data.battery.etodaychg",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.etodayChg")));
+global.set("SS_Export_Data.battery.etodaydischg", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"battery.etodayDischg")));
+global.set("SS_Export_Data.battery.efficiency",parseInt(100-(global.get("SS_Export_Data.battery.etotalchg")-global.get("SS_Export_Data.battery.etotaldischg"))/global.get("SS_Export_Data.battery.etotaldischg")*100));
+// ACDC
+global.set("SS_Export_Data.temp.ac",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"acdc.actemp",sn)));
+global.set("SS_Export_Data.temp.dc",parseFloat(do_value__single(global.get("SS_Consolid.Plant"),"acdc.dctemp",sn)));
+//Output
+global.set("SS_Export_Data.output.poweraux",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"output.poweraux")));
+global.set("SS_Export_Data.output.totalused",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"output.etotal")));
+global.set("SS_Export_Data.output.dailyused",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"output.etoday")));
+global.set("SS_Export_Data.output.totalpower",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"output.pac")));
+global.set("SS_Export_Data.output.invpower",parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"),"output.pInv")));
+global.set("SS_Export_Data.output.loadfac", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "output.fac", sn)));
+global.set("SS_Export_Data.output.volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "output.vip.0.volt", sn)));
+global.set("SS_Export_Data.output.current", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "output.vip.0.current", sn)) + parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "output.vip.1.current", sn)) + parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "output.vip.2.current", sn)));
+//Gen
+global.set("SS_Export_Data.gen.totalused", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "gen.genTotal")));
+global.set("SS_Export_Data.gen.dailyused", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "gen.Daily")));
+global.set("SS_Export_Data.gen.totalpower", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "gen.totalPower")));
+global.set("SS_Export_Data.gen.fac", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gen.Fac", sn)));
+global.set("SS_Export_Data.gen.volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gen.vip.0.volt", sn)));
+global.set("SS_Export_Data.gen.current", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gen.vip.0.current", sn)) + parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gen.vip.1.current", sn)) + parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gen.vip.2.current", sn)));
+//Grid
+global.set("SS_Export_Data.grid.totalusedin", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.etotalFrom")));
+global.set("SS_Export_Data.grid.totalusedout", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.etotalTo")));
+global.set("SS_Export_Data.grid.dailyusedin", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.etodayFrom")));
+global.set("SS_Export_Data.grid.dailyusedout", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.etodayTo")));
+global.set("SS_Export_Data.grid.power", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.pac")));
+global.set("SS_Export_Data.grid.fac", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "grid.fac", sn)));
+global.set("SS_Export_Data.grid.status", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "grid.status", sn)));
+global.set("SS_Export_Data.grid.pf", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "grid.pf", sn)));
+global.set("SS_Export_Data.grid.volt", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "grid.vip.0.volt", sn)));
+global.set("SS_Export_Data.grid.current", parseFloat(global.get("SS_Export_Data.grid.power") / global.get("SS_Export_Data.grid.volt")));
+// Errors in Sunsynk data extract
+//global.set("SS_Export_Data.grid.current", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.vip.0.current")) + parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.vip.1.current")) + parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.vip.2.current")) );
+if (parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "grid.fac", sn)) < 40 )
+  { 
+    global.set("SS_Export_Data.grid.gridonline", false);
+  } else {  
+    global.set("SS_Export_Data.grid.gridonline", true);
+  }
+global.set("SS_Export_Data.grid.limitertotalpower", parseFloat(do_value__consolid(global.get("SS_Consolid.Plant"), "grid.limiterTotalPower")));
+//Inverter 
+global.set("SS_Export_Data.inverter.status", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "status", sn)));
+global.set("SS_Export_Data.inverter.gatewaystatus", parseFloat(do_value__single(global.get("SS_Consolid.Plant"), "gatewayVO.status", sn)));
+global.set("SS_Export_Data.inverter.lastupdated", do_value__single(global.get("SS_Consolid.Plant"), "updateAt", sn));
+global.set("SS_Export_Data.inverter.usetimer", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.peakAndVallery", sn)));
+global.set("SS_Export_Data.inverter.selltime1", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime1", sn));
+global.set("SS_Export_Data.inverter.selltime2", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime2", sn));
+global.set("SS_Export_Data.inverter.selltime3", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime3", sn));
+global.set("SS_Export_Data.inverter.selltime4", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime4", sn));
+global.set("SS_Export_Data.inverter.selltime5", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime5", sn));
+global.set("SS_Export_Data.inverter.selltime6", do_value__single(global.get("SS_Consolid.Plant"), "settings.sellTime6", sn));
+global.set("SS_Export_Data.inverter.energymode", do_value__single(global.get("SS_Consolid.Plant"), "settings.energyMode", sn));
+global.set("SS_Export_Data.inverter.time1on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time1on", sn));
+global.set("SS_Export_Data.inverter.time2on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time2on", sn));
+global.set("SS_Export_Data.inverter.time3on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time3on", sn));
+global.set("SS_Export_Data.inverter.time4on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time4on", sn));
+global.set("SS_Export_Data.inverter.time5on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time5on", sn));
+global.set("SS_Export_Data.inverter.time6on", do_value__single(global.get("SS_Consolid.Plant"), "settings.time6on", sn));
+global.set("SS_Export_Data.inverter.gentime1on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime1on", sn));
+global.set("SS_Export_Data.inverter.gentime2on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime2on", sn));
+global.set("SS_Export_Data.inverter.gentime3on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime3on", sn));
+global.set("SS_Export_Data.inverter.gentime4on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime4on", sn));
+global.set("SS_Export_Data.inverter.gentime5on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime5on", sn));
+global.set("SS_Export_Data.inverter.gentime6on", do_value__single(global.get("SS_Consolid.Plant"), "settings.genTime6on", sn));
+global.set("SS_Export_Data.inverter.cap1", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap1", sn));
+global.set("SS_Export_Data.inverter.cap2", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap2", sn));
+global.set("SS_Export_Data.inverter.cap3", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap3", sn));
+global.set("SS_Export_Data.inverter.cap4", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap4", sn));
+global.set("SS_Export_Data.inverter.cap5", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap5", sn));
+global.set("SS_Export_Data.inverter.cap6", do_value__single(global.get("SS_Consolid.Plant"), "settings.cap6", sn));
+global.set("SS_Export_Data.inverter.sellTime1Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime1pac", sn)));
+global.set("SS_Export_Data.inverter.sellTime2Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime2pac", sn)));
+global.set("SS_Export_Data.inverter.sellTime3Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime3pac", sn)));
+global.set("SS_Export_Data.inverter.sellTime4Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime4pac", sn)));
+global.set("SS_Export_Data.inverter.sellTime5Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime5pac", sn)));
+global.set("SS_Export_Data.inverter.sellTime6Pac", checktrue(do_value__single(global.get("SS_Consolid.Plant"), "settings.selltime6pac", sn)));
+global.set("SS_Export_Data.inverter.batteryrestartcap", do_value__single(global.get("SS_Consolid.Plant"), "settings.batteryRestartCap", sn));
+global.set("SS_Export_Data.inverter.batterymaxcurrentcharge", do_value__single(global.get("SS_Consolid.Plant"), "settings.batteryMaxCurrentCharge", sn));
+global.set("SS_Export_Data.inverter.batteryshutdowncap", do_value__single(global.get("SS_Consolid.Plant"), "settings.batteryShutdownCap", sn));
+global.set("SS_Export_Data.inverter.sysworkmode", do_value__single(global.get("SS_Consolid.Plant"), "settings.sysWorkMode", sn).toString());
+///
+/// Flow Calculations
+///
+global.set("SS_Export_Data.flow.battery.soc", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.soc", flow_sn)));
+global.set("SS_Export_Data.flow.load.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.loadOrEpsPower", flow_sn)));
+global.set("SS_Export_Data.flow.pv.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.pvPower", flow_sn)));
+global.set("SS_Export_Data.flow.battery.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.battPower", flow_sn)));
+global.set("SS_Export_Data.flow.grid.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.gridOrMeterPower", flow_sn)));
+global.set("SS_Export_Data.flow.gen.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.genPower", flow_sn)));
+global.set("SS_Export_Data.flow.min.power", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.minPower", flow_sn)));
+global.set("SS_Export_Data.flow.misc.heatpumppower", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.heatPumpPower", flow_sn)));
+global.set("SS_Export_Data.flow.misc.smartloadpower", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.smartLoadPower", flow_sn)));
+global.set("SS_Export_Data.flow.misc.homeloadpower", parseFloat(do_value__single_plant(global.get("SS_Consolid.Plant"), "flow.homeLoadPower", flow_sn)));
+
+///
+/// Personal Calculations
+///
+global.set("SS_Export_Data.inverter.internalpowerusage", global.get("SS_Export_Data.pv.power") + global.get("SS_Export_Data.grid.power") + global.get("SS_Export_Data.battery.power") - global.get("SS_Export_Data.load.power"));
+///
+///
+///
+node.status("Starting Sensor Export");
+var returnvalue = {};
+var origpayload = global.get("SS_Export_Data.inverter");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_inverter", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.pv");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_pv", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.load");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_load", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.battery");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_battery", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.output");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_output", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.gen");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_gen", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.grid");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_grid", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.flow");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_flow", "", returnvalue);
+
+returnvalue = {};
+var origpayload = global.get("SS_Export_Data.temp");
+scroll_all_items(origpayload, "");
+updatesensor("sensor.sunsynk_usable_temp", "", returnvalue);
+
+//returnvalue = {};
+//var origpayload = global.get("SS_Consolid");
+//scroll_all_items(origpayload, "");
+//updatesensor("sensor.sunsynk_consolidated_data", "", returnvalue);
+
+node.status("Finished Sensor Export");
+global.set("SS.ScanDelay", false);
+if (global.get("SunSynkDebug") === 1) { node.error(msg); }
+if (global.get("SS.UpdateDelay") === true) { node.error("Midway Update Found"); return [null,null]; }
+return ([null,{state:"Process Services"}]);
