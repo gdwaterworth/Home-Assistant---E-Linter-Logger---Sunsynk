@@ -472,7 +472,11 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_usable_battery', 'etotalchg')|float}}
+          {% if state_attr('sensor.sunsynk_usable_battery', 'etotalchg')|float == 0 %}
+           {{ None }}
+          {% else %}
+           {{ state_attr('sensor.sunsynk_usable_battery', 'etotalchg') }}
+          {% endif %}
   - sensor:
       - name: "Sunsynk Battery etotaldischg"
         state_class: total_increasing
@@ -480,7 +484,11 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_usable_battery', 'etotaldischg')|float}}
+          {% if state_attr('sensor.sunsynk_usable_battery', 'etotaldischg')|float == 0 %}
+           {{ None }}
+          {% else %}
+           {{ state_attr('sensor.sunsynk_usable_battery', 'etotaldischg') }}
+          {% endif %}
   - sensor:
       - name: "Sunsynk PV Total"
         state_class: total_increasing
@@ -488,7 +496,11 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_usable_pv', 'etotal')|float}}
+          {% if state_attr('sensor.sunsynk_usable_pv', 'etotal')|float == 0 %}
+           {{ None }}
+          {% else %}
+           {{ state_attr('sensor.sunsynk_usable_pv', 'etotal') }}
+          {% endif %}
   - sensor:
       - name: "Sunsynk Grid Total"
         state_class: total_increasing
@@ -496,7 +508,11 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_usable_grid', 'totalusedin')|float}}
+          {% if state_attr('sensor.sunsynk_usable_grid', 'totalusedin')|float == 0 %}
+           {{ None }}
+          {% else %}
+           {{ state_attr('sensor.sunsynk_usable_grid', 'totalusedin') }}
+          {% endif %}
   - sensor:
       - name: "Sunsynk Load Total"
         state_class: total_increasing
@@ -504,21 +520,11 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-            {{state_attr('sensor.sunsynk_usable_load', 'totalused')|float}}
-  - sensor:
-    - name: "Sunsynk Grid Export Total"
-      state_class: total_increasing
-      device_class: energy
-      unit_of_measurement: kWh
-      state: >
-          {{state_attr('sensor.sunsynk_usable_grid', 'totalusedout')|float}}
-  - sensor:
-    - name: "Sunsynk Grid Export Today"
-      state_class: total_increasing
-      device_class: energy
-      unit_of_measurement: kWh
-      state: >
-          {{state_attr('sensor.sunsynk_usable_grid', 'dailyusedout')|float}}
+          {% if state_attr('sensor.sunsynk_usable_load', 'totalused')|float == 0 %}
+           {{ None }}
+          {% else %}
+           {{ state_attr('sensor.sunsynk_usable_load', 'totalused') }}
+          {% endif %}
 ##### Other Sensors 
   - sensor:
       - name: "Current Use Timer"
