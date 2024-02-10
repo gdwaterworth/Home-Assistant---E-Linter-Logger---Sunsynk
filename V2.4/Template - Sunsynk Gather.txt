@@ -1,3 +1,44 @@
+sensor:
+  - platform: filter
+    name: "Sunsynk filtered pv"
+    unique_id: sensor.sunsynk_filtered_pv
+    entity_id: sensor.sunsynk_pv_total_pre
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
+  - platform: filter
+    name: "Sunsynk filtered battery chg"
+    unique_id: sensor.sunsynk_filtered_battery_chg
+    entity_id: sensor.sunsynk_battery_etotalchg_pre
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
+  - platform: filter
+    name: "Sunsynk filtered battery dischg"
+    unique_id: sensor.sunsynk_filtered_battery_dischg
+    entity_id: sensor.sunsynk_battery_etotaldischg_pre
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
+  - platform: filter
+    name: "Sunsynk filtered grid"
+    unique_id: sensor.sunsynk_filtered_grid
+    entity_id: sensor.sunsynk_grid_total_pre
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
+  - platform: filter
+    name: "Sunsynk filtered load"
+    unique_id: sensor.sunsynk_filtered_load
+    entity_id: sensor.sunsynk_load_total_pre
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
 #####
 #####
 ##### Put These After the Sensor Templtes
@@ -7,7 +48,7 @@
 #####
 input_boolean:
   enable_sunsynk_auto_mode:
-   initial: false
+   initial: true
   enable_ups_manual_override:
    initial: false
   sunsynk_time1on:
@@ -26,6 +67,14 @@ input_boolean:
    initial: true
   sunsynk_energymode:
    initial: true
+##
+## Personal , can remove
+##
+  enable_auto_outside_lights:
+  enable_auto_gary_office:
+  enable_electric_weather_override:
+  enable_camera_alert:
+  enable_camera_high:
 
 #####
 #####
@@ -395,7 +444,7 @@ template:
 ##### 0 - Get invertor list based on plant id ---- Should work for most people
 ##### 1 - Get invertor list from account ---- Not all people will have permission to do this
 #####
-##### force_short_delay - If you do not have access to list gateways and you are certain your update time is set to 60 seconds, set to "true"
+##### force_short_delay - If you do not have access to list gateways and you are certain your update time is set to 60 seconds, set to "true" 
 ##### return_items:     Number of Items to return in queries. Default 10
 ##### sn_data:          Inverter SN to use for single data values
 #####                   Do a run through then in node red look at global context data under 
@@ -466,9 +515,9 @@ template:
         unique_id: "sensor.sunsynk_notifications"
 ##### Misc Sensors for Energy
   - sensor:
-      - name: "Sunsynk Battery etotalchg"
+      - name: "Sunsynk Battery etotalchg Pre"
         state_class: total_increasing
-        unique_id: "sensor.sunsynk_battery_etotalchg"
+        unique_id: "sensor.sunsynk_battery_etotalchg_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -478,9 +527,17 @@ template:
            {{ state_attr('sensor.sunsynk_usable_battery', 'etotalchg') }}
           {% endif %}
   - sensor:
-      - name: "Sunsynk Battery etotaldischg"
+      - name: "Sunsynk Battery etotalchg"
         state_class: total_increasing
-        unique_id: "sensor.sunsynk_battery_etotaldischg"
+        unique_id: "sensor.sunsynk_battery_etotalchg"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_battery_chg') }}
+  - sensor:
+      - name: "Sunsynk Battery etotaldischg pre"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_battery_etotaldischg_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -490,9 +547,17 @@ template:
            {{ state_attr('sensor.sunsynk_usable_battery', 'etotaldischg') }}
           {% endif %}
   - sensor:
-      - name: "Sunsynk PV Total"
+      - name: "Sunsynk Battery etotaldischg"
         state_class: total_increasing
-        unique_id: "sensor.sunsynk_pv_total"
+        unique_id: "sensor.sunsynk_battery_etotaldischg"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_battery_dischg') }}
+  - sensor:
+      - name: "Sunsynk PV Total Pre"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_pv_total_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -502,9 +567,17 @@ template:
            {{ state_attr('sensor.sunsynk_usable_pv', 'etotal') }}
           {% endif %}
   - sensor:
-      - name: "Sunsynk Grid Total"
+      - name: "Sunsynk PV Total"
         state_class: total_increasing
-        unique_id: "sensor.sunsynk_grid_total"
+        unique_id: "sensor.sunsynk_pv_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_pv') }}
+  - sensor:
+      - name: "Sunsynk Grid Total Pre"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_total_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -514,9 +587,17 @@ template:
            {{ state_attr('sensor.sunsynk_usable_grid', 'totalusedin') }}
           {% endif %}
   - sensor:
-      - name: "Sunsynk Load Total"
+      - name: "Sunsynk Grid Total"
         state_class: total_increasing
-        unique_id: "sensor.sunsynk_load_total"
+        unique_id: "sensor.sunsynk_grid_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_grid') }}
+  - sensor:
+      - name: "Sunsynk Load Total Pre"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_load_total_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
@@ -525,6 +606,14 @@ template:
           {% else %}
            {{ state_attr('sensor.sunsynk_usable_load', 'totalused') }}
           {% endif %}
+  - sensor:
+      - name: "Sunsynk Load Total"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_load_total"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_load') }}
 ##### Other Sensors 
   - sensor:
       - name: "Current Use Timer"
@@ -603,40 +692,3 @@ template:
         device_class: timestamp
         state: >
          {{ state_attr("sensor.sunsynk_usable_inverter", "lastupdated") }}
-#####
-#####
-#####
-##### Personal Sensors and Automation
-#####
-#####
-#####
-  - sensor: 
-      - name: "Weather Forecast Calc Result"
-        state: ""
-        unique_id: "sensor.weather_forecast_calc_result"
-  - sensor: 
-      - name: "New Minutes To Load Shedding"
-        state: 99999
-        unique_id: "sensor.new_minutes_to_load_shedding"
-  - sensor: 
-      - name: "New SunSynk Override Result"
-        state: " " 
-        unique_id: "sensor.new_sunsynk_override_result"
-  - sensor: 
-      - name: "New Length Load Shedding"
-        state: " "
-        unique_id: "sensor.new_length_load_shedding"
-  - sensor: 
-      - name: "New SunSynk Update Status"
-        state: "Not Been Called Yet"
-        unique_id: "sensor.new_sunsynk_update_status"
-  - sensor: 
-      - name: "Calculated Current Solar Pred"
-        unique_id: "sensor.calculated.current.solar.pred"
-        state: >
-         {{  ((float(states('sensor.power_production_now_2')) * 1 ) + (float(states('sensor.power_production_now')) * 1 ))|float  }}
-  - sensor: 
-      - name: "Sunsynk Stats Last Update"
-        device_class: timestamp
-        state: 0
-        unique_id: "sensor.sunsynk_stats_last_update"
