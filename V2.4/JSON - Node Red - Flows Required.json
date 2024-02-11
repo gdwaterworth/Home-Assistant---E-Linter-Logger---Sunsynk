@@ -121,7 +121,7 @@
         "id": "69f8b48d0eda0943",
         "type": "http request",
         "z": "ed455582310cee2d",
-        "name": "",
+        "name": "Login request",
         "method": "POST",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -133,7 +133,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 970,
+        "x": 980,
         "y": 160,
         "wires": [
             [
@@ -252,7 +252,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 480,
+        "x": 560,
         "y": 620,
         "wires": [
             [
@@ -1126,7 +1126,7 @@
         "id": "28a167d43fbce9a1",
         "type": "http request",
         "z": "ed455582310cee2d",
-        "name": "Get Request",
+        "name": "Get Notifications",
         "method": "GET",
         "ret": "obj",
         "paytoqs": "ignore",
@@ -1138,7 +1138,7 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 1010,
+        "x": 1020,
         "y": 480,
         "wires": [
             [
@@ -1935,11 +1935,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 210,
-        "y": 620,
+        "x": 270,
+        "y": 540,
         "wires": [
             [
-                "86f2fa09f3aeecaa"
+                "c9b84ed2c97bc251"
             ]
         ]
     },
@@ -1964,6 +1964,31 @@
             [
                 "fbe14b0b178f98a4",
                 "8ff245cfa5b2e98e"
+            ]
+        ]
+    },
+    {
+        "id": "c9b84ed2c97bc251",
+        "type": "delay",
+        "z": "ed455582310cee2d",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "45",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 300,
+        "y": 620,
+        "wires": [
+            [
+                "86f2fa09f3aeecaa"
             ]
         ]
     },
