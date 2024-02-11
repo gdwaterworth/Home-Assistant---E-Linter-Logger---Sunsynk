@@ -438,6 +438,7 @@ template:
           sn_flow: !secret sunsynk_sn_flow
           unit_cost: 2.37
           force_short_delay: "false"
+          timeout: 2000
 #####
 ##### invertor_list_opt:
 ##### Select which method must be used to get the invertor list
