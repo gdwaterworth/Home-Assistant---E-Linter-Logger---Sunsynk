@@ -46,7 +46,23 @@
       - name: "Sunsynk PV2 Current 112"
         state: >
           {{state_attr('sensor.sunsynk_usable_pv', '2_current')|float(0)|round(1)}}
-
+  - sensor:
+      - name: "Sunsynk PV3 Current 114"
+        state: >
+          {{state_attr('sensor.sunsynk_usable_pv', '3_current')|float(0)|round(1)}}
+  - sensor:
+      - name: "Sunsynk PV3 Voltage 113"
+        state: >
+          {{state_attr('sensor.sunsynk_usable_pv', '3_volt')|float(0)|round(1)}}
+  - sensor:
+      - name: "Sunsynk PV4 Current 116"
+        state: >
+          {{state_attr('sensor.sunsynk_usable_pv', '4_current')|float(0)|round(1)}}
+  - sensor:
+      - name: "Sunsynk PV4 Voltage 115"
+        state: >
+          {{state_attr('sensor.sunsynk_usable_pv', '4_volt')|float(0)|round(1)}}
+          
 ####Battery Sensors
 ####batchargeday_70: sensor.sunsynk_battery_daily_charge_70
 ####batdischargeday_71: sensor.sunsynk_battery_daily_discharge_71
