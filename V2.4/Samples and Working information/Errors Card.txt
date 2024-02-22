@@ -1,0 +1,32 @@
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - entity: sensor.sunsynk_errors
+        attribute: Bearer_count
+        type: custom:multiple-entity-row
+        name: Bearer
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: Bearer_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: Bearer_date
+            name: Date
+      - entity: sensor.sunsynk_errors
+        attribute: Events_count
+        type: custom:multiple-entity-row
+        name: Events
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: Events_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: Events_date
+            name: Date
+    state_color: false
+    title: Gather Errors

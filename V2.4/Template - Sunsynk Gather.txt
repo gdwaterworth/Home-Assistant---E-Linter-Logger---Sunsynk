@@ -514,6 +514,10 @@ template:
       - name: "Sunsynk Notifications"
         state: ""
         unique_id: "sensor.sunsynk_notifications"
+  - sensor: 
+      - name: "Sunsynk Errors"
+        state: ""
+        unique_id: "sensor.sunsynk_errors"
 ##### Misc Sensors for Energy
   - sensor:
       - name: "Sunsynk Battery etotalchg Pre"
