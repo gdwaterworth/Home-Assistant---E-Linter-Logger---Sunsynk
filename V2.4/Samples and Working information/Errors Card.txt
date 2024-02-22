@@ -28,5 +28,57 @@ cards:
           - entity: sensor.sunsynk_errors
             attribute: Events_date
             name: Date
+      - entity: sensor.sunsynk_errors
+        attribute: Updates_count
+        type: custom:multiple-entity-row
+        name: Updates
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: Updates_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: Updates_date
+            name: Date
+      - entity: sensor.sunsynk_errors
+        attribute: Flow_count
+        type: custom:multiple-entity-row
+        name: Flows
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: Flow_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: Flow_date
+            name: Date
+      - entity: sensor.sunsynk_errors
+        attribute: InvList_count
+        type: custom:multiple-entity-row
+        name: Inv List
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: InvList_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: InvList_date
+            name: Date
+      - entity: sensor.sunsynk_errors
+        attribute: InvParam_count
+        type: custom:multiple-entity-row
+        name: Inv Param
+        state_header: Count
+        icon: none
+        entities:
+          - entity: sensor.sunsynk_errors
+            attribute: InvParam_payload
+            name: Last Error
+          - entity: sensor.sunsynk_errors
+            attribute: InvParam_date
+            name: Date
     state_color: false
     title: Gather Errors
