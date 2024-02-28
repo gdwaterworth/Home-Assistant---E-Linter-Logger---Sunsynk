@@ -698,3 +698,7 @@ template:
         device_class: timestamp
         state: >
          {{ state_attr("sensor.sunsynk_usable_inverter", "lastupdated") }}
+  - sensor:
+      - name: "SunSynk Logger Last Update Seconds"
+        state: >
+         {{ state_attr("sensor.sunsynk_usable_inverter", "loglastupdseconds") }}
