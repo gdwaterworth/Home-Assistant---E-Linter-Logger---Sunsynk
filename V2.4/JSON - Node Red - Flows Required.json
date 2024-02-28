@@ -451,7 +451,7 @@
         "type": "function",
         "z": "ed455582310cee2d",
         "name": "Run Through Plant Inv List",
-        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nif (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    global.set(\"SS.Errors.InvList.payload\", msg.payload.slice(0,16));\n    global.set(\"SS.Errors.InvList.count\", parseInt(global.get(\"SS.Errors.InvList.count\")) + 1);\n    let currdate = new Date(); global.set(\"SS.Errors.InvList.date\", currdate.toLocaleString());\n    return null;\n}\n\n\nfunction do_value_gatewaystatus(s_payload, t_gsn) {\n    var t_value = \"False\";\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload); }\n    for (let i = 0; i < s_payload.length; i++) \n    {\n      if (s_payload[i].sn === t_gsn )\n      {\n        if (s_payload[i].uploadCycle < 61 ) \n         { \n            t_value = \"True\" ;\n         } \n         else \n         {  \n            t_value = \"Gather\" ;\n            global.set(\"SS_Consolid.LongDelay\", true);\n            node.error(\" Gateway is bad. Not configured for <= 60s cycle rate. Updates Disabled \") ; \n         }\n      }\n    }\n    if (global.get(\"SS_Consolid.Gateways.total\") === 0) {\n        t_value = \"True\";\n        if (global.get(\"SS.Config.force_short_delay\") === \"true\" )\n        {\n            global.set(\"SS_Consolid.LongDelay\", false);    \n            node.error(\" 0 Gateways Found. Enable gather/update.Long Delay Forced Disabled\");\n        } else\n        {\n            global.set(\"SS_Consolid.LongDelay\", true);\n            node.error(\" 0 Gateways Found. Enable gather/update.Set Long Delay\");\n        }\n    } \n    return t_value;\n}\n\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg);\n    global.set(\"SS.Errors.InvList.payload\", origpayload.msg.slice(0,16));\n    global.set(\"SS.Errors.InvList.count\", parseInt(global.get(\"SS.Errors.InvList.count\")) + 1);\n    let currdate = new Date(); global.set(\"SS.Errors.InvList.date\", currdate.toLocaleString());\n    return null;\n}\nnode.status(\"Plant ID:\" + global.get(\"SS_Consolid.PlantProcessing\") + \" -- \" + origpayload.data.total);\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".TotalInverters\", origpayload.data.total);\nglobal.set(\"SS_Consolid.LongDelay\",false);\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    node.status(\"Processing :\" + origpayload.data.infos[i].id + \"-\" + origpayload.data.infos[i].equipMode);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".Inverter.\" + origpayload.data.infos[i].sn , origpayload.data.infos[i]);\n    global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".ProcessingInverter\", origpayload.data.infos[i].sn);\n    global.set(\"SS_Consolid.Config_Data.InverterPlant.\" + origpayload.data.infos[i].sn, (origpayload.data.infos[i].plant.id) + \"-\" + origpayload.data.infos[i].equipMode);\n    var tt_gsn = do_value_gatewaystatus(global.get(\"SS_Consolid.Gateways.infos\"), origpayload.data.infos[i].gsn);\n    global.set(\"SS_Consolid.ListInverters.\" + origpayload.data.infos[i].sn, tt_gsn);\n    global.set(\"SS_Consolid.ListPlants.\" + origpayload.data.infos[i].plant.id, \"True\");\n    msg.payload={};\n    msg.payload = origpayload.data.infos[i].sn;\n    node.send(msg);\n    await delay(2000);\n    node.status(\"Processed :\" + origpayload.data.infos[i].sn);\n}\nglobal.set(\"SS_Consolid.ProcessState\", true);\nnode.status(\"Finished Processing - \" + origpayload.msg + \" \" + origpayload.data.total + \" inverter\");\nreturn null;\n",
+        "func": "function delay(milliseconds) {\n    return new Promise(resolve => {\n        setTimeout(resolve, milliseconds);\n    });\n}\n\nif (typeof msg.payload === 'object') { } else {\n    if (msg.payload.includes(\"RequestError\")) {\n        node.status(\"Request Error\");\n    } else {\n        node.status(\"Unknown Error\");\n    }\n    node.error(msg.payload);\n    global.set(\"SS.Errors.InvList.payload\", msg.payload.slice(0,16));\n    global.set(\"SS.Errors.InvList.count\", parseInt(global.get(\"SS.Errors.InvList.count\")) + 1);\n    let currdate = new Date(); global.set(\"SS.Errors.InvList.date\", currdate.toLocaleString());\n    return null;\n}\n\n\nfunction do_value_gatewaystatus(s_payload, t_gsn) {\n    var t_value = \"False\";\n    if (global.get(\"SunSynkDebug\") === 1) { node.error(s_payload); }\n    for (let i = 0; i < s_payload.length; i++) \n    {\n      if (s_payload[i].sn === t_gsn )\n      {\n        if (s_payload[i].uploadCycle < 61 ) \n         { \n            t_value = \"True\" ;\n         } \n         else \n         {  \n            t_value = \"Gather\" ;\n            global.set(\"SS_Consolid.LongDelay\", true);\n            node.error(\" Gateway is bad. Not configured for <= 60s cycle rate. Updates Disabled \") ; \n         }\n      }\n    }\n    if (global.get(\"SS_Consolid.Gateways.total\") === 0) {\n        t_value = \"True\";\n        if (global.get(\"SS.Config.force_short_delay\") === \"true\" )\n        {\n            global.set(\"SS_Consolid.LongDelay\", false);    \n            node.error(\" 0 Gateways Found. Enable gather/update.Long Delay Forced Disabled\");\n        } else\n        {\n            global.set(\"SS_Consolid.LongDelay\", true);\n            node.error(\" 0 Gateways Found. Enable gather/update.Set Long Delay\");\n        }\n    } \n    return t_value;\n}\n\n\n//sensor.sunsynk_plant_index\nvar origpayload = msg.payload;\nvar ErrorCk = global.get(\"SS.ErrorCk\"); //Error types to check against \nif (typeof msg.payload.data.infos[0] === \"undefined\") {\n    node.error(msg.payload);\n    node.status(\"No Inverter Received\");\n    return null;\n}\nif (origpayload.msg == \"Success\") {\n} else {\n    node.status(origpayload.msg);\n    global.set(\"SS.Errors.InvList.payload\", origpayload.msg.slice(0,16));\n    global.set(\"SS.Errors.InvList.count\", parseInt(global.get(\"SS.Errors.InvList.count\")) + 1);\n    let currdate = new Date(); global.set(\"SS.Errors.InvList.date\", currdate.toLocaleString());\n    return null;\n}\nnode.status(\"Plant ID:\" + global.get(\"SS_Consolid.PlantProcessing\") + \" -- \" + origpayload.data.total);\nglobal.set(\"SS_Consolid.Plant.\" + global.get(\"SS_Consolid.PlantProcessing\") + \".TotalInverters\", origpayload.data.total);\nglobal.set(\"SS_Consolid.LongDelay\",false);\nvar ignore_list = global.get(\"SS.Config.plant_ignore_list\");\nfor (let i = 0; i < origpayload.data.total ; i++) {\n    if (ignore_list.indexOf(origpayload.data.infos[i].plant.id) === -1 ) \n    {\n        node.status(\"Processing :\" + origpayload.data.infos[i].id + \"-\" + origpayload.data.infos[i].equipMode);\n        global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".Inverter.\" + origpayload.data.infos[i].sn , origpayload.data.infos[i]);\n        global.set(\"SS_Consolid.Plant.\" + origpayload.data.infos[i].plant.id + \".ProcessingInverter\", origpayload.data.infos[i].sn);\n        global.set(\"SS_Consolid.Config_Data.InverterPlant.\" + origpayload.data.infos[i].sn, (origpayload.data.infos[i].plant.id) + \"-\" + origpayload.data.infos[i].equipMode);\n        var tt_gsn = do_value_gatewaystatus(global.get(\"SS_Consolid.Gateways.infos\"), origpayload.data.infos[i].gsn);\n        global.set(\"SS_Consolid.ListInverters.\" + origpayload.data.infos[i].sn, tt_gsn);\n        global.set(\"SS_Consolid.ListPlants.\" + origpayload.data.infos[i].plant.id, \"True\");\n        msg.payload={};\n        msg.payload = origpayload.data.infos[i].sn;\n        node.send(msg);\n        await delay(2000);\n        node.status(\"Processed :\" + origpayload.data.infos[i].sn);\n//        node.error(ignore_list.indexOf(origpayload.data.infos[i].plant.id) + \"-\" + origpayload.data.infos[i].plant.id);\n    } else \n    {\n        node.status(\"Ignored Plant :\" + origpayload.data.infos[i].plant.id);\n        node.error(\"Ignored Plant :\" + origpayload.data.infos[i].plant.id);\n        global.set(\"SS_Consolid.ListPlants.\" + origpayload.data.infos[i].plant.id, \"IGNORED\");\n        global.set(\"SS_Consolid.ListInverters.\" + origpayload.data.infos[i].sn, tt_gsn + \"-IGNORED\");\n    }\n}\nglobal.set(\"SS_Consolid.ProcessState\", true);\nnode.status(\"Finished Processing - \" + origpayload.msg + \" \" + origpayload.data.total + \" inverter\");\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -524,7 +524,7 @@
         "finalize": "",
         "libs": [],
         "x": 2070,
-        "y": 1040,
+        "y": 1120,
         "wires": [
             [
                 "b18d7b5c30290f20"
@@ -564,7 +564,7 @@
         "finalize": "",
         "libs": [],
         "x": 2050,
-        "y": 980,
+        "y": 1060,
         "wires": [
             [
                 "a5ab1a37bd681049"
@@ -653,7 +653,7 @@
         "senderr": false,
         "headers": [],
         "x": 2390,
-        "y": 1040,
+        "y": 1120,
         "wires": [
             [
                 "939a2144f46ca9a2",
@@ -703,7 +703,7 @@
         "senderr": false,
         "headers": [],
         "x": 2390,
-        "y": 980,
+        "y": 1060,
         "wires": [
             [
                 "7c8f3e88a247abbf",
@@ -846,7 +846,7 @@
         "finalize": "",
         "libs": [],
         "x": 2660,
-        "y": 980,
+        "y": 1060,
         "wires": [
             []
         ]
@@ -864,7 +864,7 @@
         "finalize": "",
         "libs": [],
         "x": 2660,
-        "y": 1040,
+        "y": 1120,
         "wires": [
             []
         ]
@@ -1224,7 +1224,7 @@
         "finalize": "",
         "libs": [],
         "x": 2050,
-        "y": 1100,
+        "y": 1180,
         "wires": [
             [
                 "8f507ad22e9dadc0"
@@ -1248,7 +1248,7 @@
         "senderr": false,
         "headers": [],
         "x": 2390,
-        "y": 1100,
+        "y": 1180,
         "wires": [
             [
                 "264d76987abdf364",
@@ -1269,7 +1269,7 @@
         "finalize": "",
         "libs": [],
         "x": 2660,
-        "y": 1100,
+        "y": 1180,
         "wires": [
             []
         ]
@@ -1287,7 +1287,7 @@
         "finalize": "",
         "libs": [],
         "x": 2050,
-        "y": 1160,
+        "y": 1240,
         "wires": [
             [
                 "a108300c9dcd62d1"
@@ -1311,7 +1311,7 @@
         "senderr": false,
         "headers": [],
         "x": 2360,
-        "y": 1160,
+        "y": 1240,
         "wires": [
             [
                 "26561fd5f5a38ba5",
@@ -1333,7 +1333,7 @@
         "finalize": "",
         "libs": [],
         "x": 2640,
-        "y": 1160,
+        "y": 1240,
         "wires": [
             []
         ]
@@ -1397,7 +1397,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 2680,
-        "y": 1220,
+        "y": 1300,
         "wires": []
     },
     {
@@ -2085,8 +2085,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2640,
-        "y": 1280,
+        "x": 2680,
+        "y": 1000,
         "wires": [
             []
         ]

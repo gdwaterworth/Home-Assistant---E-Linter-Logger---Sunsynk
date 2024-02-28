@@ -436,6 +436,7 @@ template:
           return_items: 10
           sn_data: !secret sunsynk_sn_data
           sn_flow: !secret sunsynk_sn_flow
+          plant_ignore_list: !secret sunsynk_plantid_ignore_list
           unit_cost: 2.37
           force_short_delay: "false"
           timeout: 2000
