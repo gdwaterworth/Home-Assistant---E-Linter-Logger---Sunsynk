@@ -5,17 +5,20 @@ show_solar: true
 large_font: false
 inverter:
   autarky: 'no'
-  modern: false
+  modern: true
 battery:
   energy: 10500
   shutdown_soc: 20
   show_daily: false
+  auto_scale: true
+  full_capacity: 95
 solar:
   show_daily: false
-  mppts: 2
-  pv1_name: Front
-  pv2_name: Rear
+  mppts: 3
+  pv1_name: PV1
+  pv2_name: PV2
   auto_scale: false
+  pv3_name: PV3
 load:
   show_daily: false
   show_aux: false
@@ -26,6 +29,7 @@ grid:
   show_daily_sell: false
   show_nonessential: false
   max_power: 8000
+  dynamic_colour: true
 entities:
   use_timer_248: sensor.current_use_timer_248
   priority_load_243: sensor.energy_mode_243
@@ -58,16 +62,18 @@ entities:
   solarday_108: sensor.sunsynk_daily_pv_108
   pv1_power_186: sensor.sunsynk_pv1_186
   pv2_power_187: sensor.sunsynk_pv2_187
-  pv3_power_188: none
-  pv4_power_189: none
+  pv3_power_188: sensor.sunsynk_pv3_188
+  pv4_power_189: sensor.sunsynk_pv4_188
   pv1_v_109: sensor.sunsynk_pv1_voltage_109
   pv1_i_110: sensor.sunsynk_pv1_current_110
   pv2_v_111: sensor.sunsynk_pv2_voltage_111
   pv2_i_112: sensor.sunsynk_pv2_current_112
-  pv3_v_113: none
-  pv3_i_114: none
-  pv4_v_115: none
-  pv4_i_116: none
+  pv3_v_113: sensor.sunsynk_pv3_voltage_113
+  pv3_i_114: sensor.sunsynk_pv3_current_114
+  pv4_v_115: sensor.sunsynk_pv4_voltage_115
+  pv4_i_116: sensor.sunsynk_pv4_current_116
   load_frequency_192: sensor.sunsynk_output_frequency_192
   inverter_current_164: sensor.sunsynk_output_current_164
   battery_power_190: sensor.sunsynk_battery_power_190
+show_grid: true
+decimal_places: 2
