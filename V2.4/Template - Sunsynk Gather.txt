@@ -32,6 +32,14 @@ sensor:
          window_size: 100
          radius: 50
   - platform: filter
+    name: "Sunsynk filtered grid export"
+    unique_id: sensor.sunsynk_filtered_grid_export
+    entity_id: sensor.sunsynk_grid_total_pre_export
+    filters:
+       - filter: outlier
+         window_size: 100
+         radius: 50
+  - platform: filter
     name: "Sunsynk filtered load"
     unique_id: sensor.sunsynk_filtered_load
     entity_id: sensor.sunsynk_load_total_pre
@@ -72,6 +80,8 @@ input_boolean:
 ##
   enable_auto_outside_lights:
   enable_auto_gary_office:
+  enable_auto_night_lights:
+   initial: true
   enable_electric_weather_override:
   enable_camera_alert:
   enable_camera_high:
@@ -439,7 +449,7 @@ template:
           plant_ignore_list: !secret sunsynk_plantid_ignore_list
           unit_cost: 2.37
           force_short_delay: "false"
-          timeout: 2000
+          timeout: 3000
 #####
 ##### invertor_list_opt:
 ##### Select which method must be used to get the invertor list
@@ -456,6 +466,7 @@ template:
 #####                   Do a run through then in node red look at global context data under 
 #####                   SS_Consolidat -> Config Data -> Inverter Plant
 #####                   [Inverter SN]:[Plantid]
+##### timeout:          Web request timeout to stop long web requests ( ms ) - Do not change 
 #####
 #####
 ##### Consolidated Data
@@ -527,11 +538,7 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-          {% if state_attr('sensor.sunsynk_usable_battery', 'etotalchg')|float == 0 %}
-           {{ None }}
-          {% else %}
            {{ state_attr('sensor.sunsynk_usable_battery', 'etotalchg') }}
-          {% endif %}
   - sensor:
       - name: "Sunsynk Battery etotalchg"
         state_class: total_increasing
@@ -547,11 +554,7 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-          {% if state_attr('sensor.sunsynk_usable_battery', 'etotaldischg')|float == 0 %}
-           {{ None }}
-          {% else %}
            {{ state_attr('sensor.sunsynk_usable_battery', 'etotaldischg') }}
-          {% endif %}
   - sensor:
       - name: "Sunsynk Battery etotaldischg"
         state_class: total_increasing
@@ -567,11 +570,7 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-          {% if state_attr('sensor.sunsynk_usable_pv', 'etotal')|float == 0 %}
-           {{ None }}
-          {% else %}
            {{ state_attr('sensor.sunsynk_usable_pv', 'etotal') }}
-          {% endif %}
   - sensor:
       - name: "Sunsynk PV Total"
         state_class: total_increasing
@@ -587,11 +586,15 @@ template:
         device_class: energy
         unit_of_measurement: kWh
         state: >
-          {% if state_attr('sensor.sunsynk_usable_grid', 'totalusedin')|float == 0 %}
-           {{ None }}
-          {% else %}
            {{ state_attr('sensor.sunsynk_usable_grid', 'totalusedin') }}
-          {% endif %}
+  - sensor:
+      - name: "Sunsynk Grid Total Pre Export"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_total_pre_export"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ state_attr('sensor.sunsynk_usable_grid', 'totalusedout') }}
   - sensor:
       - name: "Sunsynk Grid Total"
         state_class: total_increasing
@@ -601,17 +604,21 @@ template:
         state: >
            {{ states('sensor.sunsynk_filtered_grid') }}
   - sensor:
+      - name: "Sunsynk Grid Total Export"
+        state_class: total_increasing
+        unique_id: "sensor.sunsynk_grid_total_export"
+        device_class: energy
+        unit_of_measurement: kWh
+        state: >
+           {{ states('sensor.sunsynk_filtered_grid_export') }}
+  - sensor:
       - name: "Sunsynk Load Total Pre"
         state_class: total_increasing
         unique_id: "sensor.sunsynk_load_total_pre"
         device_class: energy
         unit_of_measurement: kWh
         state: >
-          {% if state_attr('sensor.sunsynk_usable_load', 'totalused')|float == 0 %}
-           {{ None }}
-          {% else %}
            {{ state_attr('sensor.sunsynk_usable_load', 'totalused') }}
-          {% endif %}
   - sensor:
       - name: "Sunsynk Load Total"
         state_class: total_increasing
@@ -698,3 +705,8 @@ template:
         device_class: timestamp
         state: >
          {{ state_attr("sensor.sunsynk_usable_inverter", "lastupdated") }}
+  - sensor:
+      - name: "SunSynk Logger Last Update Seconds"
+        state: >
+         {{ state_attr("sensor.sunsynk_usable_inverter", "loglastupdseconds") }}
+#####
