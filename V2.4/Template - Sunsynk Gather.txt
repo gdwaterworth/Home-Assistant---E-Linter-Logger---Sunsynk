@@ -450,6 +450,7 @@ template:
           unit_cost: 2.37
           force_short_delay: "false"
           timeout: 3000
+          certcheck: false
 #####
 ##### invertor_list_opt:
 ##### Select which method must be used to get the invertor list
@@ -467,6 +468,8 @@ template:
 #####                   SS_Consolidat -> Config Data -> Inverter Plant
 #####                   [Inverter SN]:[Plantid]
 ##### timeout:          Web request timeout to stop long web requests ( ms ) - Do not change 
+##### certcheck:        Check SSL certs - Sunsynk is problematic
+#####
 #####
 #####
 ##### Consolidated Data
