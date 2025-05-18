@@ -1,5 +1,8 @@
 # Home-Assistant---SunSynk-Logger
 
+# This is no longer being updated or maintained as I now longer have access to or a Synsynk Solar System
+
+
 Video by Sc00bs to Assist with Configuration (Version 1) 
 
 https://youtu.be/VxhmD2GAJv4
